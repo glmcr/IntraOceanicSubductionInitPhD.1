@@ -1,4 +1,6 @@
 - 2D only
+- free surface
+- prescribed velocity boundary conditions on all sides ?
 - Write an ASPECT plugin prm file that is based on the following official ASPECT cookbooks prm files: 
 
    aspect/cookbooks/composition-passive-particles-properties.prm
