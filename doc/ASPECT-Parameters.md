@@ -24,14 +24,14 @@
    __NOTES__: 
 
      particles: initial composition + initial_position + pT_path + 
-                ? metamorphic facies(no metamorphism, greenschist, granulites, eclogites)
+                ? metamorphic facies(no metamorphism, greenschist, granulites, eclogites) ?
 
     composition: It reacts to (dynamic?)pressure-temperature conditions.
-                 ? Use the data structures that are defined in 
+                 ? Use the data structures that are defined in
                  https://github.com/geodynamics/aspect/blob/master/include/aspect/material_model/utilities.h ?   
  
 - ?? Also use the visco_plastic material model as in :
-  https://github.com/anne-glerum/paper-aspect-plasticity-subduction-data/blob/master/2D_subduction/2D_subduction_2.prm
+     https://github.com/anne-glerum/paper-aspect-plasticity-subduction-data/blob/master/2D_subduction/2D_subduction_2.prm ??
  
 
 ------------------------------------------------------------------
