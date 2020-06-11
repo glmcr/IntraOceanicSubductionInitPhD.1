@@ -11,10 +11,14 @@
    https://github.com/geodynamics/aspect/blob/master/cookbooks/composition-passive-particles-properties.prm
 
    https://github.com/geodynamics/aspect/blob/master/contrib/perplex/perplex_lookup_composition.prm
-   (Somewhat outdated, seems that it was created before
+   (somewhat outdated, it seems that it was created before
+
     https://github.com/geodynamics/aspect/blob/master/include/aspect/material_model/utilities.h
+
     and its implementation
+
     https://github.com/geodynamics/aspect/blob/master/source/utilities.cc
+
     were created)
 
    notes: 
@@ -34,5 +38,6 @@
 Questions: 
 
   1). Not sure where to put metamorphic facies flags: particles or composition or create new data structure or class ?
+
   2). Still not clear to me: The relations between the material model attributes vs composition attributes, does the
       feebacks between the attributes of those two entities are one way or two way ?.
