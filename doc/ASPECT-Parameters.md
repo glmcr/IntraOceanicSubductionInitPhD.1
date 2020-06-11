@@ -21,7 +21,7 @@
 
     were created)
 
-   notes: 
+   __NOTES__: 
 
      particles: initial composition + initial_position + pT_path + 
                 ? metamorphic facies(no metamorphism, greenschist, granulites, eclogites)
