@@ -11,7 +11,7 @@
    https://github.com/geodynamics/aspect/blob/master/cookbooks/composition-passive-particles-properties.prm
 
    https://github.com/geodynamics/aspect/blob/master/contrib/perplex/perplex_lookup_composition.prm
-   (somewhat outdated, it seems that it was created before
+   (somewhat outdated, it seems that it was created before this interface:
 
     https://github.com/geodynamics/aspect/blob/master/include/aspect/material_model/utilities.h
 
