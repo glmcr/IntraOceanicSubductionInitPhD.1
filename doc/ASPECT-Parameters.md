@@ -43,11 +43,4 @@ The __vector\<vector\<double\>\>__ __composition__ is an attribute of the __temp
 and not an attribute of the __template\<int dim\>__ __struct__ __MaterialModel::MaterialProperties::MaterialModelOutputs__.
 
 BUT the __template\<int dim\>__ __struct__ __MaterialModel::MaterialProperties::MaterialModelOutputs__ does contain
-an attribute called __vector\<vector\<double\>\>__ __reaction_terms__ which I think could likely be 
-used to store metamorphic mineral phases changes(as weight proportions ?) ex. if __reaction_terms[i][c]__ is 0.0
-then  there is no mineral phase c at position i. If the attribute __reaction_terms[i][c]__ is 0.69 then we have 
-0.69 of mineral c in weight proportion compared to the other mineral phases(which must sum up to 0.31 in weight
-proportion) present at position i.
-
-__Question__: Does that __reaction_terms__ attribute is used to modify the material model properties(viscosity,
-density and so on) ?
+an attribute of the same type as __vector\<vector\<double\>\>__ __composition__ which is named __vector\<vector\<double\>\>__ __reaction_terms__ which I think could likely be used to store metamorphic mineral phases changes(as weight proportions ?) ex. if __reaction_terms[i][c]__ is 0.0 then there is no mineral phase c at position i. If the attribute __reaction_terms[i][c]__ is 0.69 then we have 0.69 of mineral c in weight proportion compared to the other mineral phases(which must sum up to 0.31 in weight proportion) present at position i.
