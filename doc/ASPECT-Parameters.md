@@ -24,7 +24,7 @@
    __NOTES__: 
 
      particles: initial composition + initial_position + pT_path + 
-                metamorphic facies(no metamorphism, greenschist, granulites, eclogites
+                metamorphic facies(no metamorphism, greenschist, amphibolites, granulites, ?eclogites?)
                 I will have to write code that sets the metamorphic facies for each particle
                 using the (dynamic?) total pressure and pressure conditions prevailing at the
                 particles positions.
@@ -48,8 +48,8 @@ and not an attribute of the template <int dim>struct MaterialModel::MaterialProp
     BUT the template <int dim>struct MaterialModel::MaterialProperties::MaterialModelOutputs does have
 an attribute called reaction_terms which I think can be used to store metamorphic mineral phases changes
 (as weight proportions ?) ex. if reaction_terms[i][c] is 0.0 then there is no mineral phase c at position i.
-if the attribute reaction_terms[i][c] is 0.69 then we have 0.69 of mineral c in weight proportion compare
-to the other mineral phases present at position i.
+if the attribute reaction_terms[i][c] is 0.69 then we have 0.69 of mineral c in weight proportion compared
+to the other mineral phases(which must sum up to 0.31 in weight proportion) present at position i.
 
 Question: Does that reaction_terms attribute is used to update the material model properties(viscosity,
 density and so on) ?
