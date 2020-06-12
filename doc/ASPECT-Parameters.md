@@ -39,9 +39,8 @@ https://github.com/anne-glerum/paper-aspect-plasticity-subduction-data/blob/mast
 ------------------------------------------------------------------
 - Things To remember:
  
-The __composition__ (of type __vector<vector>__ of __double__) is an attribute of the __template__ __<int dim>struct__
-__MaterialModel::MaterialProperties::MaterialModelInputs__ and not an attribute of the __template__ __<int dim>struct__ 
-__MaterialModel::MaterialProperties::MaterialModelOutputs__.
+The __composition__ (of type __vector__ __<vector>__ of __double__) is an attribute of the __template__ __<int dim>struct__ __MaterialModel::MaterialProperties::MaterialModelInputs__
+and not an attribute of the __template__ __<int dim>struct__ __MaterialModel::MaterialProperties::MaterialModelOutputs__.
 
 BUT the __template__ __<int dim>struct__ __MaterialModel::MaterialProperties::MaterialModelOutputs__ does contain
 an attribute called __reaction_terms__ (of type __vector<vector>__ of __double__) which I think could likely be 
