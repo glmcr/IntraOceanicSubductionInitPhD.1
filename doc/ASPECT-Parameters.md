@@ -27,7 +27,7 @@ I will have to write code that sets the metamorphic facies for each particle
 using the (dynamic?) total pressure and pressure conditions prevailing at the
 particles positions.
 
--     material model reaction_terms: Reacts to (dynamic?)total pressure-temperature conditions OR use 
+-  material model reaction_terms: Reacts to (dynamic?)total pressure-temperature conditions OR use 
 the data structures that are defined in
 https://github.com/geodynamics/aspect/blob/master/include/aspect/material_model/utilities.h
 instead of the material model reaction_terms attribute ?  
@@ -39,14 +39,14 @@ https://github.com/anne-glerum/paper-aspect-plasticity-subduction-data/blob/mast
 ------------------------------------------------------------------
 - Things To remember:
  
-The composition is an attribute of the template <int dim>struct MaterialModel::MaterialProperties::MaterialModelInputs
-and not an attribute of the template <int dim>struct MaterialModel::MaterialProperties::MaterialModelOutputs.
+The composition is an attribute of the __template__ __<int dim>struct__ __MaterialModel::MaterialProperties::MaterialModelInputs__
+and not an attribute of the __template__ __<int dim>struct__ __MaterialModel::MaterialProperties::MaterialModelOutputs__.
 
-BUT the template <int dim>struct MaterialModel::MaterialProperties::MaterialModelOutputs does have
-an attribute called reaction_terms which I think can be used to store metamorphic mineral phases changes
-(as weight proportions ?) ex. if reaction_terms[i][c] is 0.0 then there is no mineral phase c at position i.
-if the attribute reaction_terms[i][c] is 0.69 then we have 0.69 of mineral c in weight proportion compared
-to the other mineral phases(which must sum up to 0.31 in weight proportion) present at position i.
+BUT the __template__ __<int dim>struct__ __MaterialModel::MaterialProperties::MaterialModelOutputs__ does have
+an attribute called __vector<vector<double>>__ __reaction_terms_ which I think can be used to store metamorphic
+mineral phases changes(as weight proportions ?) ex. if __reaction_terms[i][c]__ is 0.0 then there is no mineral
+phase c at position i.if the attribute __reaction_terms[i][c]__ is 0.69 then we have 0.69 of mineral c in weight
+proportion compared to the other mineral phases(which must sum up to 0.31 in weight proportion) present at position i.
 
-Question: Does that reaction_terms attribute is used to update the material model properties(viscosity,
-density and so on) ?
+__Question__: Does that __vector<vector<double>>__ __reaction_terms__ attribute is used to update the material
+model properties(viscosity, density and so on) ?
