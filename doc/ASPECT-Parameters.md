@@ -21,7 +21,7 @@
 
     were created)
 
-    But the prm file should use a brand new material model that has to be based on one of the already
+    But the prm file could use a brand new material model that has to be based on one of the already
     exiting material models implementations:
 
     (incompressible)
@@ -30,9 +30,13 @@
     (compressible)
     https://github.com/geodynamics/aspect/blob/master/include/aspect/material_model/multicomponent_compressible.h
 
-    The metamorphic phases changes(by vol\ume or mass fractions) could be tracked using the __reaction_terms__
+    The metamorphic phases changes(by volume or mass fractions) could be tracked using the __reaction_terms__
     attribute of the  __template\<int dim\>__ __struct__ __MaterialModel::MaterialProperties::MaterialModelOutputs__ 
-    object.
+    object. The __reaction_terms__ compositions would be all at 0.0 everywhere in the domain at the beginning 
+    of the simulations and would be set to the respective prograde(retrograde eventually ?) metamorphic facies
+    of the initial compositions types(i.e. initial rocks types, ex. basalt -> greenschist metabasalt -> 
+    amphibolite metabasalt -> granulite metabasalt, sediments -> greenschist metasediments -> amphibolite
+    metasediments -> granulite metasediments).
 
 -  __particles__: initial composition + initial_position + pT_path + 
 metamorphic facies(no metamorphism, greenschist, amphibolites, granulites, ?eclogites?)
@@ -43,14 +47,14 @@ particles positions.
 -  material model __reaction_terms__: Reacts to (dynamic?)total pressure-temperature conditions OR use 
 the data structures that are defined in
 https://github.com/geodynamics/aspect/blob/master/include/aspect/material_model/utilities.h
-instead of the material model reaction_terms attribute ?  
+instead of the material model reaction_terms attribute ? The answer to that question is probably no.
  
 - ?? Also use some of the __visco_plastic__ material model implementation as in :
 https://github.com/anne-glerum/paper-aspect-plasticity-subduction-data/blob/master/2D_subduction/2D_subduction_2.prm ??
  
 
 ------------------------------------------------------------------
-- Things To remember:
+- Things to always remember:
  
 The __vector\<vector\<double\>\>__ __composition__ is an attribute of the __template\<int dim\>__ __struct__ __MaterialModel::MaterialProperties::MaterialModelInputs__
 and not an attribute of the __template\<int dim\>__ __struct__ __MaterialModel::MaterialProperties::MaterialModelOutputs__.
