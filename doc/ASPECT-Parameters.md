@@ -36,7 +36,7 @@
     of the simulations and would be set to the respective prograde(retrograde eventually ?) metamorphic facies
     of the initial compositions types(i.e. initial rocks types, ex. basalt -> greenschist metabasalt -> 
     amphibolite metabasalt -> granulite metabasalt, sediments -> greenschist metasediments -> amphibolite
-    metasediments -> granulite metasediments) depending on the Pressure-Temperature values at the position\
+    metasediments -> granulite metasediments) depending on the Pressure-Temperature values at the position
     of the __reaction_terms__ objects. 
 
 -----------------------------------------------------------------
