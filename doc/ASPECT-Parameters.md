@@ -8,8 +8,6 @@
 
    https://github.com/geodynamics/aspect/blob/master/cookbooks/composition-reaction.prm
 
-   https://github.com/geodynamics/aspect/blob/master/cookbooks/composition-passive-particles-properties.prm
-
    https://github.com/geodynamics/aspect/blob/master/contrib/perplex/perplex_lookup_composition.prm
    (somewhat outdated, it seems that it was created before this interface file:
 
@@ -43,7 +41,8 @@
 - Questions:
 
 - ?? use passive __particles__ ?? : initial composition + initial_position + pT_path + 
-metamorphic facies(no metamorphism, greenschist, amphibolites, granulites, ?eclogites?)
+a new property called metamorphic facies(no metamorphism, greenschist, amphibolites, granulites, ?eclogites?).
+(ex. https://github.com/geodynamics/aspect/blob/master/cookbooks/composition-passive-particles-properties.prm)
 
 -  ?? Use the already mentioned data structures that are defined in
 https://github.com/geodynamics/aspect/blob/master/include/aspect/material_model/utilities.h
