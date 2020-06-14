@@ -2,7 +2,7 @@
 - free surface.
 - incompressible or compressible ?
 - prescribed velocity boundary conditions on bottom and vertical sides (or tangential or open or a mix of both) ?
-- prescribed adiabatic temperature boundary conditions on bottom and top.
+- prescribed adiabatic temperature boundary conditions on bottom and top ?
   
 - Write an ASPECT plugin prm file that is based the following official ASPECT cookbooks prm files: 
 
@@ -21,6 +21,19 @@
 
     were created)
 
+    But the prm file should use a brand new material model that has to be based on one of the already
+    exiting material models implementations:
+
+    (incompressible)
+    https://github.com/geodynamics/aspect/blob/master/include/aspect/material_model/multicomponent.h
+
+    (compressible)
+    https://github.com/geodynamics/aspect/blob/master/include/aspect/material_model/multicomponent_compressible.h
+
+    The metamorphic phases changes(by vol\ume or mass fractions) could be tracked using the __reaction_terms__
+    attribute of the  __template\<int dim\>__ __struct__ __MaterialModel::MaterialProperties::MaterialModelOutputs__ 
+    object.
+
 -  __particles__: initial composition + initial_position + pT_path + 
 metamorphic facies(no metamorphism, greenschist, amphibolites, granulites, ?eclogites?)
 I will have to write code that sets the metamorphic facies for each particle
@@ -32,7 +45,7 @@ the data structures that are defined in
 https://github.com/geodynamics/aspect/blob/master/include/aspect/material_model/utilities.h
 instead of the material model reaction_terms attribute ?  
  
-- ?? Also use the __visco_plastic__ material model as in :
+- ?? Also use some of the __visco_plastic__ material model implementation as in :
 https://github.com/anne-glerum/paper-aspect-plasticity-subduction-data/blob/master/2D_subduction/2D_subduction_2.prm ??
  
 
