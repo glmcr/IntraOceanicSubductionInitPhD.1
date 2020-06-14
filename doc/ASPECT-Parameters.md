@@ -36,23 +36,22 @@
     of the simulations and would be set to the respective prograde(retrograde eventually ?) metamorphic facies
     of the initial compositions types(i.e. initial rocks types, ex. basalt -> greenschist metabasalt -> 
     amphibolite metabasalt -> granulite metabasalt, sediments -> greenschist metasediments -> amphibolite
-    metasediments -> granulite metasediments).
+    metasediments -> granulite metasediments) depending on the Pressure-Temperature values at the position\
+    of the __reaction_terms__ objects. 
 
--  __particles__: initial composition + initial_position + pT_path + 
+-----------------------------------------------------------------
+- Questions:
+
+- ?? use passive __particles__ ?? : initial composition + initial_position + pT_path + 
 metamorphic facies(no metamorphism, greenschist, amphibolites, granulites, ?eclogites?)
-I will have to write code that sets the metamorphic facies for each particle
-using the (dynamic?) total pressure and pressure conditions prevailing at the
-particles positions.
 
--  material model __reaction_terms__: Reacts to (dynamic?)total pressure-temperature conditions OR use 
-the data structures that are defined in
+-  ?? Use the already mentioned data structures that are defined in
 https://github.com/geodynamics/aspect/blob/master/include/aspect/material_model/utilities.h
-instead of the material model reaction_terms attribute ? The answer to that question is probably no.
+instead of the material model __reaction_terms__ attribute ?? The answer to that question is probably no.
  
 - ?? Also use some of the __visco_plastic__ material model implementation as in :
 https://github.com/anne-glerum/paper-aspect-plasticity-subduction-data/blob/master/2D_subduction/2D_subduction_2.prm ??
  
-
 ------------------------------------------------------------------
 - Things to always remember:
  
