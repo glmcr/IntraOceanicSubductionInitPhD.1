@@ -3,14 +3,11 @@ Parameters for the 1st part of the PhD study:
 
 - 2D only.
 
-- free surface.
+- free surface and prescribed velocity boundary conditions on bottom and vertical sides (or tangential or open or a mix of both) ?(open boundary conditions as defined in this [paper](https://www.researchgate.net/publication/258723103_Using_open_sidewalls_for_modelling_self-consistent_lithosphere_subduction_dynamics/fulltext/57aaf64408ae0932c970c1cd/Using-open-sidewalls-for-modelling-self-consistent-lithosphere-subduction-dynamics.pdf))
 
 - incompressible or compressible ?
 
-- prescribed velocity boundary conditions on bottom and vertical sides (or tangential or open or a mix of both) ?
-  (open as in this [paper](https://www.researchgate.net/publication/258723103_Using_open_sidewalls_for_modelling_self-consistent_lithosphere_subduction_dynamics/fulltext/57aaf64408ae0932c970c1cd/Using-open-sidewalls-for-modelling-self-consistent-lithosphere-subduction-dynamics.pdf)
-
-- prescribed adiabatic temperature boundary conditions on bottom and top ?
+- prescribed adiabatic temperature boundary conditions on bottom and top ? also on vertical sides(or open) ? 
 
 - Does the properties(mainly the densities) of the rocks material types compositions have to be used in the
   material model itself ?
