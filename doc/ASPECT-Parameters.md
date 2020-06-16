@@ -41,7 +41,7 @@ Parameters for the 1st part of the PhD study:
 -  ?? Use the already mentioned data structures that are defined in [this include file](https://github.com/geodynamics/aspect/blob/master/include/aspect/material_model/utilities.h)
 instead of the material model __reaction_terms__ attribute ?? The answer to that question is probably no.
  
-- ?? Also use some of the __visco_plastic__ material model implementation as in this [paper](https://github.com/anne-glerum/paper-aspect-plasticity-subduction-data/blob/master/2D_subduction/2D_subduction_2.prm) ??
+- ?? Also use some of the __visco_plastic__ material model implementation as in this [paper](https://www.researchgate.net/publication/323856800_Nonlinear_viscoplasticity_in_ASPECT_Benchmarking_and_applications_to_subduction/fulltext/5aaff120aca2721710fde151/Nonlinear-viscoplasticity-in-ASPECT-Benchmarking-and-applications-to-subduction.pdf) ??
  
 ------------------------------------------------------------------
 - Things to always remember:
