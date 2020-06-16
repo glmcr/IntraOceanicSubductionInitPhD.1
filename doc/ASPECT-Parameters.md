@@ -26,7 +26,7 @@ Parameters for the 1st part of the PhD study:
   and [perplex_lookup_composition.prm](https://github.com/geodynamics/aspect/blob/master/contrib/perplex/perplex_lookup_composition.prm)
  
 - Use __particles__  properties : initial composition + initial_position + pT_path + a new  __particles__
-  called metamorphic_facies(no metamorphism, greenschist, amphibolites, granulites, ?eclogites?) to track
+  property called metamorphic_facies(no metamorphism, greenschist, amphibolites, granulites, ?eclogites?) to track
   the metamorphic evolution of the rocks materials on both sides of the subduction interface between the
   two interacting plates.
 
