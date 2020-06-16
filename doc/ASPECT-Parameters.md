@@ -8,7 +8,7 @@ Parameters for the 1st part of the PhD study:
 - incompressible or compressible ?
 
 - prescribed velocity boundary conditions on bottom and vertical sides (or tangential or open or a mix of both) ?
-  (open as in this paper https://www.researchgate.net/publication/258723103_Using_open_sidewalls_for_modelling_self-consistent_lithosphere_subduction_dynamics/fulltext/57aaf64408ae0932c970c1cd/Using-open-sidewalls-for-modelling-self-consistent-lithosphere-subduction-dynamics.pdf
+  (open as in this [paper](https://www.researchgate.net/publication/258723103_Using_open_sidewalls_for_modelling_self-consistent_lithosphere_subduction_dynamics/fulltext/57aaf64408ae0932c970c1cd/Using-open-sidewalls-for-modelling-self-consistent-lithosphere-subduction-dynamics.pdf)
 
 - prescribed adiabatic temperature boundary conditions on bottom and top ?
 
@@ -17,11 +17,13 @@ Parameters for the 1st part of the PhD study:
   
 - Write an ASPECT plugin prm file that is based the following official ASPECT cookbooks prm files: 
 
-    https://github.com/geodynamics/aspect/blob/master/cookbooks/composition-reaction.prm
-    https://github.com/geodynamics/aspect/blob/master/cookbooks/composition-active-particles.prm
-    https://github.com/geodynamics/aspect/blob/master/cookbooks/composition-passive-particles-properties.prm
-
-    and https://github.com/geodynamics/aspect/blob/master/contrib/perplex/perplex_lookup_composition.prm
+  [composition-reaction.prm](https://github.com/geodynamics/aspect/blob/master/cookbooks/composition-reaction.prm)
+  
+  [composition-active-particles.prm](https://github.com/geodynamics/aspect/blob/master/cookbooks/composition-active-particles.prm)
+  
+  [composition-passive-particles-properties.prm](https://github.com/geodynamics/aspect/blob/master/cookbooks/composition-passive-particles-properties.prm)
+  
+  and [perplex_lookup_composition.prm](https://github.com/geodynamics/aspect/blob/master/contrib/perplex/perplex_lookup_composition.prm)
  
 - Use __particles__  properties : initial composition + initial_position + pT_path + a new  __particles__
   called metamorphic_facies(no metamorphism, greenschist, amphibolites, granulites, ?eclogites?) to track
@@ -39,12 +41,10 @@ Parameters for the 1st part of the PhD study:
 -----------------------------------------------------------------
 - Questions:
 
--  ?? Use the already mentioned data structures that are defined in
-https://github.com/geodynamics/aspect/blob/master/include/aspect/material_model/utilities.h
+-  ?? Use the already mentioned data structures that are defined in [this include file](https://github.com/geodynamics/aspect/blob/master/include/aspect/material_model/utilities.h)
 instead of the material model __reaction_terms__ attribute ?? The answer to that question is probably no.
  
-- ?? Also use some of the __visco_plastic__ material model implementation as in :
-https://github.com/anne-glerum/paper-aspect-plasticity-subduction-data/blob/master/2D_subduction/2D_subduction_2.prm ??
+- ?? Also use some of the __visco_plastic__ material model implementation as in this [paper](https://github.com/anne-glerum/paper-aspect-plasticity-subduction-data/blob/master/2D_subduction/2D_subduction_2.prm) ??
  
 ------------------------------------------------------------------
 - Things to always remember:
