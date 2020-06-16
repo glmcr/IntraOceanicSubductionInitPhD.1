@@ -1,48 +1,43 @@
+Parameters for the 1st part of the PhD study:
+----------------------------------------------
+
 - 2D only.
+
 - free surface.
+
 - incompressible or compressible ?
+
 - prescribed velocity boundary conditions on bottom and vertical sides (or tangential or open or a mix of both) ?
+  (open as in this paper https://www.researchgate.net/publication/258723103_Using_open_sidewalls_for_modelling_self-consistent_lithosphere_subduction_dynamics/fulltext/57aaf64408ae0932c970c1cd/Using-open-sidewalls-for-modelling-self-consistent-lithosphere-subduction-dynamics.pdf
+
 - prescribed adiabatic temperature boundary conditions on bottom and top ?
+
+- Does the properties(mainly the densities) of the rocks material types compositions have to be used in the
+  material model itself ?
   
 - Write an ASPECT plugin prm file that is based the following official ASPECT cookbooks prm files: 
 
-   https://github.com/geodynamics/aspect/blob/master/cookbooks/composition-reaction.prm
+    https://github.com/geodynamics/aspect/blob/master/cookbooks/composition-reaction.prm
+    https://github.com/geodynamics/aspect/blob/master/cookbooks/composition-active-particles.prm
+    https://github.com/geodynamics/aspect/blob/master/cookbooks/composition-passive-particles-properties.prm
 
-   https://github.com/geodynamics/aspect/blob/master/contrib/perplex/perplex_lookup_composition.prm
-   (somewhat outdated, it seems that it was created before this interface file:
+    and https://github.com/geodynamics/aspect/blob/master/contrib/perplex/perplex_lookup_composition.prm
+ 
+- Use __particles__  properties : initial composition + initial_position + pT_path + a new  __particles__
+  called metamorphic_facies(no metamorphism, greenschist, amphibolites, granulites, ?eclogites?) to track
+  the metamorphic evolution of the rocks materials on both sides of the subduction interface between the
+  two interacting plates.
 
-    https://github.com/geodynamics/aspect/blob/master/include/aspect/material_model/utilities.h
+- Use an already defined metamorphic facies lookup table(i.e. a file) for the relation between the P-T
+  conditions and the rocks materials for the specific context of an intra-oceanic subduction initiation.
+  
+- Just one rock material type for one __particle__ at any time(possible metastable cases ??). 
 
-    and its implementation
-
-    https://github.com/geodynamics/aspect/blob/master/source/utilities.cc
-
-    were created)
-
-    But the prm file could use a brand new material model that has to be based on one of the already
-    exiting material models implementations:
-
-    (incompressible)
-    https://github.com/geodynamics/aspect/blob/master/include/aspect/material_model/multicomponent.h
-
-    (compressible)
-    https://github.com/geodynamics/aspect/blob/master/include/aspect/material_model/multicomponent_compressible.h
-
-    The metamorphic phases changes(by volume or mass fractions) could be tracked using the __reaction_terms__
-    attribute of the  __template\<int dim\>__ __struct__ __MaterialModel::MaterialProperties::MaterialModelOutputs__ 
-    object. The __reaction_terms__ compositions would be all at 0.0 everywhere in the domain at the beginning 
-    of the simulations and would be set to the respective prograde(retrograde eventually ?) metamorphic facies
-    of the initial compositions types(i.e. initial rocks types, ex. basalt -> greenschist metabasalt -> 
-    amphibolite metabasalt -> granulite metabasalt, sediments -> greenschist metasediments -> amphibolite
-    metasediments -> granulite metasediments) depending on the Pressure-Temperature values at the position
-    of the __reaction_terms__ objects. 
+- We could also use the __reaction_terms__ object to hold the a representation of the volume fractions
+  of the different rock material types in the FE cells.
 
 -----------------------------------------------------------------
 - Questions:
-
-- ?? use passive __particles__ ?? : initial composition + initial_position + pT_path + 
-a new property called metamorphic facies(no metamorphism, greenschist, amphibolites, granulites, ?eclogites?).
-(ex. https://github.com/geodynamics/aspect/blob/master/cookbooks/composition-passive-particles-properties.prm)
 
 -  ?? Use the already mentioned data structures that are defined in
 https://github.com/geodynamics/aspect/blob/master/include/aspect/material_model/utilities.h
