@@ -3,7 +3,13 @@ Parameters for the 1st part of the PhD study:
 
 - 2D only.
 
-- free surface and prescribed velocity boundary conditions on bottom and vertical sides (or tangential or open or a mix of both)? (open boundary conditions as defined in this [paper](https://www.researchgate.net/publication/258723103_Using_open_sidewalls_for_modelling_self-consistent_lithosphere_subduction_dynamics/fulltext/57aaf64408ae0932c970c1cd/Using-open-sidewalls-for-modelling-self-consistent-lithosphere-subduction-dynamics.pdf))
+- free surface on top. 
+
+- velocity boundary conditions:
+
+   Bottom: tangential or no slip ? 
+
+   vertical sides: open boundary conditions as defined in this [paper](https://www.researchgate.net/publication/258723103_Using_open_sidewalls_for_modelling_self-consistent_lithosphere_subduction_dynamics/fulltext/57aaf64408ae0932c970c1cd/Using-open-sidewalls-for-modelling-self-consistent-lithosphere-subduction-dynamics.pdf))
 
 - incompressible or compressible ?
 
@@ -23,7 +29,7 @@ Parameters for the 1st part of the PhD study:
   and [perplex_lookup_composition.prm](https://github.com/geodynamics/aspect/blob/master/contrib/perplex/perplex_lookup_composition.prm)
  
 - Use __particles__  properties : initial composition + initial_position + pT_path + a new  __particles__
-  property called metamorphic_facies(no metamorphism, greenschist, amphibolites, granulites, ?eclogites?) to track
+  property called metamorphic_facies(no metamorphism, greenschist, amphibolites, ?granulites?, ?eclogites?) to track
   the metamorphic evolution of the rocks materials on both sides of the subduction interface between the
   two interacting plates.
 
