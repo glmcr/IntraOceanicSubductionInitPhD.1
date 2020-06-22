@@ -7,7 +7,7 @@ Parameters for the 1st part of the PhD study:
 
 - velocity boundary conditions:
 
-   Bottom: tangential or no slip ? 
+   bottom: tangential or no slip ? 
 
    vertical sides: open boundary conditions as defined in this [paper](https://www.researchgate.net/publication/258723103_Using_open_sidewalls_for_modelling_self-consistent_lithosphere_subduction_dynamics/fulltext/57aaf64408ae0932c970c1cd/Using-open-sidewalls-for-modelling-self-consistent-lithosphere-subduction-dynamics.pdf))
 
