@@ -13,7 +13,7 @@ Parameters for the 1st part of the PhD study:
 
 - incompressible or compressible ?
 
-- prescribed adiabatic temperature boundary conditions on bottom and top ? also on vertical sides(or open) ? 
+- prescribed adiabatic temperature boundary conditions on bottom and top ? what about vertical sides for temperature ? 
 
 - Does the properties(mainly the densities) of the rocks material types compositions have to be used in the
   material model itself ?
