@@ -26,3 +26,6 @@ always track the prograde(and retrograde ??) metamorphic facies changes for each
 
     BUT, it seems that the time derivative of the energy equation is not considered when this parameter
     "no_advection_<single,iterated>_stokes" is used.
+
+    Explore the "prescribed_field_with_diffusion" thing to see if it's possible to get the "A la Gerya"
+    scheme.
