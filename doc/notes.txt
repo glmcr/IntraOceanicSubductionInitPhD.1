@@ -1,0 +1,25 @@
+1). WIP: Metamorphic transformations using ASPECT particles properties:
+----------------------------------------------------------------
+
+Use the initial compostion as a particle property.
+
+Use a different generic metamorphic phases T-P pseudosection for each generic starting 
+rock types(which we can consider as protoliths).
+
+ex. oceanic basalt, oceanic pelagic sediment, gabbro, peridotite and so on.
+
+Each of those generic starting rock types could have a particular metamorphic facies
+depending on the T-P conditions faced by the particles. Ex. the sediments and basalts
+protoliths can eventually have all the classic metamorphic facies types but gabbros and
+peridotites stay usually "pristine" unless they are subjected to metasomatism. 
+
+(NOTE: metasomatism and protoliths dehydration need to be parametrized)
+
+The initial composition is always available from the particles properties so we can
+always track the prograde(and retrograde ??) metamorphic facies changes for each particle.
+
+2). Test if we can do simulation "A la Gerya" with Aspect i.e. without eulerian advection 
+    of energy and compositional fields. Energy and composition fields would then be advected
+    only as properties of lagrangian particles.
+
+    The "Nonlinear solver scheme" parameter to be used to do so is "no_advection_<single,iterated>_stokes"
