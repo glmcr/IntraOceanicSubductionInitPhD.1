@@ -38,7 +38,7 @@ Parameters for the 1st part of the PhD study:
   
 - Just one rock material type for one __particle__ at any time(possible metastable cases ??). 
 
-- We could also use the __reaction_terms__ object to hold the a representation of the volume fractions
+- We could also use the __reaction_terms__ object to hold the representation of the volume fractions
   of the different rock material types in the FE cells.
 
 -----------------------------------------------------------------
