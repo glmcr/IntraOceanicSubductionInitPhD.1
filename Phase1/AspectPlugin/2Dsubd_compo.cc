@@ -124,7 +124,7 @@ namespace aspect
           age_OP_max = (use_years_instead_of_seconds ? year_in_seconds : 1.0 ) * prm.get_double ("Overriding plate age at trench");
           age_SP_max = (use_years_instead_of_seconds ? year_in_seconds : 1.0 ) * prm.get_double ("Subducting plate age at trench");
           x_trench = prm.get_double ("Horizontal trench position");
-          d_max = prm.get_double ("Maximum oceanic plate thickness");
+          //d_max = prm.get_double ("Maximum oceanic plate thickness");
           d_crust = prm.get_double ("Crustal thickness");
           slab_dip = prm.get_double ("Slab dip angle")*numbers::PI/180.0;
         }

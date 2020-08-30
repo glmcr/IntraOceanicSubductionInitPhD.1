@@ -80,7 +80,8 @@ namespace aspect
          * The maximum thickness of an oceanic plate
          * when time goes to infinity
          */   
-        double d_max;
+        //--- Seems useless
+        //double d_max;
 
         /**
          * The  thickness of the oceanic crust
