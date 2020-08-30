@@ -91,14 +91,14 @@ namespace aspect
 
       for (int i=1;i<=n_sum;i++)
            {
-	     //--- glmcr note: replaced copy-paste inlining by the inline method getSumAgeArg 
+	     //--- glmcr note: replaced copy-paste inlining by the inline method getSumAgeAccArg 
 	     //sum_OP += (1.0/i) * 
              //             (exp((-thermal_diffusivity*i*i*numbers::PI*numbers::PI*age_OP)/(d_max*d_max)))*
              //             (sin(i*numbers::PI*depth/d_max));
 
 	     sum_OP += this->getSumAgeAccArg(i,thermal_diffusivity,age_OP,depth,d_max);
 
-             //--- glmcr note: replaced copy-paste inlining by the inline method getSumAgeArg	     
+             //--- glmcr note: replaced copy-paste inlining by the inline method getSumAgeAccArg	     
 	     //sum_SP += (1.0/i) * 
              //            (exp((-thermal_diffusivity*i*i*numbers::PI*numbers::PI*age_SP)/(d_max*d_max)))*
              //            (sin(i*numbers::PI*depth/d_max));
