@@ -38,16 +38,20 @@ namespace aspect
      * A class that describes the temperature field according to the plate cooling model
      *
      * @ingroup InitialConditionsModels
+     *
+     * glmcr note: class SubdTemp is not supposed to be inherited so declare it
+     *             as final
      */
     template <int dim>
-    class SubdTemp : public ::aspect::InitialTemperature::Interface<dim>, public ::aspect::SimulatorAccess<dim>
+    class SubdTemp final : public ::aspect::InitialTemperature::Interface<dim>, public ::aspect::SimulatorAccess<dim>
     {
       public:
         /**
          * Return the initial temperature as a function of position.
          */
-        virtual
-        double initial_temperature (const Point<dim> &position) const;
+        // Since class is final then we need to override qualifier here.
+        // virtual
+        double initial_temperature (const Point<dim> &position) const override;
 
         /**
          * Declare the parameters this class takes through input files.
@@ -60,9 +64,10 @@ namespace aspect
          * Read the parameters this class declares from the parameter
          * file.
          */
-        virtual
+        //--- Since class is final then we need to override qualifier here.
+        //virtual
         void
-        parse_parameters (ParameterHandler &prm);
+        parse_parameters (ParameterHandler &prm) override;
 
       private:
         /**
