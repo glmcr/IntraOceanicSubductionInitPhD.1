@@ -1,0 +1,84 @@
+#--- Temperature initial conditions taken from 
+#    https://github.com/anne-glerum/paper-aspect-plasticity-subduction-data/tree/master/2D_subduction
+# 
+# lithospheric-age based plate cooling model. 
+# Slab dip angle, trench position and plate ages
+# can be varied.
+subsection Initial conditions
+  set Model name = 2D subduction
+  
+  subsection Plate cooling
+    set Subducting plate age at trench = 60e6
+    set Overriding plate age at trench = 16e6
+    set Maximum oceanic plate thickness = 125000.0
+    set Maximum oceanic plate temperature = 1593.0
+    set Crustal thickness = 10400.0
+    set Horizontal trench position = 1600000.0
+    set Slab dip angle = 29.0
+  end
+end
+
+# In the mantle we prescribe a linear temperature
+# gradient leading to a bottom temperature of 1728 K.
+subsection Boundary temperature model
+  set Model name = box
+  subsection Box
+    set Bottom temperature = 1728 #0.25C/km 
+    set Top temperature = 293
+  end
+
+end
+
+# There are 4 compositional fields, they represent
+# the mantle, overriding plate, mantle part of the subducting plate, and the crustal part.
+#subsection Compositional fields
+#   set Number of fields = 4
+#   ## Dislocation creep
+#   set List of activation energies dislocation of fields             = 43e4,54e4,54e4,0
+#   set List of activation volumes dislocation of fields              = 15e-6,20e-6,20e-6,0 
+#   set List of prefactors dislocation of fields                      = 3.906e-15, 2.42e-16, 2.42e-16, 1e-19
+#   set List of stress exponents of fields                            = 3, 3.5, 3.5,1    
+#   set List of constant coefficients nu dislocation of fields        = 0.5, 1, 1, 2 
+#   ## Diffusion creep
+#   set List of activation energies diffusion of fields               = 24e4,3e5,3e5,0
+#   set List of activation volumes diffusion of fields                = 5e-6,6e-6,6e-6,0
+#   set List of prefactors diffusion of fields                        = 3.73e-14, 6.079e-14, 6.079e-14, 1e-19
+#   set List of constant coefficients nu diffusion of fields          = 0.5,1,1,2
+#   ## Plasticity
+#   set List of cohesions of fields                                   = 1e6,1e15,1e6,1e15 
+#   set List of phis of fields                                        = 20,0,20,0
+#   ## Material properties
+#   set List of capacities of fields                                  = 1250., 1250., 1250., 1250.
+#   set List of conductivities of fields                              = 2., 2., 2., 2.
+#   set List of refdens of fields                                     = 3350.0, 3350.0, 3350, 3150   
+#   set List of reftemps of fields                                    = 293.5, 293.5, 293.5, 293.5    
+#   set List of initial viscs of fields                               = 2e20, 5.4e23, 5.4e23, 1e20
+#end
+
+## For the initial compositions, we draw on the parameters
+## set in the Initial conditions section for temperature. 
+#subsection Compositional initial conditions
+#   set Model name = 2D subduction
+#end
+
+## We output visualization files every milion years.
+#subsection Postprocess
+#  set List of postprocessors = visualization,velocity statistics, temperature statistics
+#
+#  subsection Visualization
+#    set Time between graphical output = 1e6 #1 My 
+#    set List of output variables      = strain rate, viscosity, density
+#    set Interpolate output            = true
+#  end
+#end
+
+## To be able to restart the run, we produce
+## restart files every 50 timesteps and 
+## when we reach the specified end time.
+#subsection Checkpointing
+#  set Steps between checkpoint = 50
+#end
+
+#subsection Termination criteria
+#  set Checkpoint on termination = true
+#end
