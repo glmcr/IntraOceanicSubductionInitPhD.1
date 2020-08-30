@@ -46,9 +46,10 @@ namespace aspect
         /**
          * Return the initial composition as a function of position.
          */
-        virtual
+        //virtual
+        final
         double initial_composition (const Point<dim> &position,
-                                    const unsigned int n_comp) const;
+                                    const unsigned int n_comp) override const;
 
         /**
          * Declare the parameters this class takes through input files.
