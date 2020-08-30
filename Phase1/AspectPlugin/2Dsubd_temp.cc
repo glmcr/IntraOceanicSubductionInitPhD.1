@@ -47,7 +47,8 @@ namespace aspect
       //--- Worth a try for a possible performance gain: const BoundaryTemperature::Box<dim> *const __restrict__ T_boundary=
       const BoundaryTemperature::Box<dim> *T_boundary=	
 	  dynamic_cast<const BoundaryTemperature::Box<dim>*> (&this->get_boundary_temperature_manager());
-      //--- DEAL.II DEPRECATED = dynamic_cast<const BoundaryTemperature::Box<dim>*> (&this->get_boundary_temperature());
+      //--- get_boundary_temperature method is marked DEAL.II DEPRECATED:
+      //dynamic_cast<const BoundaryTemperature::Box<dim>*> (&this->get_boundary_temperature());
     
       //Get the (adiabatic) temperature at the top and bottom boundary of the model
       const double Ts = T_boundary->minimal_temperature(this->get_fixed_temperature_boundary_indicators());
