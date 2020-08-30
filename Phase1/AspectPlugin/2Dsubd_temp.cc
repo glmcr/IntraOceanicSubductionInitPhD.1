@@ -51,12 +51,17 @@ namespace aspect
       //dynamic_cast<const BoundaryTemperature::Box<dim>*> (&this->get_boundary_temperature());
     
       //Get the (adiabatic) temperature at the top and bottom boundary of the model
+      //--- glmcr note: The s in Ts is probably for surface. 
       const double Ts = T_boundary->minimal_temperature(this->get_fixed_temperature_boundary_indicators());
       //const double Tas = this->get_adiabatic_surface_temperature();
       const double Tb = T_boundary->maximal_temperature(this->get_fixed_temperature_boundary_indicators());
 
       const double depth = geometry->depth(position);
+
+      //--- glmcr note: thermal_diffusivity should ideally be read
+      //                from the parameters file and not harcoded here.
       const double thermal_diffusivity = 1.0e-6;
+      
       // The height of the domain and of the maximum plate thickness
       const double domain_height = geometry->get_extents()[dim-1];
       const double z_max = domain_height-d_max;
@@ -65,7 +70,14 @@ namespace aspect
       //Determine plate age based on distance from domain boundary + 5 km
       //const double age_OP = position[0]-5000.0 * (1.0/v_spread_OP);
       //const double age_SP = (geometry->get_extents()[0]-position[0]+5000.0) * (1.0/v_spread_SP);
+
+      //--- glmcr note: The calculation setup is inverted compared to the figure 14 of the article i.e. the
+      //                trench position is at 1600km from the left vertical boundary.
+
+      //--- glmcr note: age_OP increases from the left.
       const double age_OP = (position[0]<5000.0) ? 0.0 : (position[0]-5000.0) * age_OP_max / x_trench;
+
+      //--- glmcr note: age_SP decreases from the left.
       const double age_SP = (position[0]>domain_width-5000.0)? 0.0 : (domain_width-position[0]-5000.0) * age_SP_max / (domain_width - x_trench);
 
       // Horizontal (x) position of the slab tip
@@ -79,13 +91,19 @@ namespace aspect
 
       for (int i=1;i<=n_sum;i++)
            {
-            sum_OP += (1.0/i) * 
-                          (exp((-thermal_diffusivity*i*i*numbers::PI*numbers::PI*age_OP)/(d_max*d_max)))*
-                          (sin(i*numbers::PI*depth/d_max));
+	     //--- glmcr note: replaced copy-paste inlining by the inline method getSumAgeArg 
+	     //sum_OP += (1.0/i) * 
+             //             (exp((-thermal_diffusivity*i*i*numbers::PI*numbers::PI*age_OP)/(d_max*d_max)))*
+             //             (sin(i*numbers::PI*depth/d_max));
 
-            sum_SP += (1.0/i) * 
-                          (exp((-thermal_diffusivity*i*i*numbers::PI*numbers::PI*age_SP)/(d_max*d_max)))*
-                          (sin(i*numbers::PI*depth/d_max));
+	     sum_OP += this->getSumAgeAccArg(i,thermal_diffusivity,age_OP,depth,d_max);
+
+             //--- glmcr note: replaced copy-paste inlining by the inline method getSumAgeArg	     
+	     //sum_SP += (1.0/i) * 
+             //            (exp((-thermal_diffusivity*i*i*numbers::PI*numbers::PI*age_SP)/(d_max*d_max)))*
+             //            (sin(i*numbers::PI*depth/d_max));
+
+	     sum_SP += this->getSumAgeAccArg(i,thermal_diffusivity,age_SP,depth,d_max);
            }
 
       // The SP

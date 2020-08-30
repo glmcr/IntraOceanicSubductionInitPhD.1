@@ -22,6 +22,8 @@
 #ifndef __aspect__initial_conditions_2Dsubd_temp_h
 #define __aspect__initial_conditions_2Dsubd_temp_h
 
+//#include <cmath>
+
 //#include <aspect/initial_conditions/interface.h>
 #include <aspect/initial_temperature/interface.h>
 #include <aspect/simulator.h>
@@ -70,6 +72,13 @@ namespace aspect
         parse_parameters (ParameterHandler &prm) override;
 
       private:
+
+      inline double getSumAgeAccArg(int Iidx,double ThermalDiffusivity, double PlateAge, double Depth, double MaxPlateThickness ) const {
+
+	 return (1.0/Iidx) * (exp((-ThermalDiffusivity*Iidx*Iidx*numbers::PI*numbers::PI*PlateAge)/(MaxPlateThickness*MaxPlateThickness)))*
+	    (std::sin(Iidx*numbers::PI*Depth/MaxPlateThickness)); 
+      }
+      
         /**
          *The parameters needed for the plate cooling model
          */ 
@@ -87,7 +96,7 @@ namespace aspect
          * the thermal diffusivity.
          * The function depends only on depth.
          */
-//        std::auto_ptr<Functions::ParsedFunction<dim> > function;
+        //std::auto_ptr<Functions::ParsedFunction<dim> > function;
         /**
          * The age of the plates at the trench
          */
