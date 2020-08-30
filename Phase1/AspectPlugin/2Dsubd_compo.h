@@ -38,18 +38,21 @@ namespace aspect
      * A class that describes the compositional fields according to the plate cooling model
      *
      * @ingroup CompositionInitialConditionsModels
+     *
+     * glmcr note: class SubdCompo is not supposed to be inherited so declare it
+     *             as final
      */
     template <int dim>
-    class SubdCompo : public ::aspect::InitialComposition::Interface<dim>, public ::aspect::SimulatorAccess<dim>
+    class SubdCompo final : public ::aspect::InitialComposition::Interface<dim>, public ::aspect::SimulatorAccess<dim>
     {
       public:
         /**
          * Return the initial composition as a function of position.
          */
+        // Since class is final then we need to override qualifier here.
         //virtual
-        final
         double initial_composition (const Point<dim> &position,
-                                    const unsigned int n_comp) override const;
+                                    const unsigned int n_comp) const override;
 
         /**
          * Declare the parameters this class takes through input files.
@@ -62,9 +65,10 @@ namespace aspect
          * Read the parameters this class declares from the parameter
          * file.
          */
-        virtual
+        // Since class is final then we need to override qualifier here.
+        //virtual
         void
-        parse_parameters (ParameterHandler &prm);
+        parse_parameters (ParameterHandler &prm) override;
 
       private:
         /**

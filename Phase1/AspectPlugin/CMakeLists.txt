@@ -47,4 +47,5 @@ SET(TARGET "IntraOceanicSubductionInitPhD-Phase1Plugin")
 PROJECT(${TARGET})
 
 ADD_LIBRARY(${TARGET} SHARED 2Dsubd_temp.cc)
+#ADD_LIBRARY(${TARGET} SHARED 2Dsubd_temp.cc 2Dsubd_compo.cc)
 ASPECT_SETUP_PLUGIN(${TARGET})
