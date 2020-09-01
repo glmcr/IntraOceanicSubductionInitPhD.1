@@ -4,21 +4,21 @@
 # lithospheric-age based plate cooling model. 
 # Slab dip angle, trench position and plate ages
 # can be varied.
-subsection Initial conditions
-  set Model name = 2D subduction
-  
-  subsection Plate cooling
-    set Subducting plate age at trench = 60e6
-    set Overriding plate age at trench = 16e6
-    set Maximum oceanic plate thickness = 125000.0
-    set Maximum oceanic plate temperature = 1593.0
-    set Crustal thickness = 10400.0
-    set Horizontal trench position = 1600000.0
-    set Slab dip angle = 29.0
-  end
+#subsection Initial conditions
+#  set Model name = 2D subduction
+#  
+#  subsection Plate cooling
+#    set Subducting plate age at trench = 60e6
+#    set Overriding plate age at trench = 16e6
+#    set Maximum oceanic plate thickness = 125000.0
+#    set Maximum oceanic plate temperature = 1593.0
+#    set Crustal thickness = 10400.0
+#    set Horizontal trench position = 1600000.0
+#    set Slab dip angle = 29.0
+#  end
 end
 
-# In the mantle we prescribe a linear temperature
+# In the two mantle parts we prescribe a linear temperature
 # gradient leading to a bottom temperature of 1728 K.
 subsection Boundary temperature model
   set Model name = box
@@ -26,34 +26,86 @@ subsection Boundary temperature model
     set Bottom temperature = 1728 #0.25C/km 
     set Top temperature = 293
   end
-
 end
 
-# There are 4 compositional fields, they represent
-# the mantle, overriding plate, mantle part of the subducting plate, and the crustal part.
-#subsection Compositional fields
-#   set Number of fields = 4
-#   ## Dislocation creep
-#   set List of activation energies dislocation of fields             = 43e4,54e4,54e4,0
-#   set List of activation volumes dislocation of fields              = 15e-6,20e-6,20e-6,0 
-#   set List of prefactors dislocation of fields                      = 3.906e-15, 2.42e-16, 2.42e-16, 1e-19
-#   set List of stress exponents of fields                            = 3, 3.5, 3.5,1    
-#   set List of constant coefficients nu dislocation of fields        = 0.5, 1, 1, 2 
-#   ## Diffusion creep
-#   set List of activation energies diffusion of fields               = 24e4,3e5,3e5,0
-#   set List of activation volumes diffusion of fields                = 5e-6,6e-6,6e-6,0
-#   set List of prefactors diffusion of fields                        = 3.73e-14, 6.079e-14, 6.079e-14, 1e-19
-#   set List of constant coefficients nu diffusion of fields          = 0.5,1,1,2
-#   ## Plasticity
-#   set List of cohesions of fields                                   = 1e6,1e15,1e6,1e15 
-#   set List of phis of fields                                        = 20,0,20,0
-#   ## Material properties
-#   set List of capacities of fields                                  = 1250., 1250., 1250., 1250.
-#   set List of conductivities of fields                              = 2., 2., 2., 2.
-#   set List of refdens of fields                                     = 3350.0, 3350.0, 3350, 3150   
-#   set List of reftemps of fields                                    = 293.5, 293.5, 293.5, 293.5    
-#   set List of initial viscs of fields                               = 2e20, 5.4e23, 5.4e23, 1e20
-#end
+# There are 1 background field:(index 0) and 5 compositional fields, they represent
+# An oceanic ridge:(index 1), An oceanic lithosphere upper part(MORBs and gabbros):(index 2),
+# lithospheric mantle part(sub-moho) of the oceanic plate:(index 3), asthenospheric mantle:(index 4),
+# and a serpentinized (normal ?)fault zone:(index 5).
+#
+# The background field:(index 0) is the upper mantle(under the asthenospheric
+# mantle part) going down to the 670km boundary with the lower mantle.
+#
+subsection Compositional fields
+  set Number of fields = 5
+  set Names of fields = oceanicRidge, oceanicUpperLithosphere, subMohoOceanicLithosphere, asthenosphericMantle, serpentinizedFaultZone
+end
+
+subsection Material model
+  set Model name = visco plastic
+
+  subsection Visco Plastic
+
+    #--- Need to validate that !
+    # Reference temperature and viscosity
+    set Reference temperature = 293
+    set Reference viscosity = 1e22
+
+    #--- Need to validate that !
+    # The minimum strain-rate helps limit large viscosities values that arise
+    # as the strain-rate approaches zero.
+    # The reference strain-rate is used on the first non-linear iteration
+    # of the first time step when the velocity has not been determined yet. 
+    set Minimum strain rate = 1.e-20
+    set Reference strain rate = 1.e-16
+
+    #--- Need to validate that !
+    # Limit the viscosity with minimum and maximum values
+    set Minimum viscosity = 1e18
+    set Maximum viscosity = 1e26
+
+    #--- Need to validate: background values:(index 0).
+    #                      oceanicRidge values:(index 1)
+    #                      asthenosphericMantle values:(index 4)
+    #
+    #    oceanicUpperLithosphere:(index 2) values taken from the diabase values of
+    #    the table 1 of Maffione et al. 2015.
+    #
+    #    subMohoOceanicLithosphere:(index 3) values taken from the dry olivine values of
+    #    the table 1 of Maffione et al. 2015.
+    #
+    #    serpentinizedFaultZone:(index 5) values taken from the serpentine values of
+    #    the table 1 of Maffione et al. 2015.
+    #   
+    set Thermal diffusivities = 1.333333e-6, 1.190476e-6,  1.0000e-06,  1.00000e-6, 1.333333e-6,  1.61725e-07 
+    set Heat capacities       =        750.,        750.,        750.,        750.,         750.,        5600
+    set Densities             =        3300,        2800,        3000,        3300,         3300,        2650
+    set Thermal expansivities =        2e-5,        2e-5,      2.8e-5,        3e-5,         2e-5.      4.7e-5 
+
+    # Harmonic viscosity averaging
+    set Viscosity averaging scheme = harmonic
+
+    # Choose to have the viscosity (pre-yield) follow a dislocation
+    # diffusion or composite flow law.  Here, dislocation is selected
+    # so no need to specify diffusion creep parameters below, which are
+    # only used if "diffusion" or "composite" option is selected.
+    set Viscous flow law = dislocation
+    
+    # Dislocation creep parameters for 
+    
+    set Prefactors for dislocation creep          = 6.52e-16, 8.57e-28, 7.13e-18, 6.52e-16, 7.13e-18
+    set Stress exponents for dislocation creep    =      3.5,      4.0,      3.0,      3.5, 3.0
+    set Activation energies for dislocation creep =   530.e3,   223.e3,   345.e3,   530.e3, 345.e3
+    set Activation volumes for dislocation creep  =   18.e-6,       0.,       0.,   18.e-6, 0.
+
+    # Plasticity parameters
+    set Angles of internal friction =   20.,   20.,  20.,    20., 20.
+    set Cohesions                   = 20.e6, 20.e6, 20.e6, 20.e6, 20.e6
+
+  end
+end
+
+
 
 ## For the initial compositions, we draw on the parameters
 ## set in the Initial conditions section for temperature. 
