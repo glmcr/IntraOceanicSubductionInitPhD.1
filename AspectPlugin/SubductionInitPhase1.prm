@@ -31,14 +31,14 @@ end
 # There are 1 background field:(index 0) and 5 compositional fields, they represent
 # An oceanic ridge:(index 1), An oceanic lithosphere upper part(MORBs and gabbros):(index 2),
 # lithospheric mantle part(sub-moho) of the oceanic plate:(index 3), asthenospheric mantle:(index 4),
-# and a serpentinized (normal ?)fault zone:(index 5).
+# a serpentinized (normal ?)fault zone:(index 5) and sediments:(index 6)
 #
 # The background field:(index 0) is the upper mantle(under the asthenospheric
 # mantle part) going down to the 670km boundary with the lower mantle.
 #
 subsection Compositional fields
   set Number of fields = 5
-  set Names of fields = oceanicRidge, oceanicUpperLithosphere, subMohoOceanicLithosphere, asthenosphericMantle, serpentinizedFaultZone
+  set Names of fields = oceanicRidge, oceanicUpperLithosphere, subMohoOceanicLithosphere, asthenosphericMantle, serpentinizedFaultZone, sediments
 end
 
 subsection Material model
@@ -67,6 +67,8 @@ subsection Material model
     #--- Need to validate: background values:(index 0).
     #                      oceanicRidge values:(index 1)
     #                      asthenosphericMantle values:(index 4)
+    #                      Values still to be defined are between
+    #                      brackets
     #
     #    oceanicUpperLithosphere:(index 2) values taken from the diabase values of
     #    the table 1 of Maffione et al. 2015.
@@ -76,11 +78,14 @@ subsection Material model
     #
     #    serpentinizedFaultZone:(index 5) values taken from the serpentine values of
     #    the table 1 of Maffione et al. 2015.
+    #
+    #    sediments:(index 6) values taken from the serpentine values of
+    #    the table 1 of Maffione et al. 2015.
     #   
-    set Thermal diffusivities = 1.333333e-6, 1.190476e-6,  1.0000e-06,  1.00000e-6, 1.333333e-6,  1.61725e-07 
-    set Heat capacities       =        750.,        750.,        750.,        750.,         750.,        5600
-    set Densities             =        3300,        2800,        3000,        3300,         3300,        2650
-    set Thermal expansivities =        2e-5,        2e-5,      2.8e-5,        3e-5,         2e-5.      4.7e-5 
+    set Thermal diffusivities = [1.333333e-6], [1.190476e-6],  1.0000e-06,  1.00000e-6,  [1.333333e-6],  1.61725e-07,  1.389e-06
+    set Heat capacities       =        [750.],        [750.],        750.,        750.,         [750.],         5600.,      750.
+    set Densities             =        [3300],        [2800],       3000.,       3300.,         [3300],         2650.,     2400.
+    set Thermal expansivities =        [2e-5],        [2e-5],      2.8e-5,        3e-5,         [2e-5].       4.7e-5,         0.
 
     # Harmonic viscosity averaging
     set Viscosity averaging scheme = harmonic
@@ -90,21 +95,59 @@ subsection Material model
     # so no need to specify diffusion creep parameters below, which are
     # only used if "diffusion" or "composite" option is selected.
     set Viscous flow law = dislocation
-    
-    # Dislocation creep parameters for 
-    
-    set Prefactors for dislocation creep          = 6.52e-16, 8.57e-28, 7.13e-18, 6.52e-16, 7.13e-18
-    set Stress exponents for dislocation creep    =      3.5,      4.0,      3.0,      3.5, 3.0
-    set Activation energies for dislocation creep =   530.e3,   223.e3,   345.e3,   530.e3, 345.e3
-    set Activation volumes for dislocation creep  =   18.e-6,       0.,       0.,   18.e-6, 0.
+
+    # Dislocation creep parameters
+
+    #--- Need to validate: background values:(index 0).
+    #                      oceanicRidge values:(index 1)
+    #                      asthenosphericMantle values:(index 4)
+    #                      Values still to be defined are between
+    #                      brackets
+    #
+    #    oceanicUpperLithosphere:(index 2) values taken from the diabase values of
+    #    the table 1 of Maffione et al. 2015.
+    #
+    #    subMohoOceanicLithosphere:(index 3) values taken from the dry olivine values of
+    #    the table 1 of Maffione et al. 2015.
+    #
+    #    serpentinizedFaultZone:(index 5) values taken from the serpentine values of
+    #    the table 1 of Maffione et al. 2015.
+    #
+    #    sediments:(index 6) values taken from the serpentine values of
+    #    the table 1 of Maffione et al. 2015.
+    #   
+
+    set Prefactors for dislocation creep          =  [6.52e-16],  [6.52e-16],  8.57e-28,  2.417e-16, [2.417e-16],  4.47e-38,  8.57e-28
+    set Stress exponents for dislocation creep    =       [3.5],       [3.5],       4.7,        3.5,       [3.5],       3.8,        4.
+    set Activation energies for dislocation creep =    [530.e3],    [530.e3],    485.e3,     540.e3,    [540.e3],    8.9.e3,    223.e3
+    set Activation volumes for dislocation creep  =    [18.e-6],    [18.e-6],        0.,     20.e-6,    [20.e-6],   3.2.e-6,        0.   
 
     # Plasticity parameters
-    set Angles of internal friction =   20.,   20.,  20.,    20., 20.
-    set Cohesions                   = 20.e6, 20.e6, 20.e6, 20.e6, 20.e6
+
+    #--- Need to validate: background values:(index 0).
+    #                      oceanicRidge values:(index 1)
+    #                      asthenosphericMantle values:(index 4)
+    #                      Values still to be defined are between
+    #                      brackets
+    #
+    #    oceanicUpperLithosphere:(index 2) values taken from the diabase values of
+    #    the table 1 of Maffione et al. 2015.
+    #
+    #    subMohoOceanicLithosphere:(index 3) values taken from the dry olivine values of
+    #    the table 1 of Maffione et al. 2015.
+    #
+    #    serpentinizedFaultZone:(index 5) values taken from the serpentine values of
+    #    the table 1 of Maffione et al. 2015.
+    #
+    #    sediments:(index 6) values taken from the serpentine values of
+    #    the table 1 of Maffione et al. 2015.
+    #   
+
+    set Angles of internal friction =     [20.],   [20.],   15.,    15.,    [20.],  30., 15.
+    set Cohesions                   =   [20.e6], [20.e6], 10.e6,  20.e6,  [20.e6],   0.,  5.
 
   end
 end
-
 
 
 ## For the initial compositions, we draw on the parameters
