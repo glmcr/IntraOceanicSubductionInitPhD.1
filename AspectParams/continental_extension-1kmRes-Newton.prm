@@ -29,8 +29,8 @@ set Pressure normalization                 = no
 subsection Geometry model
   set Model name = box
   subsection Box
-    set X repetitions = 400
-    set Y repetitions = 100
+    set X repetitions = 800
+    set Y repetitions = 200
     set X extent      = 400e3
     set Y extent      = 100e3
   end
