@@ -168,7 +168,8 @@ SCLMCeil= CLCFloor
 SCLMFloor= SCLMCeil - SCLMThkn
 
 #--- 2nd SCLM sector under the 1st
-SCLM2Thkn= 30e3
+# Unstable, to much isostatic adjustments: SCLM2Thkn= 30e3
+SCLM2Thkn= 35e3
 SCLM2Ceil= SCLMFloor
 SCLM2Floor= SCLM2Ceil - SCLM2Thkn
 
