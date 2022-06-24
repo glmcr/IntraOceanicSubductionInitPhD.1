@@ -200,13 +200,7 @@ composGeomDict= {
             [ [ [contVsOcean+(SCLMThkn-SCLM2Thkn),SCLM2Floor],[contVsOcean+SCLMThkn,SCLM2Ceil],[contVsOcean+SCLMThkn,SCLM2Floor] ],
               [ [contVsOcean+SCLMThkn,SCLM2Floor],[contVsOcean+SCLMThkn,SCLM2Ceil],[nbXPtsF,SCLM2Ceil],[nbXPtsF,SCLM2Floor] ],
               #[ [0.0,SCLM2Floor],[0.0,SCLM2Ceil],[contVsOcean-SCLM2Thkn,SCLM2Ceil],[contVsOcean-SCLM2Thkn,SCLM2Floor] ],
-              [ [0.0,0.0],[0.0,SCLM2Floor],[nbXPtsF,SCLM2Floor],[nbXPtsF,0.0] ],
-
-              ## Was part of the WZ at 1st (sclm2 depths)
-              [ [contVsOcean-SCLM2Thkn,SCLM2Floor], [contVsOcean,SCLM2Ceil], [contVsOcean,SCLM2Floor] ],
-              [ [contVsOcean,SCLM2Floor], [contVsOcean,SCLM2Ceil], [contVsOcean+(SCLMThkn-SCLM2Thkn),SCLM2Ceil], [contVsOcean+(SCLMThkn-SCLM2Thkn),SCLM2Floor] ],
-              [ [contVsOcean+(SCLMThkn-SCLM2Thkn),SCLM2Floor], [contVsOcean+(SCLMThkn-SCLM2Thkn),SCLM2Ceil], [contVsOcean+SCLMThkn,SCLM2Ceil] ]
-            ] 
+              [ [0.0,0.0],[0.0,SCLM2Floor],[nbXPtsF,SCLM2Floor],[nbXPtsF,0.0] ] ] 
     },
     "SCLM": {
         "col": 3,
@@ -215,11 +209,10 @@ composGeomDict= {
             [ #SCLM2
               [ [contVsOcean-SCLM2Thkn,SCLM2Floor],[contVsOcean-SCLM2Thkn,SCLM2Ceil],[contVsOcean,SCLM2Ceil] ],
               [ [0.0,SCLM2Floor],[0.0,SCLM2Ceil],[contVsOcean-SCLM2Thkn,SCLM2Ceil],[contVsOcean-SCLM2Thkn,SCLM2Floor] ],
-                
+
               #SCLM
               [ [contVsOcean,SCLMFloor],[contVsOcean,SCLMCeil],[contVsOcean+SCLMThkn,SCLMCeil] ], 
-                [ [0.0,SCLMFloor],[0.0,SCLMCeil],[contVsOcean,SCLMCeil],[contVsOcean,SCLMFloor] ]
-          ]
+              [ [0.0,SCLMFloor],[0.0,SCLMCeil],[contVsOcean,SCLMCeil],[contVsOcean,SCLMFloor] ] ] 
     },
     "contLowCrust": {
         "col": 4,
@@ -259,8 +252,7 @@ composGeomDict= {
                 [contVsOcean+2*SCLMThkn+CLCThkn+(CSPFloor-CUCFloor),CUCFloor] ],
               
               [ [contVsOcean+2*SCLMThkn+CLCThkn+(CSPFloor-CUCFloor),CUCFloor],[contVsOcean+2*SCLMThkn+CLCThkn+(CSPFloor-CUCFloor),CSPFloor],
-                [nbXPtsF,CSPFloor],[nbXPtsF,CUCFloor] ]
-            ]
+                [nbXPtsF,CSPFloor],[nbXPtsF,CUCFloor] ] ]
     },
     "oceanicUppCrust": {
         "col": 8,
@@ -280,14 +272,15 @@ composGeomDict= {
         "col": 10,
         "TCeil2Floor": [ [nbYPtsF, surfT], [SCLM2Floor,SCLMFloorT] ],
         "polygons":
-            [ ##SCLM2 depths (now located in AAUM part)
-              #  [ [contVsOcean-SCLM2Thkn,SCLM2Floor], [contVsOcean,SCLM2Ceil], [contVsOcean,SCLM2Floor] ],
-              #  [ [contVsOcean,SCLM2Floor], [contVsOcean,SCLM2Ceil], [contVsOcean+(SCLMThkn-SCLM2Thkn),SCLM2Ceil], [contVsOcean+(SCLMThkn-SCLM2Thkn),SCLM2Floor] ],
-              #  [ [contVsOcean+(SCLMThkn-SCLM2Thkn),SCLM2Floor], [contVsOcean+(SCLMThkn-SCLM2Thkn),SCLM2Ceil], [contVsOcean+SCLMThkn,SCLM2Ceil] ] ,
+            [ #SCLM2 depths
+                [ [contVsOcean-SCLM2Thkn,SCLM2Floor], [contVsOcean,SCLM2Ceil], [contVsOcean,SCLM2Floor] ],
+                [ [contVsOcean,SCLM2Floor], [contVsOcean,SCLM2Ceil], [contVsOcean+(SCLMThkn-SCLM2Thkn),SCLM2Ceil], [contVsOcean+(SCLMThkn-SCLM2Thkn),SCLM2Floor] ],
+                [ [contVsOcean+(SCLMThkn-SCLM2Thkn),SCLM2Floor], [contVsOcean+(SCLMThkn-SCLM2Thkn),SCLM2Ceil], [contVsOcean+SCLMThkn,SCLM2Ceil] ] ,
 
               #SCLM depts (only triangles)
               [ [contVsOcean,SCLMFloor],[contVsOcean+SCLMThkn,SCLMCeil],[contVsOcean+SCLMThkn,SCLMFloor] ],
               [ [contVsOcean+SCLMThkn,SCLMFloor],[contVsOcean+SCLMThkn,SCLMCeil],[contVsOcean+2*SCLMThkn,SCLMCeil] ],
+        
               [ [contVsOcean+SCLMThkn,CLCFloor],[contVsOcean+SCLMThkn+CLCThkn,CLCCeil],[contVsOcean+SCLMThkn+CLCThkn,CLCFloor] ],
 
               # Rect block between triangles, CLC depths
