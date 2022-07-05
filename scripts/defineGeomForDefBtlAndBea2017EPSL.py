@@ -280,7 +280,12 @@ composGeomDict= {
         "col": 10,
         # --- WZ is too cold with SCLMFloorT
         #"TCeil2Floor": [ [nbYPtsF, surfT], [SCLM2Floor,SCLMFloorT] ],
-        "TCeil2Floor": [ [nbYPtsF, surfT], [SCLMFloor,SOLMFloorT] ],
+        #"TCeil2Floor": [[OUCFloor, SOLMCeilT], [SCLMFloor,SOLMFloorT]],
+        #
+        # --- Starting with SOLMCeilT a the surface for the weak zone. It should
+        #     equilibrate with the surrounding materials afer some
+        #     stabilization time
+        "TCeil2Floor": [[nbYPtsF, SOLMCeilT], [SCLMFloor,SOLMFloorT]],
         "polygons":
             [ ##SCLM2 depths (now located in AAUM part)
               #  [ [contVsOcean-SCLM2Thkn,SCLM2Floor], [contVsOcean,SCLM2Ceil], [contVsOcean,SCLM2Floor] ],

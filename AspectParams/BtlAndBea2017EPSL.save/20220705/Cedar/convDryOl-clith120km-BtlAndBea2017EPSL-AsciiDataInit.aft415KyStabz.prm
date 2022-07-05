@@ -1,0 +1,224 @@
+set Resume computation                     = true
+#set Resume computation                     = false
+set Start time                             = 0
+set End time                               = 150e6 #50e6 #15e6
+set Use years in output instead of seconds = true
+set Nonlinear solver scheme                = single Advection, iterated Stokes
+#set Nonlinear solver scheme                = iterated Advection and Stokes
+set Nonlinear solver tolerance             = 1e-7
+set Max nonlinear iterations               = 100 #120 #40 #25 #40 #70
+set CFL number                             = 0.45
+set Output directory = \
+/home/gimer47/projects/def-cagui22/gimer47/Crunch/Aspect/ISI-1/convDryOl-clith120km-BtlAndBea2017EPSL-AsciiDataInit.aft415KyStabz
+set Timing output frequency                = 1
+set Pressure normalization                 = no
+set Maximum time step                      = 2e3
+
+subsection Discretization
+  set Use discontinuous composition discretization= true
+  set Use discontinuous temperature discretization= true
+
+  subsection Stabilization parameters
+    #set Use artificial viscosity smoothing = true
+    set Use limiter for discontinuous composition solution= true
+    set Use limiter for discontinuous temperature solution= true
+    set Global composition maximum= 1, 1, 1, 1, 1, 1, 1, 1, 1
+    set Global composition minimum= 0, 0, 0, 0, 0, 0, 0, 0, 1
+
+    set Global temperature minimum= 273
+    set Global temperature maximum= 1750  
+  end
+end
+
+subsection Gravity model
+  set Model name =  vertical
+  subsection Vertical
+    set Magnitude = 9.81
+  end
+end
+
+subsection Solver parameters
+  subsection Stokes solver parameters
+    set Number of cheap Stokes solver steps = 0
+    set Maximum number of expensive Stokes solver steps = 1000000
+    set Linear solver tolerance= 1e-9
+  end
+  #subsection Advection solver parameters
+  #  set GMRES solver restart length= 200
+  #end
+end
+ 
+# We write a checkpoint approximately every half an hour,
+# so that we are able to restart the computation from that
+# point.
+subsection Checkpointing
+  #~28mins: set Time between checkpoint = 1700
+  #set Time between checkpoint= 1700
+  set Steps between checkpoint= 1
+end
+
+subsection Boundary temperature model
+  set Fixed temperature boundary indicators = bottom, top
+  set List of model names = box
+
+  subsection Box
+    set Bottom temperature = 1750
+    set Top temperature    =  273
+  end
+end
+
+# Advecting the free surface vertically rather than
+# in the surface normal direction can result in a
+# more stable mesh when the deformation is large
+subsection Mesh deformation
+  set Mesh deformation boundary indicators = top: free surface
+  subsection Free surface
+    set Surface velocity projection = vertical
+  end
+end
+
+# Composition: fixed on bottom, free on sides and top
+subsection Boundary composition model
+  set Fixed composition boundary indicators = bottom, left, right
+  set List of model names = initial composition
+end
+
+subsection Boundary velocity model
+   set Tangential velocity boundary indicators = bottom #,left, right
+end
+
+subsection Boundary velocity model
+  set Prescribed velocity boundary indicators = left x: function, right x: function #, bottom y: function
+  subsection Function
+    set Variable names = x, y
+    set Function constants  = velcmyLHS= 0.5, velcmyRHS= 5.0, cm2m=0.01, year=1, bottomDepth=700e3, xdim= 2800e3, switchDepthRHS=140e3, switchDepthLHS=170e3
+    set Function expression = if ( x <= xdim/2, \
+                                     if (y > (bottomDepth-switchDepthLHS), \
+                                          0.0, \
+                                          velcmyLHS*(cm2m/year)*0.25*atan(0.0005*(pi/2)*(y-(bottomDepth-switchDepthLHS)))/(0.5*pi) ), \
+                                     if (y > (bottomDepth-switchDepthRHS), \
+                                          -velcmyRHS*(cm2m/year)*atan(0.0005*(pi/2)*(y-(bottomDepth-switchDepthRHS)))/(0.5*pi), \
+                                          -velcmyRHS*(cm2m/year)*0.25*atan(0.0005*(pi/2)*(y-(bottomDepth-switchDepthRHS)))/(0.5*pi) ) \
+                                 ); 0.0  # 0.0 needed here even if we have free slip for the bottom.  
+  end
+end
+
+subsection Mesh refinement
+  set Initial adaptive refinement        = 1 #2
+  set Initial global refinement          = 3 #3
+  set Refinement fraction                = 0.95 #0.3 #0.95
+  set Strategy                           = composition, strain rate #, temperature, velocity, viscosity, density
+  set Coarsening fraction                = 0.05
+  set Time steps between mesh refinement = 0
+  set Run postprocessors on initial refinement = false
+end
+
+subsection Postprocess
+  set List of postprocessors = visualization
+  subsection Visualization
+    #set Output format = gnuplot
+    set Output format = vtu #, gnuplot
+    set Interpolate output = false
+    set List of output variables = depth, density, viscosity, strain rate, heating #, principal stress, maximum horizontal compressive stress #
+    set Number of grouped files = 1
+    set Time between graphical output = 5e4 # years
+  end
+end
+
+subsection Compositional fields
+  set Number of fields = 9 #3
+  set Names of fields = AAUM,SCLM,contLowCrust,contUppCrust,contSedsPrism,SOLM,oceanicUppCrust,oceanicSeds,weakZone     
+end
+
+subsection Material model
+
+  set Material averaging= harmonic average
+  set Model name = visco plastic
+ 
+  subsection Visco Plastic
+
+  # Reference temperature and viscosity
+  set Reference temperature = 293 #1600 #273
+  set Reference viscosity = 1e21 #22
+
+  set Minimum viscosity = 1e19 #18
+  set Maximum viscosity = 1e25 #25
+
+  set Minimum strain rate = 1.e-20
+  set Reference strain rate = 1.e-16
+
+  # heat capacities, th. exp. for AAUM, ocUppCrust and ocLithMtl from Maffione et al., 2015
+  # AAUM (wt oli: fs= 2, Ws=1): Btl&Bea, 2017
+  # SCLM (wt oli: fs= 3, Ws=1): Btl&Bea, 2017
+  # contLowCrust: wet anorthite. of Rybacki et al. (2006), J. Geophys. Res., v.111(B3)
+  # contUppCrust: wet quartzite of Rutter & Brodie (2004), J. Struct. Geol., v.26, p.2011-2023
+  # contSedsPrism: wet quartzite of Rutter & Brodie (2004), J. Struct. Geol., v.26, p.2011-2023
+  # SOLM (wt oli: fs= 10, Ws=1): Btl&Bea, 2017
+  # oceanic sediments: Maffione et al., 2015
+  # weak zone: wet anorthite. of Rybacki et al. (2006), J. Geophys. Res., v.111(B3) BUT WITH 3200 kg/3 DENSITY
+  # Initial 3450 kg/m3 for AAUM(asth. and upp. mantle) give ~3300 kg/m3 after the 1st steps
+  #
+  # weakZone is contLowCrust/10
+  #
+  # Thermal diffusivities adjusted for giving the following values for th. conductivities
+  # - th. conduct.(W/m/K)     4.47      4.47     3.0       2.5          2.5          2.5           3.0       2.5      2.5      2.845
+  #                           bkg(AAUM) AAUM     SCLM      contLowCrust contUppCrust contSedsPrism SOLM      ocCrust  ocSeds   weakZone
+  set Thermal diffusivities = 1.29e-6,  1.29e-6, 8.658e-7, 1.1494e-6,   1.1905e-6,   1.1905e-6,    8.658e-7, 7.94e-7, 1.39e-6 , 1.1494e-6   
+  set Heat capacities       =   1050.,    1050.,    1050.,      750.,        750.,        750.,       1050.,   1050.,    750. ,      750.
+  set Densities             =   3400.,    3400.,    3300.,     2900.,       2800.,       2700.,       3250.,   3000.,   2400. ,     3250.
+  set Thermal expansivities =    3e-5,     3e-5,     3e-5,      2e-5,        2e-5,        2e-5,        3e-5,  2.8e-5,     0.0 ,      2e-5
+
+  # Harmonic viscosity averaging
+  set Viscosity averaging scheme = harmonic
+
+  set Viscous flow law = dislocation
+  #                                              bkg(AAUM) AAUM      SCLM      contLowCrust contUppCrust contSedsPrism SOLM      ocCrust   ocSeds    weakZone
+  set Prefactors for dislocation creep         = 2.42e-16, 2.42e-16, 2.42e-16, 1.156e-25,   1.71e-27,    8.57e-28,     2.42e-16, 5.78e-25, 8.57e-28, 5.78e-25 
+  set Stress exponents for dislocation creep   =      3.5,      3.5,      3.5,       4.7,        4.0,         4.0,          3.5,      4.7,      4.0,      4.7
+  set Activation energies for dislocation creep=   540.e3,   540.e3,   540.e3,    485.e3,     223.e3,      223.e3,       540.e3,   485.e3,   223.e3,   485.e3
+  set Activation volumes for dislocation creep =   20.e-6,   20.e-6,   20.e-6,       0.0,        0.0,         0.0,       20.e-6,      0.0,      0.0,      0.0
+
+  # Plasticity parameters
+  # 
+  set Angles of internal friction =   15.,   15.,   15.,   20.,  10.,   15.,   15.,   15.,  10.,  20.
+  set Cohesions                   = 20.e6, 20.e6, 20.e6, 20.e6, 5.e6, 20.e6, 20.e6, 10.e6, 5.e6, 20.e6
+ 
+ end
+end
+
+subsection Heating model
+  set List of model names = adiabatic heating, shear heating, compositional heating
+  subsection Compositional heating
+    set Compositional heating values = 0., 0., 0., 0., 1.5e-6, 1.5e-6, 0., 0., 1.5e-6, 0.
+  end
+end
+
+subsection Initial composition model
+  set Model name = ascii data
+
+  subsection Ascii data model
+    set Data directory       = /home/gimer47/Dev/AspectParamsFiles/ISI-1/dryOl-clith120km-BtlAndBea2017EPSL-AsciiDataInit/
+    #set Data directory       = /home/zns/Data/PhD/Dev/tmp/newTestDensClith120km-BtlAndBea2017EPSL-AsciiDataInit/
+    set Data file name       = clith120km-BtlAndBea2017EPSL-initCompo.txt
+  end
+end
+
+subsection Initial temperature model
+  set Model name = ascii data
+
+  subsection Ascii data model
+    set Data directory       = /home/gimer47/Dev/AspectParamsFiles/ISI-1/dryOl-clith120km-BtlAndBea2017EPSL-AsciiDataInit/
+    #set Data directory       = /home/zns/Data/PhD/Dev/tmp/newTestDensClith120km-BtlAndBea2017EPSL-AsciiDataInit
+    set Data file name       = clith120km-BtlAndBea2017EPSL-initT.txt
+  end
+end
+
+subsection Geometry model
+  set Model name = box
+  subsection Box
+    set Y extent = 700e3
+    set X extent = 2800e3
+    set Y repetitions= 35   # Start with 2km vertical res. 
+    set X repetitions= 140   # Start with 10km horiz res.
+  end
+end
