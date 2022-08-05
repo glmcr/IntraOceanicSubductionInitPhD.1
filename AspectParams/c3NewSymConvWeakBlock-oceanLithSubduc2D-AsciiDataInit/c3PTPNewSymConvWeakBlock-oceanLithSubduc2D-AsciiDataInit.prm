@@ -9,7 +9,7 @@ set Nonlinear solver tolerance             = 1e-7
 set Max nonlinear iterations               = 100 #40 #25 #40 #70
 set CFL number                             = 0.45
 set Output directory = \
-/home/gimer47/projects/def-cagui22/gimer47/Crunch/Aspect/ISI-1/c3NewSymConvWeakBlock-oceanLithSubduc2D-AsciiDataInit
+/home/gimer47/projects/def-cagui22/gimer47/Crunch/Aspect/ISI-1/c3PTPNewSymConvWeakBlock-oceanLithSubduc2D-AsciiDataInit
 set Timing output frequency                = 1
 set Pressure normalization                 = no
 set Maximum time step                      = 1e3 #1e4
@@ -120,7 +120,7 @@ subsection Mesh refinement
 end
 
 subsection Postprocess
-  set List of postprocessors = visualization #, particles
+  set List of postprocessors = visualization, particles
   subsection Visualization
     #set Output format = gnuplot
     set Output format = vtu #, gnuplot
@@ -129,15 +129,15 @@ subsection Postprocess
     set Number of grouped files = 1
     set Time between graphical output = 2.5e4
   end
-  #subsection Particles
-  #  set Number of grouped files = 1
-  #  set Number of particles        = 2000000
-  #  set Time between data output = 2.5e4
-  #  set Data output format       = vtu
-  #  set Load balancing strategy = add particles, repartition
-  #  set Minimum particles per cell = 10
-  #  set List of particle properties = pT path, composition, position, initial composition, integrated strain, initial position, velocity
-  #end
+  subsection Particles
+    set Number of grouped files = 1
+    set Number of particles        = 2000000
+    set Time between data output = 2.5e4
+    set Data output format       = vtu
+    set Load balancing strategy = add particles, repartition
+    set Minimum particles per cell = 10
+    set List of particle properties = pT path, composition, position, initial composition, integrated strain, initial position, velocity
+  end
 end
 
 subsection Compositional fields
