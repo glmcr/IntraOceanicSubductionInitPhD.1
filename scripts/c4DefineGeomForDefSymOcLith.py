@@ -338,8 +338,10 @@ for y in range(0,int(nbYPts)):
       found= False 
       compoCounter= 2
       composLineList= [str(xmeters), str(ymeters)] +  composTemplate
-      
-      for compoField in composGeomDict:
+
+      #--- Need to begin with the weak zone to be sure to
+      #   to get what we want.
+      for compoField in sorted(composGeomDict, reverse=True): #composGeomDict:
 
          if found: break
           
