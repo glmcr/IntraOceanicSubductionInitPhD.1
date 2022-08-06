@@ -284,7 +284,13 @@ composGeomDict= {
                 [midXPoint,oCrustFloor],
                 [midXPoint+oLithMtlThickness,oCrustFloor],
                 [midXPoint+2*oLithMtlThickness,oLithMtlFloor]
+              ],
+              [
+                  [midXPoint+2*oLithMtlThickness-3000,oLithMtlFloor+3000],
+                  [midXPoint+2*oLithMtlThickness-3000,oLithMtlFloor],
+                  [midXPoint+2*oLithMtlThickness,oLithMtlFloor]
               ]
+                
               ##--- begin WZ part in oceanic lithospheric mantle: 2 triangles
               #[
               #  [midXPoint,oCrustFloor],
