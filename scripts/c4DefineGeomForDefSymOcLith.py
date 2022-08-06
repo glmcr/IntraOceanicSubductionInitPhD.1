@@ -338,16 +338,22 @@ for y in range(0,int(nbYPts)):
       found= False 
       compoCounter= 2
       composLineList= [str(xmeters), str(ymeters)] +  composTemplate
+      print("composLineList="+str(composLineList))
+      #sys.exit(0)
 
       #--- Need to begin with the weak zone to be sure to
       #   to get what we want.
       for compoField in sorted(composGeomDict, reverse=True): #composGeomDict:
 
          if found: break
+
+         compoColId= composGeomDict[compoField]["col"]
           
          polygonPointsList= composGeomDict[compoField]["polygons"]
 
          print("\ncompoField="+compoField)
+         print("compoColId="+str(compoColId))
+         #sys.exit(0)
          #print("polygonPointsList="+str(polygonPointsList))
          
          for polygonPoints in polygonPointsList:
@@ -370,8 +376,9 @@ for y in range(0,int(nbYPts)):
             #---   
             if pointInside:
 
-               composLineList[compoCounter] = "1.0"
-               
+               #composLineList[compoCounter] = "1.0"
+               composLineList[compoColId]= "1.0"
+                
                #print("\ncompoField="+compoField)
                print("pointInside: x,y in [km]="+str(x)+","+str(y))
                print("polygonPoints"+str(polygonPoints))
