@@ -222,18 +222,19 @@ composGeomDict= {
                   [0.0,oCrustFloor],
                   [midXPoint,oCrustFloor],
                   [midXPoint,oLithMtlFloor] ],
-                [
-                  [midXPoint,oLithMtlFloor],
-                  [midXPoint,oCrustFloor],
-                  [midXPoint+oLithMtlThickness,oLithMtlFloor]
-                ],
-                ## New non-rectangular triangle added since the WZ is
-                ## now thinning in the OLM
+                ### WZ space
+                #[
+                #  [midXPoint,oLithMtlFloor],
+                #  [midXPoint,oCrustFloor],
+                #  [midXPoint+oLithMtlThickness,oLithMtlFloor]
+                #],
+                ##
                 #[
                 #  [midXPoint,oCrustFloor],
                 #  [midXPoint+oLithMtlThickness,oLithMtlFloor],
                 #  [midXPoint+2*oLithMtlThickness,oLithMtlFloor]
                 #],
+                ### WZ space
                 [
                   [midXPoint+oLithMtlThickness,oCrustFloor],
                   [midXPoint+2*oLithMtlThickness,oCrustFloor],
@@ -279,8 +280,13 @@ composGeomDict= {
                 [midXPoint+oLithMtlThickness,oCrustFloor]
               ],
               #--- End WZ part in oceanic crust
-              #--- lithospheric mantle part: only 1 triangle (not a rectangle triangle):
-              [
+              #--- lithospheric mantle part:
+              [                #[
+                  [midXPoint,oLithMtlFloor],
+                  [midXPoint,oCrustFloor],
+                  [midXPoint+oLithMtlThickness,oLithMtlFloor]
+              ],
+              [  
                 [midXPoint,oCrustFloor],
                 [midXPoint+oLithMtlThickness,oCrustFloor],
                 [midXPoint+2*oLithMtlThickness,oLithMtlFloor]
