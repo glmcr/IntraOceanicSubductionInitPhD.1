@@ -90,8 +90,8 @@ for vtuPFile in vtuPFiles:
                                      "Pressure(GPa)": ocpP,
                                      "Temperature(C)": ocpT-273,
                                      "Temperature(K)": ocpT,
-                                     "Depth(y,m)": gridYMeters - ocpPos[1],
-                                     "Position(x,m)": ocpPos[0]
+                                     "Depth(y[m])": gridYMeters - ocpPos[1],
+                                     "Position(x[m])": ocpPos[0]
                                    }
 
           #print("relevantOCrustData[pid]="+str(relevantOCrustData[pid]))
@@ -115,7 +115,7 @@ for vtuPFile in vtuPFiles:
 csvFile= open(csvFileOut,"w")
 csvStatsFile= open("stats-"+csvFileOut,"w")
 
-csvFile.write("time(years),particle id,concentration,Pressure(GPA),Temperature(C),Temperature(K),Depth(y,m),Position(x,m)\n")
+csvFile.write("time(years),particle id,concentration,Pressure(GPA),Temperature(C),Temperature(K),Depth(y[m]),Position(x[m])\n")
 csvStatsFile.write("time(years),TemperatureAvg(C),PressureAvg(GPA)\n")
 
 print("vtuPData keys="+str(tuple(vtuPData.keys())))
@@ -130,6 +130,7 @@ for dataTime in tuple(vtuPData.keys()):
 
    TCAvgList= []
    PGAvgList= []
+   DepthsAvgList= []
    
    for pid in tuple(vtuPDataT.keys()):
 
@@ -137,10 +138,11 @@ for dataTime in tuple(vtuPData.keys()):
       
       csvFile.write(str(dataTime)+","+str(pid)+","+str(vtuPDataTPid["concentration"])+","+
                     str(vtuPDataTPid["Pressure(GPa)"])+","+str(vtuPDataTPid["Temperature(C)"])+","+
-                    str(vtuPDataTPid["Temperature(K)"])+","+str(vtuPDataTPid["Depth(y,m)"])+","+str(vtuPDataTPid["Position(x,m)"])+"\n")
+                    str(vtuPDataTPid["Temperature(K)"])+","+str(vtuPDataTPid["Depth(y[m])"])+","+str(vtuPDataTPid["Position(x[m])"])+"\n")
 
       TCAvgList.append(vtuPDataTPid["Temperature(C)"])
       PGAvgList.append(vtuPDataTPid["Pressure(GPa)"])
+      DepthsAvgList.append(vtuPDataTPid["Depth(y[m])"])
    # ---
 
    #print("TCAvgList[0:2]="+str(TCAvgList[0:2]))
@@ -151,13 +153,14 @@ for dataTime in tuple(vtuPData.keys()):
       #PGAvgNp= np.array(PGAvgList, dtype=np.float64)
       #print("shape TCAvgNp="+str(TCAvgNp))
    
-      TCAvg= np.mean(np.array(TCAvgList, dtype=np.float32))
-      PGAvg= np.mean(np.array(PGAvgList, dtype=np.float32))
+      TCAvg= np.mean(np.array(TCAvgList, dtype=np.float64))
+      PGAvg= np.mean(np.array(PGAvgList, dtype=np.float64))
+      DepthsAvg= np.mean(np.array(DepthsAvgList, dtype=np.float64))
+      
+     #print("TCAvg="+str(TCAvg))
+     #print("PGAvg="+str(PGAvg))
 
-      print("TCAvg="+str(TCAvg))
-      print("PGAvg="+str(PGAvg))
-
-      csvStatsFile.write(str(dataTime)+","+str(TCAvg)+","+str(PGAvg)+"\n")
+      csvStatsFile.write(str(dataTime)+","+str(TCAvg)+","+str(PGAvg)+","+str(DepthsAvg)+"\n")
       #sys.exit(0)
    #--- end if   
 #--- end for dataTime in tuple(vtuPData.keys()): loop
