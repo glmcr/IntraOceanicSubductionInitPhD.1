@@ -28,6 +28,13 @@ ocCrtThr= 0.75
 
 gridYMeters= 700e3
 
+mrkXRange= [ 550000, 760000]
+mrkYRange= [ gridYMeters- 3500, gridYMeters ]
+
+#--- Only tracking the oceanic crust markers that have their initial position
+#    inside the mrkXRange and the mrkYRange.
+
+#--- 
 for vtuPFile in vtuPFiles:
                      
    print("Reading vtuPFile: "+vtuPFile)
@@ -116,7 +123,7 @@ csvFile= open(csvFileOut,"w")
 csvStatsFile= open("stats-"+csvFileOut,"w")
 
 csvFile.write("time(years),particle id,concentration,Pressure(GPA),Temperature(C),Temperature(K),Depth(y[m]),Position(x[m])\n")
-csvStatsFile.write("time(years),TemperatureAvg(C),PressureAvg(GPA)\n")
+csvStatsFile.write("time(years),TemperatureAvg(C),PressureAvg(GPA),DepthsAvg(y[m])\n")
 
 print("vtuPData keys="+str(tuple(vtuPData.keys())))
 
