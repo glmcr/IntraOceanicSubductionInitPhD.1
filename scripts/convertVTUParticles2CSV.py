@@ -2,8 +2,9 @@
 
 import os
 import sys
-import glob
 import vtk #.vtk
+import glob
+import math
 import numpy as np
 from vtk.util.numpy_support import vtk_to_numpy #thats what you need 
 
@@ -22,8 +23,8 @@ ocPLow= 4e8 # GPa, 4e8 == shorcut for 4*math.pow(10,8)
 ocTLow= 673 # Kelvin -> 400C
 
 # Only consider particle ids for oceanic crust particles
-# that have a concentration > 0.5
-ocCrtThr= 0.5
+# that have a concentration > 0.75
+ocCrtThr= 0.75
 
 gridYMeters= 700e3
 
@@ -56,7 +57,8 @@ for vtuPFile in vtuPFiles:
    pPos= dataTmp.GetPointData().GetArray("position")
    
    #--- Extract oceanic crust particles data:
-   ocCrustData= dataTmp.GetPointData().GetArray("oceanicCrust")
+   #ocCrustData= dataTmp.GetPointData().GetArray("oceanicCrust")
+   ocCrustData= dataTmp.GetPointData().GetArray("initial oceanicCrust")
    
    #--- Extract particle Pressure data:
    pPData= dataTmp.GetPointData().GetArray("p")
@@ -70,9 +72,11 @@ for vtuPFile in vtuPFiles:
 
        ocpCrt= ocCrustData.GetTuple(pid)[0]
        ocpP= pPData.GetTuple(pid)[0]
-       ocpT= pTData.GetTuple(pid)[0]       
+       ocpT= pTData.GetTuple(pid)[0]
+
+       #depth= gridYMeters - ocpPos[1]
        
-       if ocpCrt >= ocCrtThr and ocpP >= ocPLow and ocpT >= ocTLow:
+       if ocpCrt >= ocCrtThr and ocpP >= ocPLow and ocpT >= ocTLow: # and depth > 12000.0:
            
           ocpPos= pPos.GetTuple(pid)
           
@@ -84,9 +88,10 @@ for vtuPFile in vtuPFiles:
           relevantOCrustData[pid]= {
                                      "concentration": ocpCrt,
                                      "Pressure(GPa)": ocpP,
-                                     "Temperature(K)": ocpT,
                                      "Temperature(C)": ocpT-273,
-                                     "Depth(m)": gridYMeters - ocpPos[1]
+                                     "Temperature(K)": ocpT,
+                                     "Depth(y,m)": gridYMeters - ocpPos[1],
+                                     "Position(x,m)": ocpPos[0]
                                    }
 
           #print("relevantOCrustData[pid]="+str(relevantOCrustData[pid]))
@@ -108,8 +113,10 @@ for vtuPFile in vtuPFiles:
 #--- End for loop on VTU files
 
 csvFile= open(csvFileOut,"w")
+csvStatsFile= open("stats-"+csvFileOut,"w")
 
-csvFile.write("time(years),particle id,concentration,Pressure(GPA),Temperature(K),Temperature(C),Depth(m)\n")
+csvFile.write("time(years),particle id,concentration,Pressure(GPA),Temperature(C),Temperature(K),Depth(y,m),Position(x,m)\n")
+csvStatsFile.write("time(years),TemperatureAvg(C),PressureAvg(GPA)\n")
 
 print("vtuPData keys="+str(tuple(vtuPData.keys())))
 
@@ -120,6 +127,9 @@ for dataTime in tuple(vtuPData.keys()):
    vtuPDataT= vtuPData[dataTime]
 
    #print("vtuPDataT keys="+str(tuple(vtuPDataT.keys())))
+
+   TCAvgList= []
+   PGAvgList= []
    
    for pid in tuple(vtuPDataT.keys()):
 
@@ -127,11 +137,31 @@ for dataTime in tuple(vtuPData.keys()):
       
       csvFile.write(str(dataTime)+","+str(pid)+","+str(vtuPDataTPid["concentration"])+","+
                     str(vtuPDataTPid["Pressure(GPa)"])+","+str(vtuPDataTPid["Temperature(C)"])+","+
-                    str(vtuPDataTPid["Temperature(K)"])+","+str(vtuPDataTPid["Depth(m)"])+"\n")
-   #sys.exit(0)
+                    str(vtuPDataTPid["Temperature(K)"])+","+str(vtuPDataTPid["Depth(y,m)"])+","+str(vtuPDataTPid["Position(x,m)"])+"\n")
+
+      TCAvgList.append(vtuPDataTPid["Temperature(C)"])
+      PGAvgList.append(vtuPDataTPid["Pressure(GPa)"])
+   # ---
+
+   #print("TCAvgList[0:2]="+str(TCAvgList[0:2]))
+
+   if len( TCAvgList) != 0 :
    
-#---
+      #TCAvgNp= np.array(TCAvgList, dtype=np.float64)
+      #PGAvgNp= np.array(PGAvgList, dtype=np.float64)
+      #print("shape TCAvgNp="+str(TCAvgNp))
+   
+      TCAvg= np.mean(np.array(TCAvgList, dtype=np.float32))
+      PGAvg= np.mean(np.array(PGAvgList, dtype=np.float32))
+
+      print("TCAvg="+str(TCAvg))
+      print("PGAvg="+str(PGAvg))
+
+      csvStatsFile.write(str(dataTime)+","+str(TCAvg)+","+str(PGAvg)+"\n")
+      #sys.exit(0)
+   #--- end if   
+#--- end for dataTime in tuple(vtuPData.keys()): loop
+
 #sys.exit(0)
-
-
-
+csvFile.close()
+csvStatsFile.close()
