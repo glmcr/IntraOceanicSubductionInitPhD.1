@@ -29,7 +29,7 @@ ocCrtThr= 0.75
 gridYMeters= 700e3
 
 mrkXRange= [ 550e3, 760e3]
-mrkYRange= [ gridYMeters - 3500, gridYMeters ]
+mrkYRange= [ gridYMeters - 7500, gridYMeters ]
 
 #--- Only tracking the oceanic crust markers that have their initial position
 #    inside the mrkXRange and the mrkYRange.
@@ -68,8 +68,8 @@ for vtuPFile in vtuPFiles:
    ipPosData= dataTmp.GetPointData().GetArray("initial position")
    
    #--- Extract oceanic crust particles data:
-   #ocCrustData= dataTmp.GetPointData().GetArray("oceanicCrust")
-   ocCrustData= dataTmp.GetPointData().GetArray("initial oceanicCrust")
+   ocCrustData= dataTmp.GetPointData().GetArray("oceanicCrust")
+   #ocCrustData= dataTmp.GetPointData().GetArray("initial oceanicCrust")
    
    #--- Extract particle Pressure data:
    pPData= dataTmp.GetPointData().GetArray("p")
@@ -180,6 +180,7 @@ for dataTime in tuple(vtuPData.keys()):
       TCAvgList.append(vtuPDataTPid["Temperature(C)"])
       PGAvgList.append(vtuPDataTPid["Pressure(GPa)"])
       DepthsAvgList.append(vtuPDataTPid["Depth(y[m])"])
+      
    # ---
 
    #print("TCAvgList[0:2]="+str(TCAvgList[0:2]))
