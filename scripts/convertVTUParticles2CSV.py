@@ -28,8 +28,8 @@ ocCrtThr= 0.75
 
 gridYMeters= 700e3
 
-mrkXRange= [ 550000, 760000]
-mrkYRange= [ gridYMeters- 3500, gridYMeters ]
+mrkXRange= [ 550e3, 760e3]
+mrkYRange= [ gridYMeters - 3500, gridYMeters ]
 
 #--- Only tracking the oceanic crust markers that have their initial position
 #    inside the mrkXRange and the mrkYRange.
@@ -60,8 +60,12 @@ for vtuPFile in vtuPFiles:
    pidDataSize= pidData.GetSize()
    print("pidData size="+str(pidDataSize)+"\n")
 
-   #--- particles position data
+   #--- particles position data for the timestamp
    pPos= dataTmp.GetPointData().GetArray("position")
+
+   #--- Initial position of the particles
+   #   (NOTE: could be read just once outside of the loop using the 1st file)
+   ipPosData= dataTmp.GetPointData().GetArray("initial position")
    
    #--- Extract oceanic crust particles data:
    #ocCrustData= dataTmp.GetPointData().GetArray("oceanicCrust")
@@ -77,6 +81,22 @@ for vtuPFile in vtuPFiles:
    
    for pid in range(pidDataSize):
 
+       #ipPos= ipPosData.GetTuple(pid)
+
+       #print("ipPos="+str(ipPos))
+       #print("mrkXRange="+str(mrkXRange))
+       #print("mrkYRange="+str(mrkYRange))
+       #sys.exit(0)
+
+       #if not (mrkXRange[0] <= ipPos[0] and ipPos[0] <= mrkXRange[1] \
+       #         and mrkYRange[1] <= ipPos[1] and ipPos[1] <= mrkYRange[1]):
+       #   #print("initial position:"+str(ipPos)+" outside of X,Y ranges")
+       #   #sys.exit(0)
+       #   continue
+
+       #print("valid initial position:"+str(ipPos)+" inside the X,Y ranges")
+       #sys.exit(0)
+       
        ocpCrt= ocCrustData.GetTuple(pid)[0]
        ocpP= pPData.GetTuple(pid)[0]
        ocpT= pTData.GetTuple(pid)[0]
@@ -86,11 +106,21 @@ for vtuPFile in vtuPFiles:
        if ocpCrt >= ocCrtThr and ocpP >= ocPLow and ocpT >= ocTLow: # and depth > 12000.0:
            
           ocpPos= pPos.GetTuple(pid)
+
+          ipPos= ipPosData.GetTuple(pid)
+
+          if not (mrkXRange[0] <= ipPos[0] and ipPos[0] <= mrkXRange[1] \
+                and mrkYRange[0] <= ipPos[1] and ipPos[1] <= mrkYRange[1]):
+             continue
           
           #print("ocpCrt="+str(ocpCrt))
-          #print("ocpPos="+str(ocpPos))
+          print("valid init pos fpr ocpPos="+str(ocpPos)+",pid="+str(pid))
           #print("ocpP="+str(ocpP))
           #print("ocpT="+str(ocpT))
+          print("ipPos="+str(ipPos)+"\n")
+          #print("mrkXRange="+str(mrkXRange))
+          #print("mrkYRange="+str(mrkYRange))
+          #sys.exit(0)
 
           relevantOCrustData[pid]= {
                                      "concentration": ocpCrt,
