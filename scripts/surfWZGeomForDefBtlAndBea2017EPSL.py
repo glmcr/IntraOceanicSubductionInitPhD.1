@@ -272,7 +272,7 @@ composGeomDict= {
 
               # --- Need a small rectangle to complete the SOLM here
               [ [contVsOcean+SCLMThkn,SCLMCeil],[contVsOcean+SCLMThkn,CSPFloor],
-                [contVsOcean+2*SCLMThkn+CLCThkn,CSPFloor],[contVsOcean+2*SCLMThkn+CLCThkn,SCLMCeil] ]
+                [contVsOcean+3*SCLMThkn+CLCThkn,CSPFloor],[contVsOcean+3*SCLMThkn+CLCThkn,SCLMCeil] ]
               
               #[ [contVsOcean,SCLMFloor],[contVsOcean+SCLMThkn,SCLMCeil],[contVsOcean+SCLMThkn,SCLMFloor] ],
               #[ [contVsOcean+SCLMThkn,SCLMFloor],[contVsOcean+SCLMThkn,SCLMCeil],[contVsOcean+2*SCLMThkn,SCLMCeil] ],
