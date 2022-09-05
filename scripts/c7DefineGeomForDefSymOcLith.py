@@ -241,9 +241,12 @@ composGeomDict= {
                   [midXPoint+oLithMtlThickness-oCrustThickness,oCrustFloor],
                   [midXPoint+oLithMtlThickness+oCrustThickness,oLithMtlFloor+3000],
                   [midXPoint+2*oLithMtlThickness,oLithMtlFloor+3000]
-                ],                        [
-                  [midXPoint+2*oLithMtlThickness,oLithMtlFloor],
-                  [midXPoint+2*oLithMtlThickness,oCrustFloor],
+                ],
+                [
+                  #[midXPoint+2*oLithMtlThickness,oLithMtlFloor],
+                  #[midXPoint+2*oLithMtlThickness,oCrustFloor],
+                  [midXPoint+oLithMtlThickness-oCrustThickness,oLithMtlFloor],
+                  [midXPoint+oLithMtlThickness-oCrustThickness,oCrustFloor],                    
                   [nbXPtsF,oCrustFloor],
                   [nbXPtsF,oLithMtlFloor]
                 ]
@@ -289,7 +292,8 @@ composGeomDict= {
               [
                 [midXPoint+oLithMtlThickness,oCrustFloor],
                 [midXPoint+oLithMtlThickness,oLithMtlFloor],
-                [midXPoint+2*oLithMtlThickness,oLithMtlFloor]
+                [midXPoint+oLithMtlThickness+oCrustThickness,oLithMtlFloor]
+                #[midXPoint+2*oLithMtlThickness,oLithMtlFloor]
               ]
             ]
     },
