@@ -29,7 +29,7 @@ ocCrtThr= 0.75
 gridYMeters= 700e3
 
 mrkXRange= [ 550e3, 760e3]
-mrkYRange= [ gridYMeters - 7500, gridYMeters ]
+mrkYRange= [ gridYMeters - 3000, gridYMeters ]
 
 #--- Only tracking the oceanic crust markers that have their initial position
 #    inside the mrkXRange and the mrkYRange.
