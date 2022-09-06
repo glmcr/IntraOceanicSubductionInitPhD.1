@@ -228,25 +228,14 @@ composGeomDict= {
                   [midXPoint+oLithMtlThickness,oLithMtlFloor]
                 ],
                 [
-                  [midXPoint+oLithMtlThickness,oCrustFloor],
-                  [midXPoint+2*oLithMtlThickness,oCrustFloor],
-                  [midXPoint+2*oLithMtlThickness,oLithMtlFloor]
-                ],
-                [
+                  #[midXPoint+2*oCrustThickness,oCrustFloor],
                   [midXPoint+oLithMtlThickness-oCrustThickness,oCrustFloor],
-                  [midXPoint+oLithMtlThickness,oCrustFloor],
-                  [midXPoint+2*oLithMtlThickness,oLithMtlFloor+3000]
+                  [midXPoint+oLithMtlThickness+2*oCrustThickness,oCrustFloor],
+                  [midXPoint+oLithMtlThickness+2*oCrustThickness,oLithMtlFloor]
                 ],
                 [
-                  [midXPoint+oLithMtlThickness-oCrustThickness,oCrustFloor],
-                  [midXPoint+oLithMtlThickness+oCrustThickness,oLithMtlFloor+3000],
-                  [midXPoint+2*oLithMtlThickness,oLithMtlFloor+3000]
-                ],
-                [
-                  #[midXPoint+2*oLithMtlThickness,oLithMtlFloor],
-                  #[midXPoint+2*oLithMtlThickness,oCrustFloor],
-                  [midXPoint+oLithMtlThickness+oCrustThickness,oLithMtlFloor],
-                  [midXPoint+oLithMtlThickness+oCrustThickness,oCrustFloor],                    
+                  [midXPoint+oLithMtlThickness+2*oCrustThickness,oLithMtlFloor],
+                  [midXPoint+oLithMtlThickness+2*oCrustThickness,oCrustFloor],
                   [nbXPtsF,oCrustFloor],
                   [nbXPtsF,oLithMtlFloor]
                 ]
@@ -259,43 +248,6 @@ composGeomDict= {
             [
                 [ [0.0,AAUMFloor], [0.0,oLithMtlFloor], [nbXPtsF,oLithMtlFloor], [nbXPtsF,AAUMFloor] ]
             ] 
-    },
-    "weakZone": {
-        "col": 5,
-        "TCeil2Floor": [[nbYPtsF, surfT], [oLithMtlFloor,oLithMtlFloorT]],
-        "polygons":
-            [
-              #--- begin WZ part in oceanic crust: a central block between 2 triangles 
-              [
-                [midXPoint-oCrustThickness,nbYPtsF],
-                [midXPoint,nbYPtsF],
-                [midXPoint,oCrustFloor]
-              ],
-              [
-                [midXPoint,oCrustFloor],
-                [midXPoint,nbYPtsF],
-                [midXPoint+oLithMtlThickness-2*oCrustThickness,nbYPtsF],
-                [midXPoint+oLithMtlThickness-2*oCrustThickness,oCrustFloor]
-              ],
-              [         
-                [midXPoint+oLithMtlThickness-2*oCrustThickness,nbYPtsF],
-                [midXPoint+oLithMtlThickness-2*oCrustThickness,oCrustFloor],
-                [midXPoint+oLithMtlThickness-oCrustThickness,oCrustFloor]
-              ],
-              #--- End WZ part in oceanic crust
-              #--- begin WZ part in oceanic lithospheric mantle: 2 triangles
-              [
-                [midXPoint,oCrustFloor],
-                [midXPoint+oLithMtlThickness,oCrustFloor],
-                [midXPoint+oLithMtlThickness,oLithMtlFloor]
-              ],
-              [
-                [midXPoint+oLithMtlThickness-1000,oCrustFloor],
-                [midXPoint+oLithMtlThickness-1000,oLithMtlFloor],
-                [midXPoint+oLithMtlThickness+oCrustThickness+1000,oLithMtlFloor]
-                #[midXPoint+2*oLithMtlThickness,oLithMtlFloor]
-              ]
-            ]
     },
     "MTZ": {
         "col": 6,
@@ -313,6 +265,22 @@ composGeomDict= {
               [ [0.0,0.0], [0.0,topLowMantleCeil], [nbXPtsF,topLowMantleCeil], [nbXPtsF,0.0] ]
             ] 
     },  
+    "weakZone": {
+        "col": 5,
+        "TCeil2Floor": [[nbYPtsF, surfT], [oLithMtlFloor,oLithMtlFloorT]],
+        "polygons":
+            [
+              #--- Just need a rectangle of WZ to fill-up
+              #    the oblique space between both the OC
+              #    and the OLM
+              [
+                [midXPoint-2*oLithMtlThickness,oLithMtlFloor],
+                [midXPoint-2*oLithMtlThickness,nbYPtsF],
+                [midXPoint+2*oLithMtlThickness,nbYPtsF],
+                [midXPoint+2*oLithMtlThickness,oLithMtlFloor]
+              ]
+            ]
+    }
 }
 
 #print(str(composGeomDict["SOLM"]))
