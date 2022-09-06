@@ -228,13 +228,13 @@ composGeomDict= {
                   [midXPoint+oLithMtlThickness,oLithMtlFloor]
                 ],
                 [
-                  [midXPoint+oCrustThickness,oCrustFloor],
-                  [midXPoint+oLithMtlThickness+oCrustThickness,oCrustFloor],
-                  [midXPoint+oLithMtlThickness+oCrustThickness,oLithMtlFloor]
+                  [midXPoint+2*oCrustThickness,oCrustFloor],
+                  [midXPoint+oLithMtlThickness+2*oCrustThickness,oCrustFloor],
+                  [midXPoint+oLithMtlThickness+2*oCrustThickness,oLithMtlFloor]
                 ],
                 [
-                  [midXPoint+oLithMtlThickness+oCrustThickness,oLithMtlFloor],
-                  [midXPoint+oLithMtlThickness+oCrustThickness,oCrustFloor],
+                  [midXPoint+oLithMtlThickness+2*oCrustThickness,oLithMtlFloor],
+                  [midXPoint+oLithMtlThickness+2*oCrustThickness,oCrustFloor],
                   [nbXPtsF,oCrustFloor],
                   [nbXPtsF,oLithMtlFloor]
                 ]
