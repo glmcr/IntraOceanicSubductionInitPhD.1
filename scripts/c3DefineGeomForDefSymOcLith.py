@@ -186,7 +186,7 @@ surfT= 273.0
 composGeomDict= {
     "oceanicCrust": {
         "col": 2,
-        "TCeil2Floor": [ [nbXPtsF, surfT], [oCrustFloor, oCrustFloorT]],
+        "TCeil2Floor": [ [nbYPtsF, surfT], [oCrustFloor, oCrustFloorT]],
         "polygons":
             [
               [

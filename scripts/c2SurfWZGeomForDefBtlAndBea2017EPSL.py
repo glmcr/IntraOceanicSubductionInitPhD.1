@@ -130,99 +130,171 @@ initCompoFieldsList= initCompoFieldsDict["set"+sep+"Names"+sep+ "of"+sep+"fields
 initCompoFp.write("# POINTS: "+nbXPts+" "+nbYPts+"\n")
 initCompoFp.write("# Columns: x y "+ " ".join(initCompoFieldsList)+"\n")
 
-#---
-midXPoint= 750e3
+#--- lthos-asthenos bnd: 120km
+#LABDepth= 90.0 # yDim - 610.0
+#LABDOLith=90e3
+#LABDClLith= 120e3 # yDim - 610.0
 
-MTZFloor= topLowMantleCeil= 30e3
-MTZCeil= AAUMFloor= 290e3
+#--- contact position between continental and oceanic domains: 1200km
+contVsOcean= 1200e3
 
-yngOLithFloor=680e3
-oldOLithFloor=660e3
+OSDThkn= 3e3
+OSDCeil= nbYPtsF 
+OSDFloor= OSDCeil - OSDThkn
 
-ocCrustFloor=693e3
+OUCThkn= 9e3
+OUCCeil= OSDFloor
+OUCFloor= OUCCeil - OUCThkn
+
+CSPWidth= 15e3
+CSPThkn= 12e3
+CSPCeil= nbYPtsF
+CSPFloor= CSPCeil-CSPThkn
+
+#contUppCrustThkn= 30.0 # 700 - 670
+CUCThkn= 30e3 # 700 - 670
+CUCCeil= nbYPtsF
+CUCFloor= CUCCeil - CUCThkn
+
+#contLowCrustThkn= 10.0 # 670 - 660
+CLCThkn= 10e3 # 670 - 660
+CLCCeil= CUCFloor
+CLCFloor= CLCCeil - CLCThkn
+
+wZBlocWidth= CUCThkn - CLCThkn
+
+SCLMThkn= 50e3 # 660 - 610
+SCLMCeil= CLCFloor
+SCLMFloor= SCLMCeil - SCLMThkn
+
+#--- 2nd SCLM sector under the 1st
+# Unstable, to much isostatic adjustments: SCLM2Thkn= 30e3
+SCLM2Thkn= 35e3
+SCLM2Ceil= SCLMFloor
+SCLM2Floor= SCLM2Ceil - SCLM2Thkn
 
 #--- T data [K]
-topLowMantleCeilT= MTZFloorT= 1725.0
-topLowMantleFloorT= 1750.0
+AAUMCeilT= 1650.0
+AAUMFloorT= 1750.0
 
-MTZCeilT= AAUMFloorT= 1700.0
-AAUMCeilT= oLithFloorT= 1650.0
-
-oCrustFloorT= oLithCeilT= 850 #moho
-
-#SCLMFloorT= SOLMFloorT= AAUMCeilT
+SCLMFloorT= SOLMFloorT= AAUMCeilT
 
 #--- Moho
-#SCLMCeilT
-#SOLMCeilT= OUCFloorT= 773.0
+SCLMCeilT= SOLMCeilT= OUCFloorT= CSPFloorT= 773.0
 
-#CLCFloorT= SCLMCeilT
-#CLCCeilT= CUCFloorT= 650.0
+CLCFloorT= SCLMCeilT
+CLCCeilT= CUCFloorT= 650.0
 
-#CUCFloorT= CLCCeilT
-#OSDFloorT= OUCCeilT= 400.0 
+CUCFloorT= CLCCeilT
+
+OSDFloorT= OUCCeilT= 400.0 
 
 surfT= 273.0
 
 composGeomDict= {
-    "topLowMantle": {
-        "col": 7,
-        "TCeil2Floor": [[topLowMantleCeil, topLowMantleCeilT], [0.0, topLowMantleFloorT]],
+
+    "AAUM": {
+        "col": 2,
+        "TCeil2Floor": [[SCLMFloor, AAUMCeilT], [0.0, AAUMFloorT]],
         "polygons":
-            [
-              [ [0.0,0.0], [0.0,topLowMantleCeil], [nbXPtsF,topLowMantleCeil], [nbXPtsF,0.0] ]
-            ] 
-    },  
-    "MTZ": {
-        "col": 6,
-        "TCeil2Floor": [[MTZCeil, MTZCeilT], [MTZFloor, topLowMantleCeilT]],
-        "polygons":
-            [
-              [ [0.0,topLowMantleCeil], [0.0,MTZCeil], [nbXPtsF,MTZCeil], [nbXPtsF,topLowMantleCeil] ]
+            [ [ [contVsOcean+(SCLMThkn-SCLM2Thkn),SCLM2Floor],[contVsOcean+SCLMThkn,SCLM2Ceil],[contVsOcean+SCLMThkn,SCLM2Floor] ],
+              [ [contVsOcean+SCLMThkn,SCLM2Floor],[contVsOcean+SCLMThkn,SCLM2Ceil],[nbXPtsF,SCLM2Ceil],[nbXPtsF,SCLM2Floor] ],
+              #[ [0.0,SCLM2Floor],[0.0,SCLM2Ceil],[contVsOcean-SCLM2Thkn,SCLM2Ceil],[contVsOcean-SCLM2Thkn,SCLM2Floor] ],
+              [ [0.0,0.0],[0.0,SCLM2Floor],[nbXPtsF,SCLM2Floor],[nbXPtsF,0.0] ],
+
+              ## Was part of the WZ at 1st (sclm2 depths)
+              [ [contVsOcean-SCLM2Thkn,SCLM2Floor], [contVsOcean,SCLM2Ceil], [contVsOcean,SCLM2Floor] ],
+              [ [contVsOcean,SCLM2Floor], [contVsOcean,SCLM2Ceil], [contVsOcean+(SCLMThkn-SCLM2Thkn),SCLM2Ceil], [contVsOcean+(SCLMThkn-SCLM2Thkn),SCLM2Floor] ],
+              [ [contVsOcean+(SCLMThkn-SCLM2Thkn),SCLM2Floor], [contVsOcean+(SCLMThkn-SCLM2Thkn),SCLM2Ceil], [contVsOcean+SCLMThkn,SCLM2Ceil] ]
             ] 
     },
-    "YAAUM": {
+    "SCLM": {
+        "col": 3,
+        "TCeil2Floor": [[ SCLMCeil, SCLMCeilT], [SCLM2Floor,SCLMFloorT]],
+        "polygons": 
+            [ #SCLM2
+              [ [contVsOcean-SCLM2Thkn,SCLM2Floor],[contVsOcean-SCLM2Thkn,SCLM2Ceil],[contVsOcean,SCLM2Ceil] ],
+              [ [0.0,SCLM2Floor],[0.0,SCLM2Ceil],[contVsOcean-SCLM2Thkn,SCLM2Ceil],[contVsOcean-SCLM2Thkn,SCLM2Floor] ],
+                
+              #SCLM
+              [ [contVsOcean,SCLMFloor],[contVsOcean,SCLMCeil],[contVsOcean+SCLMThkn,SCLMCeil] ], 
+                [ [0.0,SCLMFloor],[0.0,SCLMCeil],[contVsOcean,SCLMCeil],[contVsOcean,SCLMFloor] ]
+          ]
+    },
+    "contLowCrust": {
         "col": 4,
-        "TCeil2Floor": [[yngOLithFloor, AAUMCeilT], [AAUMFloor, AAUMFloorT]],
-        "polygons":
-            [
-                [ [0.0,AAUMFloor], [0.0,yngOLithFloor], [midXPoint,yngOLithFloor], [midXPoint,AAUMFloor] ]
-            ] 
+        "TCeil2Floor": [ [CLCCeil, CLCCeilT], [CLCFloor, CLCFloorT]],
+        "polygons": 
+            [ [ [contVsOcean+SCLMThkn,CLCFloor],[contVsOcean+SCLMThkn,CLCCeil],[contVsOcean+SCLMThkn+CLCThkn,CLCCeil] ],
+              [ [0.0,CLCFloor],[0.0,CLCCeil],[contVsOcean+SCLMThkn,CLCCeil],[contVsOcean+SCLMThkn,CLCFloor] ] ]  
     },
-    "OAAUM": {
-        "col": 9,
-        "TCeil2Floor": [[oldOLithFloor, AAUMCeilT], [AAUMFloor, AAUMFloorT]],
+    "contUppCrust":{
+        "col": 5,
+        "TCeil2Floor": [[nbYPtsF,surfT], [CUCFloor,CUCFloorT]],
         "polygons":
-            [
-                [ [midXPoint,AAUMFloor], midXPoint,oldOLithFloor], [nbXPtsF,oldOLithFloor], [nbXPtsF,AAUMFloor] ]
+            [ [ [contVsOcean+SCLMThkn+CLCThkn,CUCFloor],[contVsOcean+SCLMThkn+CLCThkn,CUCCeil],[contVsOcean+SCLMThkn+CLCThkn+CUCThkn,CUCCeil] ],
+              [ [0.0,CUCFloor],[0.0,CUCCeil],[contVsOcean+SCLMThkn+CLCThkn,CUCCeil],[contVsOcean+SCLMThkn+CLCThkn,CUCFloor] ] ]
+    },
+    "contSedsPrism": {
+        "col": 6,
+        "TCeil2Floor": [[ nbYPtsF, surfT], [CSPFloor,CSPFloorT]],
+        "polygons":
+             [ [ [contVsOcean+SCLMThkn+CLCThkn+2*CUCThkn+wZBlocWidth-CSPThkn,CSPFloor],[contVsOcean+SCLMThkn+CLCThkn+2*CUCThkn+wZBlocWidth,CSPCeil],
+                 [contVsOcean+SCLMThkn+CLCThkn+2*CUCThkn+wZBlocWidth,CSPFloor] ],
+               
+               [ [contVsOcean+SCLMThkn+CLCThkn+2*CUCThkn+wZBlocWidth,CSPFloor],[contVsOcean+SCLMThkn+CLCThkn+2*CUCThkn+wZBlocWidth,CSPCeil],
+                 [contVsOcean+SCLMThkn+CLCThkn+2*CUCThkn+wZBlocWidth+CSPWidth,CSPCeil], [contVsOcean+SCLMThkn+CLCThkn+2*CUCThkn+wZBlocWidth+CSPWidth,CSPFloor] ] ]
+    },
+    "SOLM":  {
+        "col": 7,
+        "TCeil2Floor": [[OUCFloor, SOLMCeilT], [SCLMFloor,SOLMFloorT ]],
+        "polygons":
+            [ [ [contVsOcean+SCLMThkn,SCLMFloor],[contVsOcean+2*SCLMThkn,SCLMCeil],[contVsOcean+2*SCLMThkn,SCLMFloor] ],
+              [ [contVsOcean+2*SCLMThkn,SCLMFloor],[contVsOcean+2*SCLMThkn,SCLMCeil],[nbXPtsF,SCLMCeil],[nbXPtsF,SCLMFloor] ],
+        
+              [ [contVsOcean+2*SCLMThkn,CLCFloor],[contVsOcean+2*SCLMThkn+CLCThkn,CLCCeil],[contVsOcean+2*SCLMThkn+CLCThkn,CLCFloor] ],
+              [ [contVsOcean+2*SCLMThkn+CLCThkn,CLCFloor],[contVsOcean+2*SCLMThkn+CLCThkn,CLCCeil],[nbXPtsF,CLCCeil],[nbXPtsF,CLCFloor] ],
+
+              [ [contVsOcean+2*SCLMThkn+CLCThkn,CUCFloor],[contVsOcean+2*SCLMThkn+CLCThkn+(CSPFloor-CUCFloor),CSPFloor],
+                [contVsOcean+2*SCLMThkn+CLCThkn+(CSPFloor-CUCFloor),CUCFloor] ],
+              
+              [ [contVsOcean+2*SCLMThkn+CLCThkn+(CSPFloor-CUCFloor),CUCFloor],[contVsOcean+2*SCLMThkn+CLCThkn+(CSPFloor-CUCFloor),CSPFloor],
+                [nbXPtsF,CSPFloor],[nbXPtsF,CUCFloor] ],
+
+              # --- The following triangle was previously in the WZ mat.
+              [ [contVsOcean+SCLMThkn,SCLMCeil], [contVsOcean+2*SCLMThkn,SCLMCeil],
+                [contVsOcean+SCLMThkn+CLCThkn+2*CUCThkn+wZBlocWidth-CSPThkn,CSPFloor] ],
+              
+              # --- The following 3 triangles were previously in the WZ mat.
+              [ [contVsOcean,SCLMFloor],[contVsOcean+SCLMThkn,SCLMFloor],[contVsOcean+2*SCLMThkn,SCLMCeil] ],
+              [ [contVsOcean,SCLMFloor],[contVsOcean+SCLMThkn,SCLMCeil], [contVsOcean+2*SCLMThkn,SCLMCeil] ],
+              [ [contVsOcean+SCLMThkn,SCLMCeil],[contVsOcean+SCLMThkn,CSPFloor],[contVsOcean+2*SCLMThkn+CLCThkn,CSPFloor]],
+
+              # --- Need a small rectangle to complete the SOLM here
+              [ [contVsOcean+SCLMThkn,SCLMCeil],[contVsOcean+SCLMThkn,CSPFloor],
+                [contVsOcean+3*SCLMThkn+CLCThkn,CSPFloor],[contVsOcean+3*SCLMThkn+CLCThkn,SCLMCeil] ]
+              
+              #[ [contVsOcean,SCLMFloor],[contVsOcean+SCLMThkn,SCLMCeil],[contVsOcean+SCLMThkn,SCLMFloor] ],
+              #[ [contVsOcean+SCLMThkn,SCLMFloor],[contVsOcean+SCLMThkn,SCLMCeil],[contVsOcean+2*SCLMThkn,SCLMCeil] ],
+              #[ [contVsOcean+SCLMThkn,CLCFloor],[contVsOcean+SCLMThkn+CLCThkn,CLCCeil],[contVsOcean+SCLMThkn+CLCThkn,CLCFloor] ]
             ]
     },
-   "YOLM":  {
-        "col": 3,
-        "TCeil2Floor": [[ocCrustFloor,oCrustFloorT], [yngOLithFloor, oLithFloorT ]],
-        "polygons":
-            [
-                [ [0.0,yngOLithFloor], [0.0,oCrustFloor], [midXPoint,oCrustFloor], [midXPoint,yngOLithFloor] ]
-            ]
-    },
-   "OOLM":  {
+    "oceanicUppCrust": {
         "col": 8,
-        "TCeil2Floor": [[ocCrustFloor,oCrustFloorT], [oldOLithFloor, oLithFloorT ]],
+        "TCeil2Floor": [ [ OUCCeil, OUCCeilT], [OUCFloor, OUCFloorT]],
         "polygons":
-            [
-                [ [midXPoint,oldOLithFloor], [midXPoint,oCrustFloor], [nbXPtsF,oCrustFloor], [nbXPtsF,oldOLithFloor] ]
-            ]
-    },    
-    "oceanicCrust": {
-        "col": 3,
-        "TCeil2Floor": [ [nbYPtsF, surfT], [oCrustFloor, oCrustFloorT]],
+            [ [ [contVsOcean+SCLMThkn+CLCThkn+2*CUCThkn+wZBlocWidth,OUCFloor],[contVsOcean+SCLMThkn+CLCThkn+2*CUCThkn+wZBlocWidth,OUCCeil],
+                [nbXPtsF,OUCCeil],[nbXPtsF,OUCFloor] ] ]
+    },
+    "oceanicSeds": {
+        "col": 9,
+        "TCeil2Floor": [ [nbYPtsF, surfT], [OSDFloor, OSDFloorT]],
         "polygons":
-            [
-                [ [0.0,oCrustFloor], [0.0,nbYPtsF], [nbXPtsF,nbYPtsF], [nbXPtsF,oCrustFloor] ]
-            ]
+           [ [ [contVsOcean+SCLMThkn+CLCThkn+2*CUCThkn+wZBlocWidth,OSDFloor],[contVsOcean+SCLMThkn+CLCThkn+2*CUCThkn+wZBlocWidth,OSDCeil],
+               [nbXPtsF,OSDCeil],[nbXPtsF,OSDFloor] ] ]
     },
     "weakZone": {
-        "col": 5,
+        "col": 10,
         # --- WZ is too cold with SCLMFloorT
         #"TCeil2Floor": [ [nbYPtsF, surfT], [SCLM2Floor,SCLMFloorT] ],
         #"TCeil2Floor": [[OUCFloor, SOLMCeilT], [SCLMFloor,SOLMFloorT]],
@@ -237,16 +309,24 @@ composGeomDict= {
               #  [ [contVsOcean,SCLM2Floor], [contVsOcean,SCLM2Ceil], [contVsOcean+(SCLMThkn-SCLM2Thkn),SCLM2Ceil], [contVsOcean+(SCLMThkn-SCLM2Thkn),SCLM2Floor] ],
               #  [ [contVsOcean+(SCLMThkn-SCLM2Thkn),SCLM2Floor], [contVsOcean+(SCLMThkn-SCLM2Thkn),SCLM2Ceil], [contVsOcean+SCLMThkn,SCLM2Ceil] ] ,
 
-              #SCLM depts (only triangles)
-              [ [contVsOcean,SCLMFloor],[contVsOcean+SCLMThkn,SCLMCeil],[contVsOcean+SCLMThkn,SCLMFloor] ],
-              [ [contVsOcean+SCLMThkn,SCLMFloor],[contVsOcean+SCLMThkn,SCLMCeil],[contVsOcean+2*SCLMThkn,SCLMCeil] ],
-              [ [contVsOcean+SCLMThkn,CLCFloor],[contVsOcean+SCLMThkn+CLCThkn,CLCCeil],[contVsOcean+SCLMThkn+CLCThkn,CLCFloor] ],
+              ##SCLM depts (only triangles)
+              #[ [contVsOcean,SCLMFloor],[contVsOcean+SCLMThkn,SCLMCeil],[contVsOcean+SCLMThkn,SCLMFloor] ],
+              #[ [contVsOcean+SCLMThkn,SCLMFloor],[contVsOcean+SCLMThkn,SCLMCeil],[contVsOcean+2*SCLMThkn,SCLMCeil] ],
+              #[ [contVsOcean+SCLMThkn,CLCFloor],[contVsOcean+SCLMThkn+CLCThkn,CLCCeil],[contVsOcean+SCLMThkn+CLCThkn,CLCFloor] ],
 
-              # Rect block between triangles, CLC depths
-              [ [contVsOcean+SCLMThkn,CLCFloor], [contVsOcean+SCLMThkn,CLCCeil], [contVsOcean+2*SCLMThkn,CLCCeil],[contVsOcean+2*SCLMThkn,CLCFloor] ],
-              
-              [ [contVsOcean+2*SCLMThkn,CLCFloor],[contVsOcean+2*SCLMThkn,CLCCeil],[contVsOcean+2*SCLMThkn+CLCThkn,CLCCeil]],
+              ## --- This triangle is now in the SOLM.
+              #[ [contVsOcean,SCLMFloor],[contVsOcean+SCLMThkn,SCLMCeil],[contVsOcean+2*SCLMThkn,SCLMCeil] ],
 
+              ## --- This triangle is now in the SOLM.   
+              #[ [contVsOcean,SCLMFloor],[contVsOcean+SCLMThkn,SCLMFloor],[contVsOcean+2*SCLMThkn,SCLMCeil] ],
+                
+              ## Rect block between triangles, CLC depths
+              #[ [contVsOcean+SCLMThkn,CLCFloor], [contVsOcean+SCLMThkn,CLCCeil], [contVsOcean+2*SCLMThkn,CLCCeil],[contVsOcean+2*SCLMThkn,CLCFloor] ],
+
+              ## triangle now moved to SOLM
+              #[ [contVsOcean+2*SCLMThkn,CLCFloor],[contVsOcean+2*SCLMThkn,CLCCeil],[contVsOcean+2*SCLMThkn+CLCThkn,CLCCeil]],
+
+              # 1st WZ triangle at right of the CUC
               [ [contVsOcean+SCLMThkn+CLCThkn,CUCFloor],[contVsOcean+SCLMThkn+CLCThkn+CUCThkn,CUCCeil],[contVsOcean+SCLMThkn+CLCThkn+CUCThkn,CUCFloor] ],
 
               # Rect block between triangles, CUC depths

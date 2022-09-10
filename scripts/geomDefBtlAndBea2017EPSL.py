@@ -89,17 +89,26 @@ def getLinearTin2D(ceilT: float, floorT: float, ceilElev: float, floorElev: floa
    TRange= floorT - ceilT
    compoRange= ceilElev - floorElev
 
-   yElevWeight= (ceilElev-yElev)/compoRange
+   # --- Need to add 1000.0 to yElev to get
+   #     weight 0.0 at the surface. Note that
+   #     it can produce a smale negative yElevWeight
+   #     but this is not causing any serious problem
+   #     in terms of the geotherm (pun not intended)
+   yElevWeight= (ceilElev-(yElev+1000.0))/compoRange
    #yElevWeight= (yElev - floorElev)/compoRange
-
+ 
    TAtYElev= ceilT + yElevWeight*TRange
 
-   #print("ceilT="+str(ceilT))
-   #print("floorT="+str(floorT))
-   #print("ceilElev="+str(ceilElev))
-   #print("floorElev="+str(floorElev))
-   #print("yElev="+str(yElev))
-   #print("TAtYElev="+str(TAtYElev))
+   print("ceilT="+str(ceilT))
+   print("floorT="+str(floorT))
+   print("ceilElev="+str(ceilElev))
+   print("floorElev="+str(floorElev))
+   print("yElev="+str(yElev))
+   print("TAtYElev="+str(TAtYElev))
+   print("DEBUG yElevWeight="+str(yElevWeight))
+
+   #assert yElevWeight >= 0.0, " yElevWeight < 0.0 !!" 
+   
    #sys.exit(0)
 
    return TAtYElev

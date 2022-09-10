@@ -186,7 +186,7 @@ surfT= 273.0
 composGeomDict= {
     "oceanicCrust": {
         "col": 2,
-        "TCeil2Floor": [ [nbXPtsF, surfT], [oCrustFloor, oCrustFloorT]],
+        "TCeil2Floor": [ [nbYPtsF, surfT], [oCrustFloor, oCrustFloorT]],
         "polygons":
             [
               [
@@ -345,6 +345,9 @@ for y in range(0,int(nbYPts)):
 
                ceilElev,ceilT,= composGeomDict[compoField]["TCeil2Floor"][0]
                floorElev,floorT= composGeomDict[compoField]["TCeil2Floor"][1]
+
+               print("ceilElev,ceilT="+str(ceilElev)+","+str(ceilT))
+               print("floorElev,floorT="+str(floorElev)+","+str(floorT))
                
                TAtYElev= geom.getLinearTin2D(ceilT,
                                              floorT,
@@ -354,6 +357,9 @@ for y in range(0,int(nbYPts)):
 
                print("composGeomDict[compoField][\"TCeil2Floor\"]="+str(composGeomDict[compoField]["TCeil2Floor"]))
                print("TAtYElev="+str(TAtYElev)+"\n")
+               
+               #print("debug exit 0 \n")
+               #if compoField == "oceanicCrust": sys.exit(0)
 
                initTFp.write(str(xmeters)+" "+str(ymeters)+" "+str(TAtYElev)+"\n")
                
