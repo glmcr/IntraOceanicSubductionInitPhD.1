@@ -152,13 +152,10 @@ midXPoint= 750e3
 MTZFloor= topLowMantleCeil= 30e3
 MTZCeil= AAUMFloor= 290e3
 
-yOLithMtlFloor=670e3
+oLithMtlFloor=670e3
 oCrustFloor=692e3
 oCrustThickness= nbYPtsF - oCrustFloor
-yOLithMtlThickness= oCrustFloor-yOLithMtlFloor
-
-#--- old ocean lith. thickness = 2*young ocea lith thickness
-oOLithMtlFloor= yOLithMtlFloor - (nbYPtsF-yOLithMtlFloor)
+oLithMtlThickness= oCrustFloor-oLithMtlFloor
 
 #wzXLen= 10e3
 #wzYDepth= nbXPtsF-oLithFloor
@@ -203,53 +200,65 @@ composGeomDict= {
                 [midXPoint-oCrustThickness,oCrustFloor],
                 [midXPoint,oCrustFloor] ],
               [
-                #--- No need for the factor 2 [midXPoint+oLithMtlThickness-2*oCrustThickness,nbYPtsF],
-                [midXPoint+yOLithMtlThickness-oCrustThickness,nbYPtsF],
-                [midXPoint+yOLithMtlThickness,oCrustFloor],
-                [midXPoint+yOLithMtlThickness,nbYPtsF]
+                [midXPoint+oLithMtlThickness-2*oCrustThickness,nbYPtsF],
+                [midXPoint+oLithMtlThickness,oCrustFloor],
+                [midXPoint+oLithMtlThickness,nbYPtsF]
               ],
               [
-                [midXPoint+yOLithMtlThickness,oCrustFloor],
-                [midXPoint+yOLithMtlThickness,nbYPtsF],
+                [midXPoint+oLithMtlThickness,oCrustFloor],
+                [midXPoint+oLithMtlThickness,nbYPtsF],
                 [nbXPtsF,nbYPtsF],
                 [nbXPtsF,oCrustFloor]
               ]  
             ]
     },
-   "oldOceanicLithMantle":  {
+   "oceanicLithMantle":  {
         "col": 3,
-        "TCeil2Floor": [[oCrustFloor,oCrustFloorT], [oOLithMtlFloor, oLithMtlFloorT ]],
+        "TCeil2Floor": [[oCrustFloor,oCrustFloorT], [oLithMtlFloor, oLithMtlFloorT ]],
         "polygons":
             [
                 [
-                  [0.0,oOLithMtlFloor],
+                  [0.0,oLithMtlFloor],
                   [0.0,oCrustFloor],
                   [midXPoint,oCrustFloor],
-                  [midXPoint,oOLithMtlFloor] ],
+                  [midXPoint,oLithMtlFloor] ],
+                ### WZ space
+                #[
+                #  [midXPoint,oLithMtlFloor],
+                #  [midXPoint,oCrustFloor],
+                #  [midXPoint+oLithMtlThickness,oLithMtlFloor]
+                #],
+                ##
+                #[
+                #  [midXPoint,oCrustFloor],
+                #  [midXPoint+oLithMtlThickness,oLithMtlFloor],
+                #  [midXPoint+2*oLithMtlThickness,oLithMtlFloor]
+                #],
+                ### WZ space
                 [
-                  [midXPoint,yOLithMtlFloor],
-                  [midXPoint,oCrustFloor],
-                  [midXPoint+yOLithMtlThickness,yOLithMtlFloor]
+                  [midXPoint+oLithMtlThickness,oCrustFloor],
+                  [midXPoint+2*oLithMtlThickness,oCrustFloor],
+                  [midXPoint+2*oLithMtlThickness,oLithMtlFloor]
                 ],
                 [
-                  [midXPoint,oOLithMtlFloor],
-                  [midXPoint,yOLithMtlFloor],
-                  [midXPoint+yOLithMtlThickness,yOLithMtlFloor],
-                  [midXPoint+yOLithMtlThickness,oOLithMtlFloor]
+                  [midXPoint+2*oLithMtlThickness,oLithMtlFloor],
+                  [midXPoint+2*oLithMtlThickness,oCrustFloor],
+                  [nbXPtsF,oCrustFloor],
+                  [nbXPtsF,oLithMtlFloor]
                 ]
             ]
     },
     "asthenosphere": {
         "col": 4,
-        "TCeil2Floor": [[yOLithMtlFloor, AAUMCeilT], [AAUMFloor, AAUMFloorT]],
+        "TCeil2Floor": [[oLithMtlFloor, AAUMCeilT], [AAUMFloor, AAUMFloorT]],
         "polygons":
             [
-                [ [0.0,AAUMFloor], [0.0,yOLithMtlFloor], [nbXPtsF,yOLithMtlFloor], [nbXPtsF,AAUMFloor] ]
+                [ [0.0,AAUMFloor], [0.0,oLithMtlFloor], [nbXPtsF,oLithMtlFloor], [nbXPtsF,AAUMFloor] ]
             ] 
     },
     "weakZone": {
         "col": 5,
-        "TCeil2Floor": [[nbYPtsF, surfT], [yOLithMtlFloor,oLithMtlFloorT]],
+        "TCeil2Floor": [[nbYPtsF, surfT], [oLithMtlFloor,oLithMtlFloorT]],
         "polygons":
             [
               #--- begin WZ part in oceanic crust: a central block between 2 triangles 
@@ -258,33 +267,54 @@ composGeomDict= {
                 [midXPoint,nbYPtsF],
                 [midXPoint,oCrustFloor]
               ],
+                
               [
                 [midXPoint,oCrustFloor],
                 [midXPoint,nbYPtsF],
-                #[midXPoint+yOLithMtlThickness-2*oCrustThickness,nbYPtsF],
-                [midXPoint+yOLithMtlThickness-oCrustThickness,nbYPtsF],
-                #[midXPoint+yOLithMtlThickness-2*oCrustThickness,oCrustFloor]
-                [midXPoint+yOLithMtlThickness-oCrustThickness,oCrustFloor]
+                [midXPoint+oLithMtlThickness-oCrustThickness,nbYPtsF],
+                [midXPoint+oLithMtlThickness-oCrustThickness,oCrustFloor]
               ],
               [         
-                #[midXPoint+yOLithMtlThickness-2*oCrustThickness,nbYPtsF],
-                [midXPoint+yOLithMtlThickness-oCrustThickness,nbYPtsF],  
-                #[midXPoint+yOLithMtlThickness-2*oCrustThickness,oCrustFloor],
-                [midXPoint+yOLithMtlThickness-oCrustThickness,oCrustFloor],
-                [midXPoint+yOLithMtlThickness,oCrustFloor]
+                [midXPoint+oLithMtlThickness-oCrustThickness,nbYPtsF],  
+                [midXPoint+oLithMtlThickness-oCrustThickness,oCrustFloor],
+                [midXPoint+oLithMtlThickness,oCrustFloor]
               ],
               #--- End WZ part in oceanic crust
-              #--- begin WZ part in oceanic lithospheric mantle: 2 triangles
-              [
+              #--- lithospheric mantle part:
+              [                #[
+                  [midXPoint,oLithMtlFloor],
+                  [midXPoint,oCrustFloor],
+                  [midXPoint+oLithMtlThickness,oLithMtlFloor]
+              ],
+              [  
                 [midXPoint,oCrustFloor],
-                [midXPoint+yOLithMtlThickness,oCrustFloor],
-                [midXPoint+yOLithMtlThickness,yOLithMtlFloor]
+                [midXPoint+oLithMtlThickness,oCrustFloor],
+                [midXPoint+2*oLithMtlThickness,oLithMtlFloor]
               ],
               [
-                [midXPoint+yOLithMtlThickness,oCrustFloor],
-                [midXPoint+yOLithMtlThickness,yOLithMtlFloor],
-                [midXPoint+2*yOLithMtlThickness,yOLithMtlFloor]
-              ]
+                  [midXPoint+2*oLithMtlThickness-3000,oLithMtlFloor+3000],
+                  [midXPoint+2*oLithMtlThickness-3000,oLithMtlFloor],
+                  [midXPoint+2*oLithMtlThickness,oLithMtlFloor]
+              ],
+              # New non-rectangular triangle added taken from
+              # the C4 OLM on the left HS. LHS OLM do not have
+              # triangles at the junction of the WZ here
+              [
+                [midXPoint,oCrustFloor],
+                [midXPoint+oLithMtlThickness,oLithMtlFloor],
+                [midXPoint+2*oLithMtlThickness,oLithMtlFloor]
+              ],                  
+              ##--- begin WZ part in oceanic lithospheric mantle: 2 triangles
+              #[
+              #  [midXPoint,oCrustFloor],
+              #  [midXPoint+oLithMtlThickness,oCrustFloor],
+              #  [midXPoint+oLithMtlThickness,oLithMtlFloor]
+              #],
+              #[
+              #  [midXPoint+oLithMtlThickness,oCrustFloor],
+              #  [midXPoint+oLithMtlThickness,oLithMtlFloor],
+              #  [midXPoint+2*oLithMtlThickness,oLithMtlFloor]
+              #]
             ]
     },
     "MTZ": {
@@ -302,25 +332,7 @@ composGeomDict= {
             [
               [ [0.0,0.0], [0.0,topLowMantleCeil], [nbXPtsF,topLowMantleCeil], [nbXPtsF,0.0] ]
             ] 
-    },
-    "yngOceanicLithMantle":  {
-        "col": 8,
-        "TCeil2Floor": [[oCrustFloor,oCrustFloorT], [yOLithMtlFloor, oLithMtlFloorT ]],
-        "polygons":
-            [
-              [
-                [midXPoint+yOLithMtlThickness,oCrustFloor],
-                [midXPoint+2*yOLithMtlThickness,oCrustFloor],
-                [midXPoint+2*yOLithMtlThickness,yOLithMtlFloor]
-              ],
-              [
-                [midXPoint+2*yOLithMtlThickness,yOLithMtlFloor],
-                [midXPoint+2*yOLithMtlThickness,oCrustFloor],
-                [nbXPtsF,oCrustFloor],
-                [nbXPtsF,yOLithMtlFloor]
-              ]
-            ]
-    }
+    },  
 }
 
 #print(str(composGeomDict["SOLM"]))
@@ -345,14 +357,22 @@ for y in range(0,int(nbYPts)):
       found= False 
       compoCounter= 2
       composLineList= [str(xmeters), str(ymeters)] +  composTemplate
-      
-      for compoField in composGeomDict:
+      print("composLineList="+str(composLineList))
+      #sys.exit(0)
+
+      #--- Need to begin with the weak zone to be sure to
+      #   to get what we want.
+      for compoField in sorted(composGeomDict, reverse=True): #composGeomDict:
 
          if found: break
+
+         compoColId= composGeomDict[compoField]["col"]
           
          polygonPointsList= composGeomDict[compoField]["polygons"]
 
          print("\ncompoField="+compoField)
+         print("compoColId="+str(compoColId))
+         #sys.exit(0)
          #print("polygonPointsList="+str(polygonPointsList))
          
          for polygonPoints in polygonPointsList:
@@ -376,8 +396,9 @@ for y in range(0,int(nbYPts)):
             if pointInside:
 
                #composLineList[compoCounter] = "1.0"
+               #composLineList[compoColId]= "1.0"
                composLineList[compoCounter] = str(1.0*composGeomDict[compoField]["col"]-1.0) #"1.0"
-               
+                
                #print("\ncompoField="+compoField)
                print("pointInside: x,y in [km]="+str(x)+","+str(y))
                print("polygonPoints"+str(polygonPoints))
