@@ -397,7 +397,7 @@ for y in range(0,int(nbYPts)):
 
                #composLineList[compoCounter] = "1.0"
                #composLineList[compoColId]= "1.0"
-               composLineList[compoCounter] = str(1.0*composGeomDict[compoField]["col"]-1.0) #"1.0"
+               composLineList[compoColId] = str(1.0*composGeomDict[compoField]["col"]-1.0) #"1.0"
                 
                #print("\ncompoField="+compoField)
                print("pointInside: x,y in [km]="+str(x)+","+str(y))
