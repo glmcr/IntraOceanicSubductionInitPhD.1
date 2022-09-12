@@ -148,7 +148,7 @@ subsection Postprocess
 end
 
 subsection Compositional fields
-  set Number of fields = 6
+  set Number of fields = 5
   set Names of fields = oceanicCrust, oceanicLithMantle, asthenosphere, MTZ, topOfLowerMantle #, weakZone        
 end
 
