@@ -5,7 +5,7 @@ set End time                               = 150e6
 set Use years in output instead of seconds = true
 set Nonlinear solver scheme                = single Advection, iterated Stokes
 #set Nonlinear solver scheme                = iterated Advection and Stokes
-set Nonlinear solver tolerance             = 1e-7
+set Nonlinear solver tolerance             = 2e-7
 set Max nonlinear iterations               = 100 #40 #25 #40 #70
 set CFL number                             = 0.45
 set Output directory = /home/gimer47/projects/def-cagui22/gimer47/Crunch/Aspect/ISI-1/aSymOceanicLith
@@ -92,22 +92,22 @@ subsection Boundary velocity model
   set Prescribed velocity boundary indicators = left x: function, right x: function #, bottom y: function
   subsection Function
     set Variable names = x, y
-    set Function constants  = velcmyLHS= 1.5, velcmyRHS= 1.5, cm2m=0.01, year=1, bottomDepth=700e3, xdim= 1500e3, switchDepthRHS=50e3, switchDepthLHS=50e3
+    set Function constants  = velcmyLHS= 0.0, velcmyRHS= 1.5, cm2m=0.01, year=1, bottomDepth=700e3, xdim= 1500e3, switchDepthRHS=50e3, switchDepthLHS=50e3
     set Function expression = if ( x >= xdim/2, \
                                      if (y > (bottomDepth-switchDepthRHS), \
                                           velcmyRHS*(cm2m/year), \
                                           if ( y >= (bottomDepth-switchDepthRHS-10e3), \
                                              velcmyRHS*(cm2m/year)*((y - (bottomDepth-switchDepthRHS-10e3))*70.0)/bottomDepth, \
-                                             if ( y >= (bottomDepth-switchDepthRHS-10e3), \
-                                                -0.01*velcmyRHS*(cm2m/year)*((y - (bottomDepth-switchDepthRHS-10e3))*70.0)/bottomDepth, \
-                                                -0.01*velcmyRHS*(cm2m/year) ) ) ), \
+                                             if ( y >= (bottomDepth-switchDepthRHS-15e3), \
+                                                0.01*velcmyRHS*(cm2m/year)*((y - (bottomDepth-switchDepthRHS-10e3))*70.0)/bottomDepth, \
+                                                -5e-05*velcmyRHS*(cm2m/year) ) ) ), \
                                      if (y > (bottomDepth-switchDepthLHS), \
-                                          -0.0*(cm2m/year), \
+                                          velcmyLHS*(cm2m/year), \
                                           if ( y >= (bottomDepth-switchDepthLHS-10e3), \
-                                             -0.0*(cm2m/year)*((y - (bottomDepth-switchDepthLHS-10e3))*70.0)/bottomDepth, \
-                                             if ( y >= (bottomDepth-switchDepthLHS-20e3), \
+                                             velcmyLHS*(cm2m/year)*((y - (bottomDepth-switchDepthLHS-10e3))*70.0)/bottomDepth, \
+                                             if ( y >= (bottomDepth-switchDepthLHS-15e3), \
                                                 0.01*velcmyLHS*(cm2m/year)*((y - (bottomDepth-switchDepthLHS-10e3))*70.0)/bottomDepth, \
-                                                0.01*velcmyLHS*(cm2m/year) ) ) ) \
+                                                -5e-05*velcmyLHS*(cm2m/year) ) ) ) \
                                  ); 0.0  # 0.0 needed here even if we have free slip for the bottom.
   end
 end
