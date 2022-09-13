@@ -92,22 +92,22 @@ end
 #  set Prescribed velocity boundary indicators = left x: function, right x: function #, bottom y: function
 #  subsection Function
 #    set Variable names = x, y
-#    set Function constants  = velcmyLHS= 0.0, velcmyRHS= 1.5, cm2m=0.01, year=1, bottomDepth=700e3, xdim= 1500e3, switchDepthRHS=50e3, switchDepthLHS=50e3
+#    set Function constants  = velcmyLHS= 0.0, velcmyRHS= 1.5, cm2m=0.01, year=1, bottomDepth=700e3, xdim= 1500e3, switchDepthRHS=70e3, switchDepthLHS=70e3
 #    set Function expression = if ( x >= xdim/2, \
 #                                     if (y > (bottomDepth-switchDepthRHS), \
 #                                          velcmyRHS*(cm2m/year), \
-#                                          if ( y >= (bottomDepth-switchDepthRHS-10e3), \
-#                                             velcmyRHS*(cm2m/year)*((y - (bottomDepth-switchDepthRHS-10e3))*70.0)/bottomDepth, \
-#                                             if ( y >= (bottomDepth-switchDepthRHS-15e3), \
-#                                                0.01*velcmyRHS*(cm2m/year)*((y - (bottomDepth-switchDepthRHS-10e3))*70.0)/bottomDepth, \
-#                                                -5e-05*velcmyRHS*(cm2m/year) ) ) ), \
+#                                          if ( y >= (bottomDepth-switchDepthRHS-20e3), \
+#                                             velcmyRHS*(cm2m/year)*((y - (bottomDepth-switchDepthRHS-20e3))*35.0)/bottomDepth, \
+#                                             if ( y >= (bottomDepth-switchDepthRHS-30e3), \
+#                                                0.01*velcmyRHS*(cm2m/year)*((y - (bottomDepth-switchDepthRHS-20e3))*35.0)/bottomDepth, \
+#                                                -5e-03*velcmyRHS*(cm2m/year) ) ) ), \
 #                                     if (y > (bottomDepth-switchDepthLHS), \
 #                                          velcmyLHS*(cm2m/year), \
-#                                          if ( y >= (bottomDepth-switchDepthLHS-10e3), \
-#                                             velcmyLHS*(cm2m/year)*((y - (bottomDepth-switchDepthLHS-10e3))*70.0)/bottomDepth, \
-#                                             if ( y >= (bottomDepth-switchDepthLHS-15e3), \
-#                                                0.01*velcmyLHS*(cm2m/year)*((y - (bottomDepth-switchDepthLHS-10e3))*70.0)/bottomDepth, \
-#                                                -5e-05*velcmyLHS*(cm2m/year) ) ) ) \
+#                                          if ( y >= (bottomDepth-switchDepthLHS-20e3), \
+#                                             velcmyLHS*(cm2m/year)*((y - (bottomDepth-switchDepthLHS-20e3))*35.0)/bottomDepth, \
+#                                             if ( y >= (bottomDepth-switchDepthLHS-30e3), \
+#                                                0.01*velcmyLHS*(cm2m/year)*((y - (bottomDepth-switchDepthLHS-20e3))*35.0)/bottomDepth, \
+#                                                -5e-03*velcmyLHS*(cm2m/year) ) ) ) \
 #                                 ); 0.0  # 0.0 needed here even if we have free slip for the bottom.
 #  end
 #end
