@@ -25,7 +25,7 @@
 
    //---
    {"model": "oceanic plate", "name":"thermal perturbation", "coordinates":[[750e3,-1e3],[752e3,-1e3],[752e3,1e3],[750e3,1e3]],
-             "temperature models":[ {"model":"linear", "min depth": 7.5e3,"max depth":10.5e3, "top temperature": 1300 ,"bottom temperature": 1300 }],
+             "temperature models":[ {"model":"linear", "min depth": 7.5e3,"max depth":10.5e3, "top temperature": 950,"bottom temperature": 970 }],
              "composition models":[ {"model":"uniform", "compositions":[1], "min depth":7.5e3, "max depth":10.5e3} ] }
   ]
 }
