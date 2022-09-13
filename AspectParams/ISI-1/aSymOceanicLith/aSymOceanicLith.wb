@@ -11,11 +11,11 @@
         "temperature models":[{"model":"linear", "min depth":20e3, "max depth":425e3, "top temperature": 1650, "bottom temperature":1700}],
         "composition models":[{"model":"uniform", "compositions":[2], "min depth":20e3, "max depth":425e3}]},
 
-   {"model": "oceanic plate", "name":"thick oceanic plate lith. mantle", "coordinates":[[-1e3,-1e3],[750e3,-1e3],[750e3,1e3],[1e3,1e3]],
+   {"model": "oceanic plate", "name":"thick oceanic plate lith. mantle", "coordinates":[[-1e3,-1e3],[752e3,-1e3],[752e3,1e3],[-1e3,1e3]],
         "temperature models":[ {"model":"linear", "min depth":7.5e3, "max depth":50e3, "top temperature": 850, "bottom temperature":1650 }],
         "composition models":[ {"model":"uniform", "compositions":[1], "min depth":7.5e3, "max depth":50e3}]},
 
-   {"model": "oceanic plate", "name":"thin oceanic plate lith. mantle", "coordinates":[[-1e3,-1e3],[750e3,-1e3],[750e3,1e3],[1e3,1e3]],
+   {"model": "oceanic plate", "name":"thin oceanic plate lith. mantle", "coordinates":[[750e3,-1e3],[1500e3,-1e3],[1500e3,1e3],[750e3,1e3]],
         "temperature models":[ {"model":"linear", "min depth":7.5e3, "max depth":25e3, "top temperature": 850, "bottom temperature":1650 }],
         "composition models":[ {"model":"uniform", "compositions":[1], "min depth":7.5e3, "max depth":25e3}]},
 
