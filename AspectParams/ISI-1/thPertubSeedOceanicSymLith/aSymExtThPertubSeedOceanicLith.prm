@@ -8,7 +8,7 @@ set Nonlinear solver scheme                = single Advection, iterated Stokes
 set Nonlinear solver tolerance             = 2e-7
 set Max nonlinear iterations               = 100 #40 #25 #40 #70
 set CFL number                             = 0.45
-set Output directory = /home/gimer47/projects/def-cagui22/gimer47/Crunch/Aspect/ISI-1/thPertubSeedOceanicSymLith
+set Output directory = /home/gimer47/projects/def-cagui22/gimer47/Crunch/Aspect/ISI-1/aSymExtThPertubSeedOceanicLith
 set Timing output frequency                = 1
 set Pressure normalization                 = no
 set Maximum time step                      = 1e3 #1e4
@@ -92,7 +92,7 @@ subsection Boundary velocity model
   set Prescribed velocity boundary indicators = left x: function, right x: function #, bottom y: function
   subsection Function
     set Variable names = x, y
-    set Function constants  = velcmyLHS= -1.5, velcmyRHS= 1.5, cm2m=0.01, year=1, bottomDepth=700e3, xdim= 1500e3, switchDepthRHS=50e3, switchDepthLHS=50e3
+    set Function constants  = velcmyLHS= 0.0, velcmyRHS= 1.5, cm2m=0.01, year=1, bottomDepth=700e3, xdim= 1500e3, switchDepthRHS=50e3, switchDepthLHS=50e3
     set Function expression = if ( x >= xdim/2, \
                                      if (y > (bottomDepth-switchDepthRHS), \
                                           velcmyRHS*(cm2m/year), \
