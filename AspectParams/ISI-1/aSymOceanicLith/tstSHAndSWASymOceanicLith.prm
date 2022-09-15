@@ -8,11 +8,12 @@ set Nonlinear solver scheme                = single Advection, iterated Stokes
 set Nonlinear solver tolerance             = 2e-7
 set Max nonlinear iterations               = 100 #40 #25 #40 #70
 set CFL number                             = 0.45
-set Output directory = /home/gimer47/projects/def-cagui22/gimer47/Crunch/Aspect/ISI-1/aSymOceanicLith
+set Output directory = /home/gimer47/projects/def-cagui22/gimer47/Crunch/Aspect/ISI-1/tstSHAndSWASymOceanicLith
 set Timing output frequency                = 1
 set Pressure normalization                 = no
 set Maximum time step                      = 1e3 #1e4
 set World builder file = /home/gimer47/Dev/AspectParamsFiles/ISI-1/aSymOceanicLith/aSymOceanicLith.wb
+set Adiabatic surface temperature = 1573
 
 subsection Discretization
   set Use discontinuous composition discretization= true
@@ -21,8 +22,8 @@ subsection Discretization
   subsection Stabilization parameters
     set Use limiter for discontinuous composition solution= true
     set Use limiter for discontinuous temperature solution= true
-    set Global composition maximum= 1, 1, 1, 1, 1 #, 1
-    set Global composition minimum= 0, 0, 0, 0, 0 #, 0
+    set Global composition maximum= 1, 1, 1, 1, 1, 1
+    set Global composition minimum= 0, 0, 0, 0, 0, 0
 
     #set Use artificial viscosity smoothing = true
     set Global temperature minimum= 273
@@ -149,16 +150,16 @@ subsection Postprocess
 end
 
 subsection Compositional fields
-  set Number of fields = 5
-  set Names of fields = oceanicCrust, oceanicLithMantle, asthenosphere, MTZ, topOfLowerMantle #, weakZone        
+  set Number of fields = 6
+  set Names of fields = oceanicCrust, oceanicLithMantle, asthenosphere, MTZ, topOfLowerMantle, total_strain #, weakZone        
 end
 
 subsection Material model
 
-  set Material averaging= harmonic average
-  set Model name = visco plastic
+ set Material averaging= harmonic average
+ set Model name = visco plastic
  
-  subsection Visco Plastic
+ subsection Visco Plastic
 
   # Reference temperature and viscosity
   set Reference temperature = 293 #1600 #273
@@ -170,6 +171,12 @@ subsection Material model
   set Minimum strain rate = 1.e-20
   set Reference strain rate = 1.e-16
 
+  # --- 
+  set Strain healing mechanism = temperature dependent
+ 
+  set Strain weakening mechanism = total strain
+  #plastic weakening with plastic strain and viscous weakening with viscous strain
+
   # heat capacities, densities, thermal exp. taken from Maffione et al., 2015 but
   # Serp. WZ Maffione et al., 2015 (except for larger density of 2900 kg/3 as in Porkolab et al., 2021)
   # Thermal diffusivities adjusted for giving the following values for thermal conductivities
@@ -177,33 +184,39 @@ subsection Material model
   # Testing a low density constrast of 50 kg/m3 for the asth. and oceanic lith mantle.
   # Mantle layers densities taken from Stixrude et Lithgow-Bertelloni, GJI, 2011
   # Using a low th. cond. for OLM to try to delay its heating in the asth.  
-  #        - th. conduct.      4.47         1.5         2.7      4.47     4.47     4.47            
-  #                           bkg(asth.) basGabCrust  ocLithMtl  asth.    MTZ      topOfLowerMantle
-  set Thermal diffusivities = 1.25e-6,   4.762e-07,   7.63e-07,  1.25e-6, 1.25e-6, 1.25e-6
-  set Heat capacities       =   1050.,       1050.,      1050.,    1050.,   1050.,   1050
-  set Densities             =   3370.,       3000.,      3370.,    3370.,   3600.,   3700.
-  set Thermal expansivities =    3e-5,      2.8e-5,      3e-5 ,     3e-5,    3e-5,    3e-5
+  #        - th. conduct.      4.47         1.5         2.7      4.47     4.47     4.47             
+  #                           bkg(asth.) basGabCrust  ocLithMtl  asth.    MTZ      topOfLowerMantle total_strain
+  set Thermal diffusivities = 1.25e-6,   4.762e-07,   7.63e-07,  1.25e-6, 1.25e-6, 1.25e-6,          1.0
+  set Heat capacities       =   1050.,       1050.,      1050.,    1050.,   1050.,   1050 ,          1.0
+  set Densities             =   3370.,       3000.,      3370.,    3370.,   3600.,   3700.,          1.0
+  set Thermal expansivities =    3e-5,      2.8e-5,      3e-5 ,     3e-5,    3e-5,    3e-5,          1.0
 
   # Harmonic viscosity averaging
   set Viscosity averaging scheme = harmonic
 
-  set Viscous flow law = dislocation
+  #set Viscous flow law = dislocation
+  set Viscous flow law = composite
 
   # Using dry olivine for both asthenosphere and oceanic lith. mantle 
   # with weakening factors as in Butler & Beaumont, 2017
   # Experimenting with low activation volumes for the asth, MTZ and topOfLowMtl
   # in order to reduce theire viscosities to ~1e21, ~1e22  
-  #                                               bkg(asth)  basGabCrust  oLithMtl   asth.     MTZ       topOfLowMtl
-  set Prefactors for dislocation creep          = 2.42e-16,  5.05e-28,    2.42e-16,  2.42e-16, 2.42e-16, 2.42e-16
-  set Stress exponents for dislocation creep    =      3.5,       4.7,         3.5,      3.5,       3.5,      3.5      
-  set Activation energies for dislocation creep =   540.e3,    485.e3,      540.e3,   540.e3,    540.e3,   540.e3
-  set Activation volumes for dislocation creep  =   7.5e-6,        0.,      20.e-6,   7.5e-6,    7.5e-6,   10.e-6 
+  #                                               bkg(asth)  basGabCrust  oLithMtl   asth.     MTZ       topOfLowMtl total_strain
+  set Prefactors for dislocation creep          = 2.42e-16,  5.05e-28,    2.42e-16,  2.42e-16, 2.42e-16, 2.42e-16,    1.0e-50
+  set Stress exponents for dislocation creep    =      3.5,       4.7,         3.5,      3.5,       3.5,      3.5,        1.0
+  set Activation energies for dislocation creep =   540.e3,    485.e3,      540.e3,   540.e3,    540.e3,   540.e3,        0.0
+  set Activation volumes for dislocation creep  =   20.e-6,        0.,      20.e-6,   20.e-6,    20.e-6,   20.e-6,        0.0
 
   # Plasticity parameters
-  set Angles of internal friction =   15.,    15.,   15.,   15. , 15.  , 15.
-  set Cohesions                   = 20.e6, 10.e6 , 20.e6, 20.e6 , 20.e6, 20.e6
+  set Angles of internal friction =   15.,    15.,   15.,   15. , 15.  , 15.  , 0.
+  set Cohesions                   = 20.e6, 10.e6 , 20.e6, 20.e6 , 20.e6, 20.e6, 1.e6
  
- end
+  # diffusion creep section. Same as for disc. creep but lower Activation volumes for the asth. MTZ and TOLM
+  set Prefactors for diffusion creep          = 2.42e-16,  5.05e-28,    2.42e-16,  2.42e-16, 2.42e-16, 2.42e-16,  1.0e-50
+  set Activation energies for diffusion creep =   540.e3,    485.e3,      540.e3,   540.e3,    540.e3,   540.e3,      0.0 
+  set Activation volumes for dislocation creep=   7.5e-6,        0.,      20.e-6,   7.5e-6,    7.5e-6,   10.e-6,      0.0
+
+ end #--- visco plastic
 end
 
 subsection Heating model
