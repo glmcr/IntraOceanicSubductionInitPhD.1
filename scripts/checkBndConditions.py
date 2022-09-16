@@ -8,8 +8,12 @@ cm2m=0.01
 year=1
 bottomDepth=700e3
 xdim= 1500e3
-switchDepthRHS=140e3
-switchDepthLHS=140e3
+
+switchDepthRHS=50e3
+switchDepthLHS=50e3
+
+#switchDepthRHS=140e3
+#switchDepthLHS=140e3
 
 #maxDepth= 700e3
 nbCellsY= 700
