@@ -128,7 +128,7 @@ initCompoFieldsDict= relevantSubsectionsDict["subsection"+sep+"Compositional"+se
 initCompoFieldsList= initCompoFieldsDict["set"+sep+"Names"+sep+ "of"+sep+"fields"+sep]
 
 initCompoFp.write("# POINTS: "+nbXPts+" "+nbYPts+"\n")
-initCompoFp.write("# Columns: x y "+ " ".join(initCompoFieldsList)+"\n")
+initCompoFp.write("# Columns: x y "+ " ".join(initCompoFieldsList)+" SWDummy1 SWDummy2\n")
 
 #--- lthos-asthenos bnd: 120km
 #LABDepth= 90.0 # yDim - 610.0
@@ -225,9 +225,11 @@ composGeomDict= {
         "col": 4,
         "TCeil2Floor": [ [CLCCeil, CLCCeilT], [CLCFloor, CLCFloorT]],
         "polygons": 
-            [ # --- Reoved CLC triangle for creating a small CLC weak seed which slightly protrudes in the SOLM  
-              #[ [contVsOcean+SCLMThkn,CLCFloor],[contVsOcean+SCLMThkn,CLCCeil],[contVsOcean+SCLMThkn+CLCThkn,CLCCeil] ],
-              [ [0.0,CLCFloor],[0.0,CLCCeil],[contVsOcean+SCLMThkn+CLCThkn,CLCCeil],[contVsOcean+SCLMThkn+CLCThkn,CLCFloor] ] ]  
+            [ # ---  
+              [ [contVsOcean+SCLMThkn,CLCFloor],[contVsOcean+SCLMThkn,CLCCeil],[contVsOcean+SCLMThkn+CLCThkn,CLCCeil] ],
+              [ [0.0,CLCFloor],[0.0,CLCCeil],[contVsOcean+SCLMThkn,CLCCeil],[contVsOcean+SCLMThkn,CLCFloor] ] ]
+              # --- For having a small CLC WS protruding in the SOLM
+              #[ [0.0,CLCFloor],[0.0,CLCCeil],[contVsOcean+SCLMThkn+CLCThkn,CLCCeil],[contVsOcean+SCLMThkn+CLCThkn,CLCFloor] ] ]  
     },
     "contUppCrust":{
         "col": 5,
@@ -327,7 +329,9 @@ assert tuple(composGeomDict.keys()) == tuple(initCompoFieldsList), \
     "Inconsistency between initCompoFieldsList and composGeomDict.keys():" + \
     " initCompoFieldsList="+str(initCompoFieldsList)+", composGeomDict.keys()="+str(tuple(composGeomDict.keys()))
 
-composTemplate= ["0.0"]*len(initCompoFieldsList)
+# --- Adding two dummy fields (0.0 compos everywhere) to
+#     possibly be used for strain weakening stuff.
+composTemplate= ["0.0"]*(len(initCompoFieldsList)+2)
 
 for y in range(0,int(nbYPts)):
    for x in range(0,int(nbXPts)):
