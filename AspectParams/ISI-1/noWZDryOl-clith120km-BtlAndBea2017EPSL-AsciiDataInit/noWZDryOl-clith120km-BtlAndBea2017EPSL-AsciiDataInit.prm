@@ -177,25 +177,39 @@ subsection Material model
   # Harmonic viscosity averaging
   set Viscosity averaging scheme = harmonic
 
-  set Viscous flow law = dislocation
+  #set Viscous flow law = dislocation
+  set Viscous flow law = composite
+
+  # dislocation creep section.
+  # Maffione et al., 2015: https://doi.org/10.1002/2015GC005746 for mantle materials.
+  # (except for the Activation volumes which are 15.e-6 instead of 20.e-6
+  # contLowCrust, contUppCrust, ocCrust and ocSeds from Butler & Beaumont, EPSL 2017 
   #                                              bkg(AAUM) AAUM      SCLM      contLowCrust contUppCrust SOLM      ocCrust   ocSeds
   set Prefactors for dislocation creep         = 2.42e-16, 2.42e-16, 2.42e-16, 1.156e-25,   1.71e-27,    2.42e-16, 5.78e-25, 8.57e-28 
   set Stress exponents for dislocation creep   =      3.5,      3.5,      3.5,       4.7,        4.0,         3.5,      4.7,      4.0
   set Activation energies for dislocation creep=   540.e3,   540.e3,   540.e3,    485.e3,     223.e3,      540.e3,   485.e3,   223.e3
-  set Activation volumes for dislocation creep =   20.e-6,   20.e-6,   20.e-6,       0.0,        0.0,      20.e-6,      0.0,      0.0
+  set Activation volumes for dislocation creep =   15.e-6,   15.e-6,   15.e-6,       0.0,        0.0,      15.e-6,      0.0,      0.0
 
   # Plasticity parameters
-  # 
+  # Maffione et al., 2015: https://doi.org/10.1002/2015GC005746 for mantle materials.
+  # Butler & Beaumont, EPSL 2017 for the rest.
   set Angles of internal friction = 15.  ,   15.,   15.,   20.,  10.,    15.,   15.,  10.
   set Cohesions                   = 20.e6, 20.e6, 20.e6, 20.e6, 5.e6,  20.e6, 10.e6, 5.e6
  
+  # diffusion creep section:
+  # mantle materials and ocCrust: Taken from table B2 of Glerum et al., https://doi.org/10.1002/2015GC005746
+  # Others are the same as for dislocation creep.
+  set Prefactors for diffusion creep         = 5.92e-11, 5.92e-11, 5.92e-11, 1.156e-25, 1.71e-27, 5.92e-11, 1.92e-11, 8.57e-28
+  set Activation energies for diffusion creep=   335.e3,   335.e3,   335.e3,    485.e3,   223.e3,   335.e3,   335.e3,   223.e3
+  set Activation volumes for diffusion creep =    4.e-6,    4.e-6,    4.e-6,       0.0,      0.0,    4.e-6,    4.e-6,      0.0
+
  end
 end
 
 subsection Heating model
   set List of model names = adiabatic heating, shear heating, compositional heating
   subsection Compositional heating
-    set Compositional heating values = 0., 0., 0., 0., 1.5e-6, 0., 0., 1.5e-6,
+    set Compositional heating values = 0., 0., 0., 0., 1.5e-6, 0., 0., 1.5e-6
   end
 end
 
