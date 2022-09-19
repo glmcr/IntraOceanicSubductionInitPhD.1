@@ -9,7 +9,7 @@ import numpy as np
 from vtk.util.numpy_support import vtk_to_numpy #thats what you need 
 
 # 1469 km from the left side
-iPosExtract= 765000
+iPosExtract= 1465000 #765000
 
 vtuFilePath= sys.argv[1]
 csvVrtProfFilePath= sys.argv[2]
