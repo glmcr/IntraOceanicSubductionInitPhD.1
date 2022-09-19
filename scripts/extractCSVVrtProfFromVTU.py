@@ -9,7 +9,7 @@ import numpy as np
 from vtk.util.numpy_support import vtk_to_numpy #thats what you need 
 
 # 1469 km from the left side
-iPosExtract= 1450000
+iPosExtract= 1465000 #765000
 
 vtuFilePath= sys.argv[1]
 csvVrtProfFilePath= sys.argv[2]
@@ -58,7 +58,8 @@ csvFp.write("#elevation from bottom, strtDict, viscDict\n")
 
 for elev in sorted( tuple(viscDict.keys())):
 
-   csvFp.write(str(elev)+","+str(strtDict[elev])+","+str(viscDict[elev])+"\n")
+   #csvFp.write(str(elev)+","+str(strtDict[elev])+","+str(viscDict[elev])+"\n")
+   csvFp.write(str(elev)+","+str(math.log10(strtDict[elev]))+","+str(math.log10(viscDict[elev]))+"\n")
    #csvFp.write(str(elev)+","+str(viscDict[elev])+"\n")
 
 csvFp.close()

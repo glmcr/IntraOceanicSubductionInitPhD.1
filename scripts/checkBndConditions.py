@@ -1,9 +1,15 @@
 #!/usr/bin/python3
 
 import sys
+import math
 
-velcmyLHS= 1.0
-velcmyRHS= -1.0
+# convergence
+velcmyLHS= 3.0
+velcmyRHS= -3.0
+
+# extension
+#velcmyLHS= -1.0
+#velcmyRHS= 1.0
 
 cm2m=0.01
 year=1
@@ -38,7 +44,7 @@ for cellY in range(700):
         rhsXVelo= velcmyRHS*(cm2m/year)*((y - (bottomDepth-switchDepthRHS-20e3))*35.0)/bottomDepth
 
     elif ( y >= (bottomDepth-switchDepthRHS-40e3)):
-        rhsXVelo= 0.05*velcmyLHS*(cm2m/year)*(((bottomDepth-switchDepthRHS-20e3)-y)*35.0)/bottomDepth
+        rhsXVelo= -0.05*velcmyLHS*(cm2m/year)*(((bottomDepth-switchDepthRHS-20e3)-y)*35.0)/bottomDepth
         
     else:
         #rhsXVelo= -5e-3*velcmyRHS*(cm2m/year)
@@ -51,7 +57,6 @@ for cellY in range(700):
         lhsXVelo= velcmyLHS*(cm2m/year)*((y - (bottomDepth-switchDepthLHS-20e3))*35.0)/bottomDepth
 
     elif ( y >= (bottomDepth-switchDepthLHS-40e3)):
-        #lhsXVelo= 0.01*velcmyLHS*(cm2m/year)*((y - (bottomDepth-switchDepthLHS-20e3))*35.0)/bottomDepth
         lhsXVelo= -0.05*velcmyLHS*(cm2m/year)*(((bottomDepth-switchDepthLHS-20e3)-y)*35.0)/bottomDepth
 
     else:     
