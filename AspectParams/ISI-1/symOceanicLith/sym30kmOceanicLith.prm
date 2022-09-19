@@ -198,7 +198,8 @@ subsection Material model
   set Viscous flow law = composite
 
   # Using Cizkova et al. 2012, http://dx.doi.org/10.1016/j.pepi.2012.02.010
-  # parameters (wet olv it seems) for mantellic materials here.
+  # parameters (wet olv it seems) for mantle materials here.
+  # (olmWS prefact. = prefact*10)
   #                                               bkg(asth) basGabCrust oLithMtl  asth.     olmWS     # MTZ       topOfLowMtl total_strain
   set Prefactors for dislocation creep          = 3.1e-17,  5.05e-28,   3.1e-17, 3.1e-17,  3.1e-16  #,2.42e-16, 2.42e-16,    1.0e-50
   set Stress exponents for dislocation creep    =     3.5,       4.7,       3.5,     3.5,      3.5  #,     3.5,      3.5,        1.0
@@ -209,10 +210,11 @@ subsection Material model
   set Angles of internal friction =   15.,    15.,   15.,   15. , 15.   #, 15.  , 0.
   set Cohesions                   = 20.e6, 10.e6 , 20.e6, 20.e6 , 20.e6 #, 20.e6, 1.e6
  
-  # diffusion creep section      
-  set Prefactors for diffusion creep          =   1.e-9, 5.05e-28, 1.e-9,   1.e-9, 1.e-9   #2.42e-16, 2.42e-16,  1.0e-50
-  set Activation energies for diffusion creep =  335.e3,   485.e3, 335.e3, 335.e3, 335.e3  #  540.e3   # 540.e3,   540.e3,      0.0 
-  set Activation volumes for dislocation creep=  4.8e-6,       0., 4.8e-6, 4.8e-6, 4.8e-6  #  20.e-6   #5.5e-6,   10.e-6,      0.0
+  # diffusion creep section Cizkova et al. 2012, http://dx.doi.org/10.1016/j.pepi.2012.02.010
+  # (olmWS prefact. = prefact*10)      
+  set Prefactors for diffusion creep         =   1.e-9, 5.05e-28, 1.e-9,   1.e-9, 1.e-8   # 2.42e-16, 2.42e-16,  1.0e-50
+  set Activation energies for diffusion creep=  335.e3,   485.e3, 335.e3, 335.e3, 335.e3  #  540.e3   # 540.e3,   540.e3,      0.0 
+  set Activation volumes for diffusion creep =  4.8e-6,       0., 4.8e-6, 4.8e-6, 4.8e-6  #  20.e-6   #5.5e-6,   10.e-6,      0.0
 
  end #--- visco plastic
 end

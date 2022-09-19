@@ -194,27 +194,28 @@ subsection Material model
   # Harmonic viscosity averaging
   set Viscosity averaging scheme = harmonic
 
-  set Viscous flow law = dislocation
-  #set Viscous flow law = composite
+  #set Viscous flow law = dislocation
+  set Viscous flow law = composite
 
-  # Using dry olivine for both asthenosphere and oceanic lith. mantle 
-  # with weakening factors as in Butler & Beaumont, 2017
-  # Experimenting with low activation volumes for the asth, MTZ and topOfLowMtl
-  # in order to reduce theire viscosities to ~1e21, ~1e22  
+  # Using dry olivine for both asthenosphere and oceanic lith. mantle
+  # Maffione et al., 2015: https://doi.org/10.1002/2015GC005746
+  # (except for the Activation volumes which is 15.e-6 instead of 20.e-6
+  # olmWS prefactor = prefactor*10 for the start 
   #                                               bkg(asth) basGabCrust  oLithMtl  asth.     olmWS     # MTZ       topOfLowMtl total_strain
-  set Prefactors for dislocation creep          = 2.42e-16, 5.05e-28,    2.42e-16, 2.42e-16, 2.42e-15  #,2.42e-16, 2.42e-16,    1.0e-50
+  set Prefactors for dislocation creep          = 2.42e-16, 5.04e-28,    2.42e-16, 2.42e-16, 2.42e-15  #,2.42e-16, 2.42e-16,    1.0e-50
   set Stress exponents for dislocation creep    =      3.5,      4.7,         3.5,      3.5,      3.5  #,     3.5,      3.5,        1.0
   set Activation energies for dislocation creep =   540.e3,   485.e3,      540.e3,   540.e3,   540.e3  #,  540.e3,   540.e3,        0.0
-  set Activation volumes for dislocation creep  =   5.5e-6,       0.,      20.e-6,   5.5e-6,   20.e-6  #,  7.5e-6,   10.e-6,        0.0
+  set Activation volumes for dislocation creep  =   15.e-6,       0.,      15.e-6,   15.e-6,   15.e-6  #,  7.5e-6,   10.e-6,        0.0
 
-  # Plasticity parameters
+  # Plasticity parameters from Maffione et al., 2015: https://doi.org/10.1002/2015GC005746
   set Angles of internal friction =   15.,    15.,   15.,   15. , 15.   #, 15.  , 0.
   set Cohesions                   = 20.e6, 10.e6 , 20.e6, 20.e6 , 20.e6 #, 20.e6, 1.e6
  
-  ## diffusion creep section. Same as for disc. creep but lower Activation volumes for the asth.          #MTZ and TOLM.     total_strain      
-  #set Prefactors for diffusion creep          = 2.42e-16,  5.05e-28,    2.42e-16,  2.42e-16,  2.42e-15   #2.42e-16, 2.42e-16,  1.0e-50
-  #set Activation energies for diffusion creep =   540.e3,    485.e3,      540.e3,   540.e3,     540.e3   # 540.e3,   540.e3,      0.0 
-  #set Activation volumes for dislocation creep=   5.5e-6,        0.,      20.e-6,   5.5e-6,     20.e-6   #5.5e-6,   10.e-6,      0.0
+  ## diffusion creep section. Taken from table B2 of Glerum et al., https://doi.org/10.1002/2015GC005746
+  #  olmWS prefactor = prefactor*10 for the start       
+  set Prefactors for diffusion creep         = 5.92e-11, 1.92e-1, 5.92e-11,  5.92e-11, 5.92e-10   #2.42e-16, 2.42e-16,  1.0e-50
+  set Activation energies for diffusion creep=   335.e3,  335.e3,   335.e3,    335.e3,   335.e3   # 540.e3,   540.e3,      0.0 
+  set Activation volumes for diffusion creep =    4.e-6,   4.e-6,    4.e-6,     4.e-6,    4.e-6   #5.5e-6,   10.e-6,      0.0
 
  end #--- visco plastic
 end
