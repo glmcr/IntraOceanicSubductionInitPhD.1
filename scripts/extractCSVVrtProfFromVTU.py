@@ -6,9 +6,9 @@ import vtk #.vtk
 import glob
 import math
 import numpy as np
-from vtk.util.numpy_support import vtk_to_numpy #thats what you need 
+from vtk.util.numpy_support import vtk_to_numpy #thats what you need
 
-# 1469 km from the left side
+# 1465 km from the left side
 iPosExtract= 1465000 #765000
 
 vtuFilePath= sys.argv[1]
@@ -49,7 +49,11 @@ for pci in range(PointCoordinates.GetSize()):
         viscDict[pct[1]]= viscData.GetTuple(pci)[0]
         strtDict[pct[1]]= strainRateData.GetTuple(pci)[0]
 # ---
- 
+
+if len(viscDict) == 0:
+    print("len(viscDict) == 0, Invalid X grid position !!")
+    sys.exit(1)
+    
 # --- CSV
 csvFp= open(csvVrtProfFilePath,"w")
 
