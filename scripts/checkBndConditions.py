@@ -4,8 +4,8 @@ import sys
 import math
 
 # convergence
-velcmyLHS= 4.0
-velcmyRHS= -4.0
+velcmyLHS= 2.0
+velcmyRHS= -2.0
 
 # extension
 #velcmyLHS= -1.0
@@ -16,11 +16,11 @@ year=1
 bottomDepth=700e3
 xdim= 1500e3
 
-switchDepthRHS=40e3
-switchDepthLHS=40e3
+#switchDepthRHS=40e3
+#switchDepthLHS=40e3
 
-#switchDepthRHS=140e3
-#switchDepthLHS=140e3
+switchDepthRHS=80e3
+switchDepthLHS=80e3
 
 #maxDepth= 700e3
 nbCellsY= 700
@@ -29,10 +29,13 @@ csvFileName= sys.argv[1]
 
 csvFile= open(csvFileName,"w")
 
-rhsVeloAcc= 0.0
-lhsVeloAcc= 0.0
+rhsVeloAccIn= 0.0
+lhsVeloAccIn= 0.0
 
-cellSide= 1000.0
+rhsVeloAccOut= 0.0
+lhsVeloAccOut= 0.0
+
+cellSide= 1 #1000.0
 
 #bFact= -0.0785
 #bFact= -0.078525
@@ -68,6 +71,12 @@ bFact= -0.0785091197462 # < 6.396827512133996e-13
 bFact= -0.07850911974621 # < 4.1763814628836826e-13
 bFact= -0.07850911974625 # < 3.2776559244496184e-13
 bFact= -0.07850911974623 # < 7.813194535799539e-14
+bFact= -0.07850911974623428 # 40km
+
+#bFact=       -0.1515664690939903 # 80km
+
+dFact= 35.0
+#dFact= 70.0
 
 csvFile.write("#lhsXVelo,rhsXVelo,yElev\n")
 
@@ -79,42 +88,57 @@ for cellY in range(700):
     
     if (y > (bottomDepth-switchDepthRHS)):
         rhsXVelo= velcmyRHS*(cm2m/year)
-        rhsVeloAcc += rhsXVelo*cellSide
+        rhsVeloAccIn += rhsXVelo*cellSide
         
     elif ( y >= (bottomDepth-switchDepthRHS-20e3)):
-        rhsXVelo= velcmyRHS*(cm2m/year)*((y - (bottomDepth-switchDepthRHS-20e3))*35.0)/bottomDepth
-        rhsVeloAcc += rhsXVelo*cellSide
+        rhsXVelo= velcmyRHS*(cm2m/year)*((y - (bottomDepth-switchDepthRHS-20e3))*dFact)/bottomDepth
+        rhsVeloAccIn += rhsXVelo*cellSide
 
     elif ( y >= (bottomDepth-switchDepthRHS-40e3)):
-        rhsXVelo= bFact*velcmyRHS*(cm2m/year)*(((bottomDepth-switchDepthRHS-20e3)-y)*35.0)/bottomDepth
-        rhsVeloAcc += rhsXVelo*cellSide
+        #rhsXVelo= bFact*velcmyRHS*(cm2m/year)*(((bottomDepth-switchDepthRHS-20e3)-y)*dFact)/bottomDepth
+        rhsXVelo= velcmyRHS*(cm2m/year)*(((bottomDepth-switchDepthRHS-20e3)-y)*dFact)/bottomDepth
+        rhsVeloAccOut += rhsXVelo*cellSide
     else:
         #rhsXVelo= -5e-3*velcmyRHS*(cm2m/year)
-        rhsXVelo= bFact*velcmyRHS*(cm2m/year)
-        rhsVeloAcc += rhsXVelo*cellSide
+        #rhsXVelo= bFact*velcmyRHS*(cm2m/year)
+        rhsXVelo= velcmyRHS*(cm2m/year)
+        rhsVeloAccOut += rhsXVelo*cellSide
         
     if (y > (bottomDepth-switchDepthLHS)):
         lhsXVelo= velcmyLHS*(cm2m/year)
-        lhsVeloAcc += lhsXVelo*cellSide
+        lhsVeloAccIn += lhsXVelo*cellSide
         
     elif ( y >= (bottomDepth-switchDepthLHS-20e3)):
-        lhsXVelo= velcmyLHS*(cm2m/year)*((y - (bottomDepth-switchDepthLHS-20e3))*35.0)/bottomDepth
-        lhsVeloAcc += lhsXVelo*cellSide
+        lhsXVelo= velcmyLHS*(cm2m/year)*((y - (bottomDepth-switchDepthLHS-20e3))*dFact)/bottomDepth
+        lhsVeloAccIn += lhsXVelo*cellSide
         
     elif ( y >= (bottomDepth-switchDepthLHS-40e3)):
-        lhsXVelo= bFact*velcmyLHS*(cm2m/year)*(((bottomDepth-switchDepthLHS-20e3)-y)*35.0)/bottomDepth
-        lhsVeloAcc += lhsXVelo*cellSide
+        #lhsXVelo= bFact*velcmyLHS*(cm2m/year)*(((bottomDepth-switchDepthLHS-20e3)-y)*dFact)/bottomDepth
+        lhsXVelo= velcmyLHS*(cm2m/year)*(((bottomDepth-switchDepthLHS-20e3)-y)*dFact)/bottomDepth
+        lhsVeloAccOut += lhsXVelo*cellSide
         
     else:     
         #lhsXVelo= -5e-3*velcmyLHS*(cm2m/year)
-        lhsXVelo= bFact*velcmyLHS*(cm2m/year)
-        lhsVeloAcc += lhsXVelo*cellSide
+        #lhsXVelo= bFact*velcmyLHS*(cm2m/year)
+        lhsXVelo= velcmyLHS*(cm2m/year)
+        lhsVeloAccOut += lhsXVelo*cellSide
         
     csvFile.write(str(lhsXVelo)+","+str(rhsXVelo)+","+str(y)+"\n")
 # ---
 
-print("lhsVeloAcc="+str(lhsVeloAcc))
-print("rhsVeloAcc="+str(rhsVeloAcc))
+print("lhsVeloAccIn="+str(lhsVeloAccIn))
+print("lhsVeloAccOut="+str(lhsVeloAccOut))
+print("rhsVeloAccIn="+str(rhsVeloAccIn))
+print("rhsVeloAccOut="+str(rhsVeloAccOut))
+
+#   lhsVeloAccIn + lhsBFact*lhsVeloAccOut = 0.0
+#   lhsBFact = -lhsVeloAccIn/lhsVeloAccOut
+
+lhsBFact = -lhsVeloAccIn/lhsVeloAccOut
+rhsBFact = -rhsVeloAccIn/rhsVeloAccOut
+
+print("lhsBFact="+str(lhsBFact))
+print("rhsBFact="+str(rhsBFact))
 
 csvFile.close()
     
