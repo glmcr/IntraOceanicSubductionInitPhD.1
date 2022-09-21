@@ -8,7 +8,7 @@ set Nonlinear solver scheme                = single Advection, iterated Stokes
 set Nonlinear solver tolerance             = 2e-7
 set Max nonlinear iterations               = 100 #40 #25 #40 #70
 set CFL number                             = 0.45
-set Output directory = /home/gimer47/projects/def-cagui22/gimer47/Crunch/Aspect/ISI-1/dryOlSym30kmOceanicLith
+set Output directory = /home/gimer47/projects/def-cagui22/gimer47/Crunch/Aspect/ISI-1/psoSWDryOlSym30kmOceanicLith
 set Timing output frequency                = 1
 set Pressure normalization                 = no
 set Maximum time step                      = 1e3 #1e4
@@ -93,8 +93,8 @@ subsection Boundary velocity model
   set Prescribed velocity boundary indicators = left x: function #, right x: function #, bottom y: function
   subsection Function
     set Variable names = x, y
-    # 40km: oFlowBlcFactor= -0.07850911974623428
-    # 80km ioFlowBlcFactor= -0.1515664690939903
+    # 40km: ioFlowBlcFactor= -0.07850911974623428
+    # 80km: ioFlowBlcFactor= -0.1515664690939903
     set Function constants  = velcmyLHS= -2.0, \
                               velcmyRHS= 0.0, \
                               cm2m=0.01, \
@@ -104,7 +104,6 @@ subsection Boundary velocity model
                               switchDepthRHS=40e3, \
                               switchDepthLHS=40e3, \
                               ioFlowBlcFactor= -0.07850911974623428
-
     set Function expression = if ( x >= xdim/2, \
                                      if (y > (bottomDepth-switchDepthRHS), \
                                           velcmyRHS*(cm2m/year), \
@@ -186,8 +185,7 @@ subsection Material model
   #set Strain healing mechanism = temperature dependent
   #set Strain weakening mechanism = total strain
   #plastic weakening with plastic strain and viscous weakening with viscous strain
-  #set Strain weakening mechanism = plastic weakening with plastic strain only
-  #set Strain weakening mechanism = none
+  set Strain weakening mechanism = plastic weakening with plastic strain only
 
   # ---
   # Thermal diffusivities adjusted for giving the following values for thermal conductivities
@@ -215,8 +213,8 @@ subsection Material model
   #                                               bkg(asth) basGabCrust  oLithMtl  asth.     olmWS     (dummies for SW)  
   set Prefactors for dislocation creep          = 2.42e-16, 5.04e-28,    2.42e-16, 2.42e-16, 2.42e-14,  1.0e-50, 1.0e-50
   set Stress exponents for dislocation creep    =      3.5,      4.7,         3.5,      3.5,      3.5,      1.0,     1.0
-  set Activation energies for dislocation creep =   540.e3,   485.e3,      540.e3,   540.e3,   430.e3,      0.0,     0.0
-  set Activation volumes for dislocation creep  =   15.e-6,       0.,      15.e-6,   15.e-6,   11.e-6,      0.0,     0.0
+  set Activation energies for dislocation creep =   540.e3,   485.e3,      540.e3,   540.e3,   540.e3,      0.0,     0.0
+  set Activation volumes for dislocation creep  =   15.e-6,       0.,      15.e-6,   15.e-6,   15.e-6,      0.0,     0.0
 
   # Plasticity parameters from Maffione et al., 2015: https://doi.org/10.1002/2015GC005746
   # cont. ext. cookbook for the dummy strain fields.

@@ -23,8 +23,8 @@ subsection Discretization
   subsection Stabilization parameters
     set Use limiter for discontinuous composition solution= true
     set Use limiter for discontinuous temperature solution= true
-    set Global composition maximum= 1, 1, 1, 1, 1 #, 1
-    set Global composition minimum= 0, 0, 0, 0, 0 #, 0
+    set Global composition maximum= 1, 1, 1, 1 #, 1 #, 1
+    set Global composition minimum= 0, 0, 0, 0 #, 0 #, 0
 
     #set Use artificial viscosity smoothing = true
     set Global temperature minimum= 273
@@ -151,7 +151,7 @@ subsection Postprocess
 end
 
 subsection Compositional fields
-  set Number of fields = 5
+  set Number of fields = 4
   set Names of fields = oceanicCrust, oceanicLithMantle, asthenosphere, olmWS #MTZ, topOfLowerMantle, total_strain #, weakZone        
 end
 

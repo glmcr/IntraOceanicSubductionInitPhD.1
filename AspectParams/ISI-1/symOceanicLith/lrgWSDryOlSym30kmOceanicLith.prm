@@ -8,11 +8,11 @@ set Nonlinear solver scheme                = single Advection, iterated Stokes
 set Nonlinear solver tolerance             = 2e-7
 set Max nonlinear iterations               = 100 #40 #25 #40 #70
 set CFL number                             = 0.45
-set Output directory = /home/gimer47/projects/def-cagui22/gimer47/Crunch/Aspect/ISI-1/dryOlSym30kmOceanicLith
+set Output directory = /home/gimer47/projects/def-cagui22/gimer47/Crunch/Aspect/ISI-1/lrgWSDryOlSym30kmOceanicLith
 set Timing output frequency                = 1
 set Pressure normalization                 = no
 set Maximum time step                      = 1e3 #1e4
-set World builder file = /home/gimer47/Dev/AspectParamsFiles/ISI-1/symOceanicLith/sym30kmOceanicLith.wb
+set World builder file = /home/gimer47/Dev/AspectParamsFiles/ISI-1/symOceanicLith/lrgWSDryOlSym30kmOceanicLith.wb
 #set Adiabatic surface temperature = 1573
 
 subsection Discretization
@@ -227,7 +227,7 @@ subsection Material model
   # prefact. adjusted (reduced by 1e3) because of the small (1e-3) default grain size used by aspect
   #  olmWS prefactor = prefactor*10 for the start
   # cont. ext. cookbook for the dummy strain fields.       
-  set Prefactors for diffusion creep         = 6.08e-18, 6.08e-18, 6.08e-18, 6.08e-18, 6.08e-16, 1.0e-50, 1.0e-50
+  set Prefactors for diffusion creep         = 6.08e-18, 6.08e-17, 6.08e-18, 6.08e-18, 6.08e-16, 1.0e-50, 1.0e-50
   set Activation energies for diffusion creep=   335.e3,   335.e3,   335.e3,   335.e3,   335.e3,     0.0,     0.0
   set Activation volumes for diffusion creep =    6.e-6,    6.e-6,    6.e-6,    6.e-6,    6.e-6,     0.0,     0.0
 
