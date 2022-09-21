@@ -93,22 +93,22 @@ end
 #  set Prescribed velocity boundary indicators = left x: function, right x: function #, bottom y: function
 #  subsection Function
 #    set Variable names = x, y
-#    set Function constants  = velcmyLHS= 0.0, velcmyRHS= 1.5, cm2m=0.01, year=1, bottomDepth=700e3, xdim= 1500e3, switchDepthRHS=70e3, switchDepthLHS=70e3
+#    set Function constants  = velcmyLHS= 0.0, velcmyRHS= 1.5, cm2m=0.01, year=1, bottomDepth=700e3, xdim= 1500e3, switchDepthRHS=40e3, switchDepthLHS=65e3
 #    set Function expression = if ( x >= xdim/2, \
 #                                     if (y > (bottomDepth-switchDepthRHS), \
 #                                          velcmyRHS*(cm2m/year), \
 #                                          if ( y >= (bottomDepth-switchDepthRHS-20e3), \
 #                                             velcmyRHS*(cm2m/year)*((y - (bottomDepth-switchDepthRHS-20e3))*35.0)/bottomDepth, \
-#                                             if ( y >= (bottomDepth-switchDepthRHS-30e3), \
-#                                                0.01*velcmyRHS*(cm2m/year)*((y - (bottomDepth-switchDepthRHS-20e3))*35.0)/bottomDepth, \
-#                                                -5e-03*velcmyRHS*(cm2m/year) ) ) ), \
+#                                             if ( y >= (bottomDepth-switchDepthRHS-40e3), \
+#                                                -0.07*velcmyRHS*(cm2m/year)*(((bottomDepth-switchDepthRHS-20e3)-y)*35.0)/bottomDepth, \
+#                                                -0.07*velcmyRHS*(cm2m/year) ) ) ), \
 #                                     if (y > (bottomDepth-switchDepthLHS), \
 #                                          velcmyLHS*(cm2m/year), \
 #                                          if ( y >= (bottomDepth-switchDepthLHS-20e3), \
 #                                             velcmyLHS*(cm2m/year)*((y - (bottomDepth-switchDepthLHS-20e3))*35.0)/bottomDepth, \
-#                                             if ( y >= (bottomDepth-switchDepthLHS-30e3), \
-#                                                0.01*velcmyLHS*(cm2m/year)*((y - (bottomDepth-switchDepthLHS-20e3))*35.0)/bottomDepth, \
-#                                                -5e-03*velcmyLHS*(cm2m/year) ) ) ) \
+#                                             if ( y >= (bottomDepth-switchDepthLHS-40e3), \
+#                                                -0.07*velcmyLHS*(cm2m/year)*(((bottomDepth-switchDepthLHS-20e3)-y)*35.0)/bottomDepth, \
+#                                                -0.07*velcmyLHS*(cm2m/year) ) ) ) \
 #                                 ); 0.0  # 0.0 needed here even if we have free slip for the bottom.
 #  end
 #end
@@ -205,16 +205,16 @@ subsection Material model
   set Prefactors for dislocation creep          = 2.42e-16,  5.05e-28,    2.42e-16,  2.42e-16, 2.42e-16, 2.42e-16,    1.0e-50
   set Stress exponents for dislocation creep    =      3.5,       4.7,         3.5,      3.5,       3.5,      3.5,        1.0
   set Activation energies for dislocation creep =   540.e3,    485.e3,      540.e3,   540.e3,    540.e3,   540.e3,        0.0
-  set Activation volumes for dislocation creep  =   20.e-6,        0.,      20.e-6,   20.e-6,    20.e-6,   20.e-6,        0.0
+  set Activation volumes for dislocation creep  =   7.5e-6,        0.,      20.e-6,   7.5e-6,    7.5e-6,   10.e-6,        0.0
 
   # Plasticity parameters
   set Angles of internal friction =   15.,    15.,   15.,   15. , 15.  , 15.  , 0.
   set Cohesions                   = 20.e6, 10.e6 , 20.e6, 20.e6 , 20.e6, 20.e6, 1.e6
  
-  # diffusion creep section. Same as for disc. creep but lower Activation volumes for the asth. MTZ and TOLM
+  # diffusion creep section. Same as for disc. creep but lower Activation volumes for the asth. MTZ and TOLM.     total_strain      
   set Prefactors for diffusion creep          = 2.42e-16,  5.05e-28,    2.42e-16,  2.42e-16, 2.42e-16, 2.42e-16,  1.0e-50
   set Activation energies for diffusion creep =   540.e3,    485.e3,      540.e3,   540.e3,    540.e3,   540.e3,      0.0 
-  set Activation volumes for dislocation creep=   7.5e-6,        0.,      20.e-6,   7.5e-6,    7.5e-6,   10.e-6,      0.0
+  set Activation volumes for dislocation creep=   5.5e-6,        0.,      20.e-6,   5.5e-6,    5.5e-6,   10.e-6,      0.0
 
  end #--- visco plastic
 end
