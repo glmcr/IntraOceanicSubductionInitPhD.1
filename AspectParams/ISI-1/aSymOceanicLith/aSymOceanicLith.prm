@@ -92,7 +92,7 @@ end
 #  set Prescribed velocity boundary indicators = left x: function, right x: function #, bottom y: function
 #  subsection Function
 #    set Variable names = x, y
-#    set Function constants  = velcmyLHS= 0.0, velcmyRHS= 1.5, cm2m=0.01, year=1, bottomDepth=700e3, xdim= 1500e3, switchDepthRHS=70e3, switchDepthLHS=70e3
+#    set Function constants  = velcmyLHS= 0.0, velcmyRHS= 1.5, cm2m=0.01, year=1, bottomDepth=700e3, xdim= 1500e3, switchDepthRHS=140e3, switchDepthLHS=140e3
 #    set Function expression = if ( x >= xdim/2, \
 #                                     if (y > (bottomDepth-switchDepthRHS), \
 #                                          velcmyRHS*(cm2m/year), \
