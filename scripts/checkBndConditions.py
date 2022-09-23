@@ -4,12 +4,12 @@ import sys
 import math
 
 # convergence
-velcmyLHS= 2.0
-velcmyRHS= -2.0
+#velcmyLHS= 2.0
+#velcmyRHS= -2.0
 
 # extension
-#velcmyLHS= -1.0
-#velcmyRHS= 1.0
+velcmyLHS= -2.0
+velcmyRHS= 2.0
 
 cm2m=0.01
 year=1
@@ -103,11 +103,14 @@ for cellY in range(700):
         #rhsXVelo= bFact*velcmyRHS*(cm2m/year)*(((bottomDepth-switchDepthRHS-20e3)-y)*dFact)/bottomDepth
         rhsXVelo= velcmyRHS*(cm2m/year)*(((bottomDepth-switchDepthRHS-20e3)-y)*dFact)/bottomDepth
         rhsVeloAccOut += rhsXVelo*cellSide
+        rhsXVelo *= -1
+        
     else:
         #rhsXVelo= -5e-3*velcmyRHS*(cm2m/year)
         #rhsXVelo= bFact*velcmyRHS*(cm2m/year)
         rhsXVelo= velcmyRHS*(cm2m/year)
         rhsVeloAccOut += rhsXVelo*cellSide
+        rhsXVelo *= -1
         
     if (y > (bottomDepth-switchDepthLHS)):
         lhsXVelo= velcmyLHS*(cm2m/year)
@@ -121,12 +124,14 @@ for cellY in range(700):
         #lhsXVelo= bFact*velcmyLHS*(cm2m/year)*(((bottomDepth-switchDepthLHS-20e3)-y)*dFact)/bottomDepth
         lhsXVelo= velcmyLHS*(cm2m/year)*(((bottomDepth-switchDepthLHS-20e3)-y)*dFact)/bottomDepth
         lhsVeloAccOut += lhsXVelo*cellSide
+        lhsXVelo *= -1
         
     else:     
         #lhsXVelo= -5e-3*velcmyLHS*(cm2m/year)
         #lhsXVelo= bFact*velcmyLHS*(cm2m/year)
         lhsXVelo= velcmyLHS*(cm2m/year)
         lhsVeloAccOut += lhsXVelo*cellSide
+        lhsXVelo *= -1
         
     csvFile.write(str(lhsXVelo)+","+str(rhsXVelo)+","+str(y)+"\n")
 # ---
