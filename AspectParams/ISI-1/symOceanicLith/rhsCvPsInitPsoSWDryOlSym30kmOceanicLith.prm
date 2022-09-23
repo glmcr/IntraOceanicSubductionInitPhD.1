@@ -1,14 +1,14 @@
-set Resume computation  = true
-#set Resume computation   = false
+#set Resume computation  = true
+set Resume computation   = false
 set Start time                             = 0
-set End time                               = 2.5e5 #150e6
+set End time                               = 50e5 #150e6
 set Use years in output instead of seconds = true
 set Nonlinear solver scheme                = single Advection, iterated Stokes
 #set Nonlinear solver scheme                = iterated Advection and Stokes
 set Nonlinear solver tolerance             = 2e-7
 set Max nonlinear iterations               = 100 #40 #25 #40 #70
 set CFL number                             = 0.45
-set Output directory = /home/gimer47/projects/def-cagui22/gimer47/Crunch/Aspect/ISI-1/xtRhsPsInitPsoSWDryOlSym30kmOceanicLith
+set Output directory = /home/gimer47/projects/def-cagui22/gimer47/Crunch/Aspect/ISI-1/rhsCvPsInitPsoSWDryOlSym30kmOceanicLith
 set Timing output frequency                = 1
 set Pressure normalization                 = no
 set Maximum time step                      = 1e3 #1e4
@@ -96,7 +96,7 @@ subsection Boundary velocity model
     # 40km: oFlowBlcFactor= -0.07850911974623428
     # 80km ioFlowBlcFactor= -0.1515664690939903
     set Function constants  = velcmyLHS= 0.0, \
-                              velcmyRHS= 3.5, \
+                              velcmyRHS= -3.5, \
                               cm2m=0.01, \
                               year=1, \
                               bottomDepth=700e3, \
@@ -171,7 +171,7 @@ subsection Initial composition model
                               if(y< 692.5e3 && y>= 670e3, 1, 0); \
                               if(y< 670e3, 1, 0); \             
                               0; \
-                              if(y<=695e3 && y>=670e3 && x>=750.e3 && x<=756.e3, 0.5 + rand_seed(1), 0);
+                              if(y<=700e3 && y>=670e3 && x>=748e3 && x<=755.5.e3, 0.5 + rand_seed(1), 0);
   end
 end
 

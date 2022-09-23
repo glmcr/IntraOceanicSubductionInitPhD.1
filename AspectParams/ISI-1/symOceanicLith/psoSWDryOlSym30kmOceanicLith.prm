@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 set Resume computation  = true
 #set Resume computation   = false
 set Start time                             = 0
@@ -228,7 +227,7 @@ subsection Material model
   ## diffusion creep section. Taken from table 8 of Glerum et al., https://doi.org/10.1002/2015GC005746
   # prefact. adjusted (reduced by 1e3) because of the small (1e-3) default grain size used by aspect
   #  olmWS prefactor = prefactor*10 for the start
-  # cont. ext. cookbook for the dummy strain fields.      
+  # cont. ext. cookbook for the dummy strain fields.       
   #set Prefactors for diffusion creep         = 6.08e-18, 6.08e-18, 6.08e-18, 6.08e-18, 6.08e-16, 1.0e-50, 1.0e-50
   #set Activation energies for diffusion creep=   335.e3,   335.e3,   335.e3,   335.e3,   335.e3,     0.0,     0.0
   #set Activation volumes for diffusion creep =    6.e-6,    6.e-6,    6.e-6,    6.e-6,    6.e-6,     0.0,     0.0
