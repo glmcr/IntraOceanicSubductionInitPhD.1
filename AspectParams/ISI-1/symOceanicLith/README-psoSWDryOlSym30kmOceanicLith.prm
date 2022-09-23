@@ -1,0 +1,9 @@
+
+disloc. creep params for weak seed used only at the initial (t=0) extension stage:
+                                                                                           **here**
+                                                                                              |
+set Prefactors for dislocation creep          = 2.42e-16, 5.04e-28,    2.42e-16, 2.42e-16, 2.42e-14,  1.0e-50, 1.0e-50
+set Stress exponents for dislocation creep    =      3.5,      4.7,         3.5,      3.5,      3.5,      1.0,     1.0
+set Activation energies for dislocation creep =   540.e3,   485.e3,      540.e3,   540.e3,   430.e3,      0.0,     0.0
+set Activation volumes for dislocation creep  =    5.e-6,       0.,      15.e-6,    5.e-6,   11.e-6,      0.0,     0.0
+
