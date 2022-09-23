@@ -1,5 +1,5 @@
-set Resume computation                     = true
-#set Resume computation                     = false
+#set Resume computation                     = true
+set Resume computation                     = false
 set Start time                             = 0
 set End time                               = 150e6 #50e6 #15e6
 set Use years in output instead of seconds = true
@@ -9,7 +9,7 @@ set Nonlinear solver tolerance             = 2e-7
 set Max nonlinear iterations               = 100 #120 #40 #25 #40 #70
 set CFL number                             = 0.45
 set Output directory = \
-/home/gimer47/projects/def-cagui22/gimer47/Crunch/Aspect/ISI-1/noWZDryOl-clith120km-BtlAndBea2017EPSL-AsciiDataInit
+/home/gimer47/projects/def-cagui22/gimer47/Crunch/Aspect/ISI-1/psoSWNoWZDryOl-clith120km-BtlAndBea2017EPSL-AsciiDataInit
 set Timing output frequency                = 1
 set Pressure normalization                 = no
 set Maximum time step                      = 1e3
@@ -20,10 +20,10 @@ subsection Discretization
 
   subsection Stabilization parameters
     #set Use artificial viscosity smoothing = true
-    set Use limiter for discontinuous composition solution= true
+    #set Use limiter for discontinuous composition solution= true
     set Use limiter for discontinuous temperature solution= true
-    set Global composition maximum= 1, 1, 1, 1, 1, 1, 1
-    set Global composition minimum= 0, 0, 0, 0, 0, 0, 0
+    #set Global composition maximum= 1, 1, 1, 1, 1, 1, 1, 0, 0
+    #set Global composition minimum= 0, 0, 0, 0, 0, 0, 0, 0, 0
 
     set Global temperature minimum= 273
     set Global temperature maximum= 1750  
@@ -136,8 +136,8 @@ subsection Postprocess
 end
 
 subsection Compositional fields
-  set Number of fields = 7 
-  set Names of fields = AAUM,SCLM,contLowCrust,contUppCrust,SOLM,oceanicUppCrust,oceanicSeds     
+  set Number of fields = 9 
+  set Names of fields = AAUM,SCLM,contLowCrust,contUppCrust,SOLM,oceanicUppCrust,oceanicSeds,noninitial_plastic_strain, plastic_strain     
 end
 
 subsection Material model
@@ -158,52 +158,62 @@ subsection Material model
   set Minimum strain rate = 1.e-20
   set Reference strain rate = 1.e-16
 
+  set Strain weakening mechanism                   = plastic weakening with plastic strain only
+  set Start plasticity strain weakening intervals  = 0.5
+  set End plasticity strain weakening intervals    = 1.5
+  set Cohesion strain weakening factors            = 0.25
+  set Friction strain weakening factors            = 0.25
+
   # heat capacities, th. exp. for AAUM, ocUppCrust and ocLithMtl from Maffione et al., 2015
   # AAUM (wt oli: fs= 2, Ws=1): Btl&Bea, 2017
   # SCLM (wt oli: fs= 3, Ws=1): Btl&Bea, 2017
   # contLowCrust: wet anorthite. of Rybacki et al. (2006), J. Geophys. Res., v.111(B3)
   # contUppCrust: wet quartzite of Rutter & Brodie (2004), J. Struct. Geol., v.26, p.2011-2023
   # oceanic sediments: Maffione et al., 2015
+  # cont. ext. cookbook for the dummy strain fields.
   #
   # Thermal diffusivities adjusted for giving the following values for th. conductivities
   # Oc. crust th. cond. at 1.5 to include the overlying water thermal inertia.
   # (Seems to help keeping the normal oceanic geotherm stable without boosting the mantle th. cond. 10-15x times)
-  # - th. conduct.(W/m/K)     4.47      4.47     2.7       2.5          2.5          2.7     1.5      2.5
-  #                           bkg(AAUM) AAUM     SCLM      contLowCrust contUppCrust SOLM    ocCrust  ocSeds
-  set Thermal diffusivities = 1.29e-6,  1.29e-6, 7.63e-7, 1.1494e-6,   1.1905e-6,   7.63e-7, 4.76e-7, 1.39e-6   
-  set Heat capacities       =   1050.,    1050.,   1050.,      750.,        750.,     1050.,   1050.,    750.
-  set Densities             =   3370.,    3370.,   3370.,     2900.,       2800.,     3370.,   3000.,   2400.
-  set Thermal expansivities =    3e-5,     3e-5,    3e-5,      2e-5,        2e-5,      3e-5,  2.8e-5,     0.0
+  # - th. conduct.(W/m/K)     4.47      4.47     2.7       2.5          2.5          2.7     1.5      2.5       2.5(dummies for SW) 
+  #                           bkg(AAUM) AAUM     SCLM      contLowCrust contUppCrust SOLM    ocCrust  ocSeds    nips  ps
+  set Thermal diffusivities = 1.29e-6,  1.29e-6, 7.63e-7, 1.1494e-6,   1.1905e-6,   7.63e-7, 4.76e-7, 1.39e-6,  3.3e-3, 3.3e-3 
+  set Heat capacities       =   1050.,    1050.,   1050.,      750.,        750.,     1050.,   1050.,    750.,  750.,   750. 
+  set Densities             =   3370.,    3370.,   3370.,     2900.,       2800.,     3370.,   3000.,   2400.,  1.0,    1.0
+  set Thermal expansivities =    3e-5,     3e-5,    3e-5,      2e-5,        2e-5,      3e-5,  2.8e-5,     0.0,  2e-5,   2e-5
 
   # Harmonic viscosity averaging
   set Viscosity averaging scheme = harmonic
 
-  #set Viscous flow law = dislocation
-  set Viscous flow law = composite
+  set Viscous flow law = dislocation
+  #set Viscous flow law = composite
 
   # dislocation creep section.
   # Maffione et al., 2015: https://doi.org/10.1002/2015GC005746 for mantle materials.
   # (except for the Activation volumes which are 15.e-6 instead of 20.e-6)
-  # contLowCrust, contUppCrust, ocCrust and ocSeds from Butler & Beaumont, EPSL 2017 
-  #                                              bkg(AAUM) AAUM      SCLM      contLowCrust contUppCrust SOLM      ocCrust   ocSeds
-  set Prefactors for dislocation creep         = 2.42e-16, 2.42e-16, 2.42e-16, 1.156e-25,   1.71e-27,    2.42e-16, 5.78e-25, 8.57e-28 
-  set Stress exponents for dislocation creep   =      3.5,      3.5,      3.5,       4.7,        4.0,         3.5,      4.7,      4.0
-  set Activation energies for dislocation creep=   540.e3,   540.e3,   540.e3,    485.e3,     223.e3,      540.e3,   485.e3,   223.e3
-  set Activation volumes for dislocation creep =   15.e-6,   15.e-6,   15.e-6,       0.0,        0.0,      15.e-6,      0.0,      0.0
+  # contLowCrust, contUppCrust, ocCrust and ocSeds from Butler & Beaumont, EPSL 2017
+  # cont. ext. cookbook for the dummy strain fields. 
+  #                                              bkg(AAUM) AAUM      SCLM      contLowCrust contUppCrust SOLM      ocCrust   ocSeds   dummies for SW
+  set Prefactors for dislocation creep         = 2.42e-16, 2.42e-16, 2.42e-16, 1.156e-25,   1.71e-27,    2.42e-16, 5.78e-25, 8.57e-28, 1.00e-50, 1.00e-50 
+  set Stress exponents for dislocation creep   =      3.5,      3.5,      3.5,       4.7,        4.0,         3.5,      4.7,      4.0, 1.0,	  1.0
+  set Activation energies for dislocation creep=   540.e3,   540.e3,   540.e3,    485.e3,     223.e3,      540.e3,   485.e3,   223.e3, 0.0,	  0.0
+  set Activation volumes for dislocation creep =    5.e-6,    5.e-6,   15.e-6,       0.0,        0.0,      15.e-6,      0.0,      0.0, 0.0,	  0.0
 
   # Plasticity parameters
   # Maffione et al., 2015: https://doi.org/10.1002/2015GC005746 for mantle materials.
   # Butler & Beaumont, EPSL 2017 for the rest.
-  set Angles of internal friction = 15.  ,   15.,   15.,   20.,  10.,    15.,   15.,  10.
-  set Cohesions                   = 20.e6, 20.e6, 20.e6, 20.e6, 5.e6,  20.e6, 10.e6, 5.e6
+  # cont. ext. cookbook for the dummy strain fields.
+  set Angles of internal friction = 15.  ,   15.,   15.,   20.,  10.,    15.,   15.,  10., 30., 30.
+  set Cohesions                   = 20.e6, 20.e6, 20.e6, 20.e6, 5.e6,  20.e6, 10.e6, 5.e6, 20.e6, 20.e6
  
   # diffusion creep section:
   # mantle materials: Karato and Wu, 1993
-  # ocCrust prefact = mantle prefact/10
+  # (oc. crust prefact = mantle prefact/10)
   # Others are the same as for dislocation creep.
-  set Prefactors for diffusion creep         = 6.08e-18, 6.08e-18, 6.08e-18, 1.156e-25, 1.71e-27, 6.08e-18, 6.08e-17, 8.57e-28
-  set Activation energies for diffusion creep=   335.e3,   335.e3,   335.e3,    485.e3,   223.e3,   335.e3,   335.e3,   223.e3
-  set Activation volumes for diffusion creep =    6.e-6,    6.e-6,    6.e-6,       0.0,      0.0,    6.e-6,    6.e-6,      0.0
+  # cont. ext. cookbook for the dummy strain fields.
+  #set Prefactors for diffusion creep         = 6.08e-18, 6.08e-18, 6.08e-18, 1.156e-25, 1.71e-27, 6.08e-18, 6.08e-17, 8.57e-28, 1.00e-50, 1.00e-50
+  #set Activation energies for diffusion creep=   335.e3,   335.e3,   335.e3,    485.e3,   223.e3,   335.e3,   335.e3,   223.e3,     0.0,       0.0
+  #set Activation volumes for diffusion creep =    6.e-6,    6.e-6,    6.e-6,       0.0,      0.0,    6.e-6,    6.e-6,      0.0,     0.0,       0.0
 
  end
 end
@@ -211,7 +221,7 @@ end
 subsection Heating model
   set List of model names = adiabatic heating, shear heating, compositional heating
   subsection Compositional heating
-    set Compositional heating values = 0., 0., 0., 0., 1.5e-6, 0., 0., 1.5e-6
+    set Compositional heating values = 0., 0., 0., 0., 1.5e-6, 0., 0., 1.5e-6, 0., 0.
   end
 end
 
@@ -221,7 +231,8 @@ subsection Initial composition model
   subsection Ascii data model
     set Data directory       = /home/gimer47/Dev/AspectParamsFiles/ISI-1/noWZDryOl-clith120km-BtlAndBea2017EPSL-AsciiDataInit/
     #set Data directory       = /home/zns/Data/PhD/Dev/tmp/noWZDryOl-clith120km-BtlAndBea2017EPSL-AsciiDataInit/
-    set Data file name       = noWZDryOl-clith120km-BtlAndBea2017EPSL-initCompo.txt
+    #set Data file name       = noWZDryOl-clith120km-BtlAndBea2017EPSL-initCompo.txt
+    set Data file name       = withDummyFieldsNoWZDryOl-clith120km-BtlAndBea2017EPSL-initCompo.txt
   end
 end
 
