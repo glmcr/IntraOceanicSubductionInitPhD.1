@@ -1,15 +1,14 @@
-
-#set Resume computation  = true
-set Resume computation   = false
+set Resume computation  = true
+#set Resume computation   = false
 set Start time                             = 0
-set End time                               = 150e6
+set End time                               = 2.5e5 #150e6
 set Use years in output instead of seconds = true
 set Nonlinear solver scheme                = single Advection, iterated Stokes
 #set Nonlinear solver scheme                = iterated Advection and Stokes
 set Nonlinear solver tolerance             = 2e-7
 set Max nonlinear iterations               = 100 #40 #25 #40 #70
 set CFL number                             = 0.45
-set Output directory = /home/gimer47/projects/def-cagui22/gimer47/Crunch/Aspect/ISI-1/sym30kmOceanicLith
+set Output directory = /home/gimer47/projects/def-cagui22/gimer47/Crunch/Aspect/ISI-1/psoSWDryOlSym30kmOceanicLith
 set Timing output frequency                = 1
 set Pressure normalization                 = no
 set Maximum time step                      = 1e3 #1e4
@@ -21,10 +20,10 @@ subsection Discretization
   set Use discontinuous temperature discretization= true
 
   subsection Stabilization parameters
-    set Use limiter for discontinuous composition solution= true
+    #set Use limiter for discontinuous composition solution= true
     set Use limiter for discontinuous temperature solution= true
-    set Global composition maximum= 1, 1, 1, 1 #, 1 #, 1
-    set Global composition minimum= 0, 0, 0, 0 #, 0 #, 0
+    #set Global composition maximum= 1, 1, 1, 1, 1, 1
+    #set Global composition minimum= 0, 0, 0, 0, 1, 1
 
     #set Use artificial viscosity smoothing = true
     set Global temperature minimum= 273
@@ -86,33 +85,44 @@ subsection Boundary composition model
 end
 
 subsection Boundary velocity model
-   set Tangential velocity boundary indicators = bottom, right, left
+   set Tangential velocity boundary indicators = bottom, right #, left
 end
 
 # --- 
-#subsection Boundary velocity model
-#  set Prescribed velocity boundary indicators = left x: function, right x: function #, bottom y: function
-#  subsection Function
-#    set Variable names = x, y
-#    set Function constants  = velcmyLHS= 0.0, velcmyRHS= 1.5, cm2m=0.01, year=1, bottomDepth=700e3, xdim= 1500e3, switchDepthRHS=40e3, switchDepthLHS=65e3
-#    set Function expression = if ( x >= xdim/2, \
-#                                     if (y > (bottomDepth-switchDepthRHS), \
-#                                          velcmyRHS*(cm2m/year), \
-#                                          if ( y >= (bottomDepth-switchDepthRHS-20e3), \
-#                                             velcmyRHS*(cm2m/year)*((y - (bottomDepth-switchDepthRHS-20e3))*35.0)/bottomDepth, \
-#                                             if ( y >= (bottomDepth-switchDepthRHS-40e3), \
-#                                                -0.07*velcmyRHS*(cm2m/year)*(((bottomDepth-switchDepthRHS-20e3)-y)*35.0)/bottomDepth, \
-#                                                -0.07*velcmyRHS*(cm2m/year) ) ) ), \
-#                                     if (y > (bottomDepth-switchDepthLHS), \
-#                                          velcmyLHS*(cm2m/year), \
-#                                          if ( y >= (bottomDepth-switchDepthLHS-20e3), \
-#                                             velcmyLHS*(cm2m/year)*((y - (bottomDepth-switchDepthLHS-20e3))*35.0)/bottomDepth, \
-#                                             if ( y >= (bottomDepth-switchDepthLHS-40e3), \
-#                                                -0.07*velcmyLHS*(cm2m/year)*(((bottomDepth-switchDepthLHS-20e3)-y)*35.0)/bottomDepth, \
-#                                                -0.07*velcmyLHS*(cm2m/year) ) ) ) \
-#                                 ); 0.0  # 0.0 needed here even if we have free slip for the bottom.
-#  end
-#end
+subsection Boundary velocity model
+  set Prescribed velocity boundary indicators = left x: function #, right x: function #, bottom y: function
+  subsection Function
+    set Variable names = x, y
+    # 40km: oFlowBlcFactor= -0.07850911974623428
+    # 80km ioFlowBlcFactor= -0.1515664690939903
+    set Function constants  = velcmyLHS= -3.5, \
+                              velcmyRHS= 0.0, \
+                              cm2m=0.01, \
+                              year=1, \
+                              bottomDepth=700e3, \
+                              xdim= 1500e3, \
+                              switchDepthRHS=40e3, \
+                              switchDepthLHS=40e3, \
+                              ioFlowBlcFactor= -0.07850911974623428
+
+    set Function expression = if ( x >= xdim/2, \
+                                     if (y > (bottomDepth-switchDepthRHS), \
+                                          velcmyRHS*(cm2m/year), \
+                                          if ( y >= (bottomDepth-switchDepthRHS-20e3), \
+                                             velcmyRHS*(cm2m/year)*((y - (bottomDepth-switchDepthRHS-20e3))*35.0)/bottomDepth, \
+                                             if ( y >= (bottomDepth-switchDepthRHS-40e3), \
+                                                ioFlowBlcFactor*velcmyRHS*(cm2m/year)*(((bottomDepth-switchDepthRHS-20e3)-y)*35.0)/bottomDepth, \
+                                                ioFlowBlcFactor*velcmyRHS*(cm2m/year) ) ) ), \
+                                     if (y > (bottomDepth-switchDepthLHS), \
+                                          velcmyLHS*(cm2m/year), \
+                                          if ( y >= (bottomDepth-switchDepthLHS-20e3), \
+                                             velcmyLHS*(cm2m/year)*((y - (bottomDepth-switchDepthLHS-20e3))*35.0)/bottomDepth, \
+                                             if ( y >= (bottomDepth-switchDepthLHS-40e3), \
+                                                ioFlowBlcFactor*velcmyLHS*(cm2m/year)*(((bottomDepth-switchDepthLHS-20e3)-y)*35.0)/bottomDepth, \
+                                                ioFlowBlcFactor*velcmyLHS*(cm2m/year) ) ) ) \
+                                 ); 0.0  # 0.0 needed here even if we have free slip for the bottom.
+  end
+end
 
 subsection Mesh refinement
   set Initial adaptive refinement        = 1 #2
@@ -130,7 +140,7 @@ subsection Postprocess
     #set Output format = gnuplot
     set Output format = vtu #, gnuplot
     set Interpolate output = false #true
-    set List of output variables = depth, density, viscosity, strain rate, heating #, compositional vectors
+    set List of output variables = depth, density, viscosity, strain rate, heating, heat flux map, stress
     set Number of grouped files = 1
     set Time between graphical output = 2.5e4
     #subsection Compositional fields as vectors
@@ -151,8 +161,8 @@ subsection Postprocess
 end
 
 subsection Compositional fields
-  set Number of fields = 4
-  set Names of fields = oceanicCrust, oceanicLithMantle, asthenosphere, olmWS #MTZ, topOfLowerMantle, total_strain #, weakZone        
+  set Number of fields = 6
+  set Names of fields = oceanicCrust, oceanicLithMantle, asthenosphere, olmWS, noninitial_plastic_strain, plastic_strain        
 end
 
 subsection Material model
@@ -174,47 +184,53 @@ subsection Material model
 
   # --- 
   #set Strain healing mechanism = temperature dependent
-  #set Strain weakening mechanism = total strain
-  #plastic weakening with plastic strain and viscous weakening with viscous strain
+  set Strain weakening mechanism = plastic weakening with plastic strain only
+  set Start plasticity strain weakening intervals  = 0.5
+  set End plasticity strain weakening intervals    = 1.5
+  set Cohesion strain weakening factors            = 0.25
+  set Friction strain weakening factors            = 0.25
 
-  # heat capacities, densities, thermal exp. taken from Maffione et al., 2015 but
-  # Serp. WZ Maffione et al., 2015 (except for larger density of 2900 kg/3 as in Porkolab et al., 2021)
+  # ---
   # Thermal diffusivities adjusted for giving the following values for thermal conductivities
   # basGabCrust th. cond. include the effect of water on top.
-  # Testing a low density constrast of 50 kg/m3 for the asth. and oceanic lith mantle.
-  # Mantle layers densities taken from Stixrude et Lithgow-Bertelloni, GJI, 2011
-  # Using a low th. cond. for OLM to try to delay its heating in the asth.  
-  #        - th. conduct.      4.47         1.5         2.7      4.47     2.7       #4.47     4.47             
-  #                           bkg(asth.) basGabCrust  ocLithMtl  asth.    olmWS     #MTZ      topOfLowerMantle total_strain
-  set Thermal diffusivities = 1.25e-6,   4.762e-07,   7.63e-07,  1.25e-6, 7.63e-07  #,1.25e-6, 1.25e-6,          1.0
-  set Heat capacities       =   1050.,       1050.,      1050.,    1050.,     1050. #,  1050.,   1050 ,          1.0
-  set Densities             =   3370.,       3000.,      3370.,    3370.,     3370  #,  3600.,   3700.,          1.0
-  set Thermal expansivities =    3e-5,      2.8e-5,      3e-5 ,     3e-5,     3e-5  #,   3e-5,    3e-5,          1.0
+  # Using a low th. cond. for OLM to try to delay its heating in the asth.
+  # cont. ext. cookbook for the dummy strain fields.  
+  #        - th. conduct.      4.47         1.5         2.7      4.47     2.7       2.5(dummies for SW)
+  #                           bkg(asth.) basGabCrust  ocLithMtl  asth.    olmWS     nips  ps
+  set Thermal diffusivities = 1.25e-6,   4.762e-07,   7.63e-07,  1.25e-6, 7.63e-07,  3.3e-3, 3.3e-3  
+  set Heat capacities       =   1050.,       1050.,      1050.,    1050.,    1050.,    750.,   750.
+  set Densities             =   3370.,       3000.,      3370.,    3370.,     3370,     1.0,    1.0
+  set Thermal expansivities =    3e-5,      2.8e-5,      3e-5 ,     3e-5,     3e-5,    2e-5,    2e-5
 
   # Harmonic viscosity averaging
   set Viscosity averaging scheme = harmonic
 
-  #set Viscous flow law = dislocation
-  set Viscous flow law = composite
+  set Viscous flow law = dislocation
+  #set Viscous flow law = composite
 
-  # Using Cizkova et al. 2012, http://dx.doi.org/10.1016/j.pepi.2012.02.010
-  # parameters (wet olv it seems) for mantle materials here.
-  # (olmWS prefact. = prefact*10)
-  #                                               bkg(asth) basGabCrust oLithMtl  asth.     olmWS     # MTZ       topOfLowMtl total_strain
-  set Prefactors for dislocation creep          = 3.1e-17,  5.05e-28,   3.1e-17, 3.1e-17,  3.1e-16  #,2.42e-16, 2.42e-16,    1.0e-50
-  set Stress exponents for dislocation creep    =     3.5,       4.7,       3.5,     3.5,      3.5  #,     3.5,      3.5,        1.0
-  set Activation energies for dislocation creep =  480.e3,    485.e3,    480.e3,  480.e3,   480.e3  #,  540.e3,   540.e3,        0.0
-  set Activation volumes for dislocation creep  =   11e-6,        0.,    11.e-6,   11e-6,   11.e-6  #,  7.5e-6,   10.e-6,        0.0
+  # Using dry olivine for both asthenosphere and oceanic lith. mantle
+  # Maffione et al., 2015: https://doi.org/10.1002/2015GC005746
+  # (except for the Activation volumes which is 15.e-6 instead of 20.e-6
+  # olmWS prefactor = prefactor*10 for the start
+  # cont. ext. cookbook for the dummy strain fields. 
+  #                                               bkg(asth) basGabCrust  oLithMtl  asth.     olmWS     (dummies for SW)  
+  set Prefactors for dislocation creep          = 2.42e-16, 5.04e-28,    2.42e-16, 2.42e-16, 2.42e-14,  1.0e-50, 1.0e-50
+  set Stress exponents for dislocation creep    =      3.5,      4.7,         3.5,      3.5,      3.5,      1.0,     1.0
+  set Activation energies for dislocation creep =   540.e3,   485.e3,      540.e3,   540.e3,   430.e3,      0.0,     0.0
+  set Activation volumes for dislocation creep  =    5.e-6,       0.,      15.e-6,    5.e-6,   11.e-6,      0.0,     0.0
 
-  # Plasticity parameters
-  set Angles of internal friction =   15.,    15.,   15.,   15. , 15.   #, 15.  , 0.
-  set Cohesions                   = 20.e6, 10.e6 , 20.e6, 20.e6 , 20.e6 #, 20.e6, 1.e6
+  # Plasticity parameters from Maffione et al., 2015: https://doi.org/10.1002/2015GC005746
+  # cont. ext. cookbook for the dummy strain fields.
+  set Angles of internal friction =   15.,    15.,   15.,   15. , 15.  , 30.  , 30.
+  set Cohesions                   = 20.e6, 10.e6 , 20.e6, 20.e6 , 20.e6, 20.e6, 20.e6
  
-  # diffusion creep section Cizkova et al. 2012, http://dx.doi.org/10.1016/j.pepi.2012.02.010
-  # (olmWS prefact. = prefact*10)      
-  set Prefactors for diffusion creep         =   1.e-9, 5.05e-28, 1.e-9,   1.e-9, 1.e-8   # 2.42e-16, 2.42e-16,  1.0e-50
-  set Activation energies for diffusion creep=  335.e3,   485.e3, 335.e3, 335.e3, 335.e3  #  540.e3   # 540.e3,   540.e3,      0.0 
-  set Activation volumes for diffusion creep =  4.8e-6,       0., 4.8e-6, 4.8e-6, 4.8e-6  #  20.e-6   #5.5e-6,   10.e-6,      0.0
+  ## diffusion creep section. Taken from table 8 of Glerum et al., https://doi.org/10.1002/2015GC005746
+  # prefact. adjusted (reduced by 1e3) because of the small (1e-3) default grain size used by aspect
+  #  olmWS prefactor = prefactor*10 for the start
+  # cont. ext. cookbook for the dummy strain fields.       
+  #set Prefactors for diffusion creep         = 6.08e-18, 6.08e-18, 6.08e-18, 6.08e-18, 6.08e-16, 1.0e-50, 1.0e-50
+  #set Activation energies for diffusion creep=   335.e3,   335.e3,   335.e3,   335.e3,   335.e3,     0.0,     0.0
+  #set Activation volumes for diffusion creep =    6.e-6,    6.e-6,    6.e-6,    6.e-6,    6.e-6,     0.0,     0.0
 
  end #--- visco plastic
 end

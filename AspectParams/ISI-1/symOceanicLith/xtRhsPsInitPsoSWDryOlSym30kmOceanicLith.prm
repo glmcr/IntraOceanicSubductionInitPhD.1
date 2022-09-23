@@ -1,18 +1,18 @@
 #set Resume computation  = true
 set Resume computation   = false
 set Start time                             = 0
-set End time                               = 150e6
+set End time                               = 1e5 #150e6
 set Use years in output instead of seconds = true
 set Nonlinear solver scheme                = single Advection, iterated Stokes
 #set Nonlinear solver scheme                = iterated Advection and Stokes
 set Nonlinear solver tolerance             = 2e-7
 set Max nonlinear iterations               = 100 #40 #25 #40 #70
 set CFL number                             = 0.45
-set Output directory = /home/gimer47/projects/def-cagui22/gimer47/Crunch/Aspect/ISI-1/
+set Output directory = /home/gimer47/projects/def-cagui22/gimer47/Crunch/Aspect/ISI-1/xtRhsPsInitPsoSWDryOlSym30kmOceanicLith
 set Timing output frequency                = 1
 set Pressure normalization                 = no
 set Maximum time step                      = 1e3 #1e4
-set World builder file = /home/gimer47/Dev/AspectParamsFiles/ISI-1/symOceanicLith/sym30kmOceanicLith.wb
+set World builder file = /home/gimer47/Dev/AspectParamsFiles/ISI-1/symOceanicLith/onlyTSym30kmOceanicLith.wb
 #set Adiabatic surface temperature = 1573
 
 subsection Discretization
@@ -20,10 +20,10 @@ subsection Discretization
   set Use discontinuous temperature discretization= true
 
   subsection Stabilization parameters
-    set Use limiter for discontinuous composition solution= true
+    #set Use limiter for discontinuous composition solution= true
     set Use limiter for discontinuous temperature solution= true
-    set Global composition maximum= 1, 1, 1, 1, 0, 0
-    set Global composition minimum= 0, 0, 0, 0, 0, 0
+    #set Global composition maximum= 1, 1, 1, 1, 1, 1
+    #set Global composition minimum= 0, 0, 0, 0, 0, 0
 
     #set Use artificial viscosity smoothing = true
     set Global temperature minimum= 273
@@ -85,18 +85,18 @@ subsection Boundary composition model
 end
 
 subsection Boundary velocity model
-   set Tangential velocity boundary indicators = bottom, right #, left
+   set Tangential velocity boundary indicators = bottom, left # right #, left
 end
 
 # --- 
 subsection Boundary velocity model
-  set Prescribed velocity boundary indicators = left x: function #, right x: function #, bottom y: function
+  set Prescribed velocity boundary indicators = right x: function #, left x: function #, bottom y: function
   subsection Function
     set Variable names = x, y
     # 40km: oFlowBlcFactor= -0.07850911974623428
     # 80km ioFlowBlcFactor= -0.1515664690939903
-    set Function constants  = velcmyLHS= -2.0, \
-                              velcmyRHS= 0.0, \
+    set Function constants  = velcmyLHS= 0.0, \
+                              velcmyRHS= 3.5, \
                               cm2m=0.01, \
                               year=1, \
                               bottomDepth=700e3, \
@@ -143,10 +143,6 @@ subsection Postprocess
     set List of output variables = depth, density, viscosity, strain rate, heating, heat flux map, stress
     set Number of grouped files = 1
     set Time between graphical output = 2.5e4
-    #subsection Compositional fields as vectors
-    #  set Names of vectors = ocCrustAndLithMtleVect
-    #  set Names of fields = oceanicCrust, oceanicLithMantle
-    #end
   end
   subsection Particles
     set Number of grouped files = 1
@@ -161,8 +157,22 @@ subsection Postprocess
 end
 
 subsection Compositional fields
-  set Number of fields = 6
-  set Names of fields = oceanicCrust, oceanicLithMantle, asthenosphere, olmWS, noninitial_plastic_strain, plastic_strain        
+  set Number of fields = 5
+  set Names of fields = oceanicCrust, oceanicLithMantle, asthenosphere, noninitial_plastic_strain, plastic_strain        
+end
+
+# --- Using an initial 5x8 km randomized (0.5 - 1.5) plastic strain 
+#     "weak seed" located 2.5 km under the oceanic crust.
+subsection Initial composition model
+  set Model name = function
+  subsection Function
+    set Variable names      = x,y
+    set Function expression = if(y>= 692.5e3, 1, 0); \
+                              if(y< 692.5e3 && y>= 670e3, 1, 0); \
+                              if(y< 670e3, 1, 0); \             
+                              0; \
+                              if(y<=695e3 && y>=670e3 && x>=750.e3 && x<=756.e3, 0.5 + rand_seed(1), 0);
+  end
 end
 
 subsection Material model
@@ -184,52 +194,53 @@ subsection Material model
 
   # --- 
   #set Strain healing mechanism = temperature dependent
-  #set Strain weakening mechanism = total strain
-  #plastic weakening with plastic strain and viscous weakening with viscous strain
-  #set Strain weakening mechanism = plastic weakening with plastic strain only
-  #set Strain weakening mechanism = none
+  set Strain weakening mechanism = plastic weakening with plastic strain only
+  set Start plasticity strain weakening intervals  = 0.5
+  set End plasticity strain weakening intervals    = 1.5
+  set Cohesion strain weakening factors            = 0.25
+  set Friction strain weakening factors            = 0.25
 
   # ---
   # Thermal diffusivities adjusted for giving the following values for thermal conductivities
   # basGabCrust th. cond. include the effect of water on top.
   # Using a low th. cond. for OLM to try to delay its heating in the asth.
   # cont. ext. cookbook for the dummy strain fields.  
-  #        - th. conduct.      4.47         1.5         2.7      4.47     2.7       2.5(dummies for SW)
-  #                           bkg(asth.) basGabCrust  ocLithMtl  asth.    olmWS     nips  ps
-  set Thermal diffusivities = 1.25e-6,   4.762e-07,   7.63e-07,  1.25e-6, 7.63e-07,  3.3e-3, 3.3e-3  
-  set Heat capacities       =   1050.,       1050.,      1050.,    1050.,    1050.,    750.,   750.
-  set Densities             =   3370.,       3000.,      3370.,    3370.,     3370,     1.0,    1.0
-  set Thermal expansivities =    3e-5,      2.8e-5,      3e-5 ,     3e-5,     3e-5,    2e-5,    2e-5
+  #        - th. conduct.      4.47         1.5         2.7      4.47     2.5(dummies for SW)
+  #                           bkg(asth.) basGabCrust  ocLithMtl  asth.    nips  ps
+  set Thermal diffusivities = 1.25e-6,   4.762e-07,   7.63e-07,  1.25e-6, 3.3e-3, 3.3e-3  
+  set Heat capacities       =   1050.,       1050.,      1050.,    1050.,   750.,   750.
+  set Densities             =   3370.,       3000.,      3370.,    3370.,    1.0,   1.0
+  set Thermal expansivities =    3e-5,      2.8e-5,      3e-5 ,     3e-5,   2e-5,   2e-5
 
   # Harmonic viscosity averaging
   set Viscosity averaging scheme = harmonic
 
-  #set Viscous flow law = dislocation
-  set Viscous flow law = composite
+  set Viscous flow law = dislocation
+  #set Viscous flow law = composite
 
   # Using dry olivine for both asthenosphere and oceanic lith. mantle
   # Maffione et al., 2015: https://doi.org/10.1002/2015GC005746
   # (except for the Activation volumes which is 15.e-6 instead of 20.e-6
   # olmWS prefactor = prefactor*10 for the start
   # cont. ext. cookbook for the dummy strain fields. 
-  #                                               bkg(asth) basGabCrust  oLithMtl  asth.     olmWS     (dummies for SW)  
-  set Prefactors for dislocation creep          = 2.42e-16, 5.04e-28,    2.42e-16, 2.42e-16, 2.42e-14,  1.0e-50, 1.0e-50
-  set Stress exponents for dislocation creep    =      3.5,      4.7,         3.5,      3.5,      3.5,      1.0,     1.0
-  set Activation energies for dislocation creep =   540.e3,   485.e3,      540.e3,   540.e3,   430.e3,      0.0,     0.0
-  set Activation volumes for dislocation creep  =   15.e-6,       0.,      15.e-6,   15.e-6,   11.e-6,      0.0,     0.0
+  #                                               bkg(asth) basGabCrust  oLithMtl  asth.    (dummies for SW)  
+  set Prefactors for dislocation creep          = 2.42e-16, 5.04e-28,    2.42e-16, 2.42e-16, 1.0e-50, 1.0e-50
+  set Stress exponents for dislocation creep    =      3.5,      4.7,         3.5,      3.5,     1.0,     1.0
+  set Activation energies for dislocation creep =   540.e3,   485.e3,      540.e3,   540.e3,     0.0,     0.0
+  set Activation volumes for dislocation creep  =    5.e-6,       0.,      15.e-6,    5.e-6,     0.0,     0.0
 
   # Plasticity parameters from Maffione et al., 2015: https://doi.org/10.1002/2015GC005746
   # cont. ext. cookbook for the dummy strain fields.
-  set Angles of internal friction =   15.,    15.,   15.,   15. , 15.  , 30.  , 30.
-  set Cohesions                   = 20.e6, 10.e6 , 20.e6, 20.e6 , 20.e6, 20.e6, 20.e6
+  set Angles of internal friction =   15.,    15.,   15.,   15., 30.  , 30.
+  set Cohesions                   = 20.e6, 10.e6 , 20.e6, 20.e6, 20.e6, 20.e6
  
   ## diffusion creep section. Taken from table 8 of Glerum et al., https://doi.org/10.1002/2015GC005746
   # prefact. adjusted (reduced by 1e3) because of the small (1e-3) default grain size used by aspect
   #  olmWS prefactor = prefactor*10 for the start
   # cont. ext. cookbook for the dummy strain fields.       
-  set Prefactors for diffusion creep         = 6.08e-18, 6.08e-18, 6.08e-18, 6.08e-18, 6.08e-16, 1.0e-50, 1.0e-50
-  set Activation energies for diffusion creep=   335.e3,   335.e3,   335.e3,   335.e3,   335.e3,     0.0,     0.0
-  set Activation volumes for diffusion creep =    6.e-6,    6.e-6,    6.e-6,    6.e-6,    6.e-6,     0.0,     0.0
+  #set Prefactors for diffusion creep         = 6.08e-18, 6.08e-18, 6.08e-18, 6.08e-18, 6.08e-16, 1.0e-50, 1.0e-50
+  #set Activation energies for diffusion creep=   335.e3,   335.e3,   335.e3,   335.e3,   335.e3,     0.0,     0.0
+  #set Activation volumes for diffusion creep =    6.e-6,    6.e-6,    6.e-6,    6.e-6,    6.e-6,     0.0,     0.0
 
  end #--- visco plastic
 end
@@ -255,9 +266,9 @@ subsection Initial temperature model
   set Model name = world builder
 end
 
-subsection Initial composition model
-  set List of model names = world builder
-end
+#subsection Initial composition model
+#  set List of model names = world builder
+#end
 
 #subsection Initial composition model
 #  set Model name = ascii data
