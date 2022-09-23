@@ -19,8 +19,11 @@ xdim= 1500e3
 #switchDepthRHS=40e3
 #switchDepthLHS=40e3
 
-switchDepthRHS=80e3
-switchDepthLHS=80e3
+switchDepthRHS=45e3
+switchDepthLHS=45e3
+
+#switchDepthRHS=80e3
+#switchDepthLHS=80e3
 
 #maxDepth= 700e3
 nbCellsY= 700
@@ -73,7 +76,9 @@ bFact= -0.07850911974625 # < 3.2776559244496184e-13
 bFact= -0.07850911974623 # < 7.813194535799539e-14
 bFact= -0.07850911974623428 # 40km
 
-#bFact=       -0.1515664690939903 # 80km
+#40km bFact=  -0.07850911974623428
+#45km bFact= -0.08713029576339054
+#80km bFact= -0.1515664690939903  
 
 dFact= 35.0
 #dFact= 70.0
