@@ -19,11 +19,11 @@ xdim= 1500e3
 #switchDepthRHS=40e3
 #switchDepthLHS=40e3
 
-#switchDepthRHS=45e3
-#switchDepthLHS=45e3
+switchDepthRHS=45e3
+switchDepthLHS=45e3
 
-switchDepthRHS=50e3
-switchDepthLHS=50e3
+#switchDepthRHS=50e3
+#switchDepthLHS=50e3
 
 #switchDepthRHS=80e3
 #switchDepthLHS=80e3
