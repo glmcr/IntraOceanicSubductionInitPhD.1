@@ -4,12 +4,12 @@ import sys
 import math
 
 # convergence
-#velcmyLHS= 2.0
-#velcmyRHS= -2.0
+velcmyLHS= 3.5
+velcmyRHS= -3.5
 
 # extension
-velcmyLHS= -2.0
-velcmyRHS= 2.0
+#velcmyLHS= -2.0
+#velcmyRHS= 2.0
 
 cm2m=0.01
 year=1
@@ -19,8 +19,11 @@ xdim= 1500e3
 #switchDepthRHS=40e3
 #switchDepthLHS=40e3
 
-switchDepthRHS=45e3
-switchDepthLHS=45e3
+#switchDepthRHS=45e3
+#switchDepthLHS=45e3
+
+switchDepthRHS=50e3
+switchDepthLHS=50e3
 
 #switchDepthRHS=80e3
 #switchDepthLHS=80e3
