@@ -8,8 +8,8 @@ velcmyLHS= 3.5
 velcmyRHS= -3.5
 
 # extension
-#velcmyLHS= -2.0
-#velcmyRHS= 2.0
+#velcmyLHS= -2.5
+#velcmyRHS= 2.5
 
 cm2m=0.01
 year=1
@@ -19,8 +19,8 @@ xdim= 1500e3
 #switchDepthRHS=40e3
 #switchDepthLHS=40e3
 
-switchDepthRHS=45e3
-switchDepthLHS=45e3
+switchDepthRHS=55e3
+switchDepthLHS=55e3
 
 #switchDepthRHS=50e3
 #switchDepthLHS=50e3
@@ -81,6 +81,7 @@ bFact= -0.07850911974623428 # 40km
 
 #40km bFact=  -0.07850911974623428
 #45km bFact= -0.08713029576339054
+#55km bFact= -0.10479285134037329
 #80km bFact= -0.1515664690939903  
 
 dFact= 35.0
