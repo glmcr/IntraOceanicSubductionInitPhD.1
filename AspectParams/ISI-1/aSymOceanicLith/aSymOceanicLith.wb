@@ -19,8 +19,8 @@
         "temperature models":[ {"model":"linear", "min depth":7.5e3, "max depth":30e3, "top temperature": 850, "bottom temperature":1650 }],
         "composition models":[ {"model":"uniform", "compositions":[1], "min depth":7.5e3, "max depth":30e3}]},
 
-   {"model": "oceanic plate", "name":"oceanic plate lith. mantle WS", "coordinates":[[750e3,-1e3],[752e3,-1e3],[752e3,1e3],[750e3,1e3]],
-        "temperature models":[ {"model":"linear", "min depth":9.5e3, "max depth":14.5e3, "top temperature": 1050, "bottom temperature":1350 }],
-        "composition models":[ {"model":"uniform", "compositions":[1], "min depth":9.5e3, "max depth":14.5e3}]}
+   {"model": "oceanic plate", "name":"oceanic plate lith. mantle WS", "coordinates":[[749e3,-1e3],[751e3,-1e3],[751e3,1e3],[749e3,1e3]],
+        "temperature models":[ {"model":"linear", "min depth":9.5e3, "max depth":13.5e3, "top temperature": 1050, "bottom temperature":1350 }],
+        "composition models":[ {"model":"uniform", "compositions":[3], "min depth":9.5e3, "max depth":13.5e3}]}
   ]
 }
