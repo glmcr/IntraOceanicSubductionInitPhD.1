@@ -1,5 +1,5 @@
-#set Resume computation  = true
-set Resume computation   = false
+set Resume computation  = true
+#set Resume computation   = false
 set Start time                             = 0
 set End time                               = 150e6
 set Use years in output instead of seconds = true
@@ -20,10 +20,10 @@ subsection Discretization
   set Use discontinuous temperature discretization= true
 
   subsection Stabilization parameters
-    #set Use limiter for discontinuous composition solution= true
+    set Use limiter for discontinuous composition solution= true
     set Use limiter for discontinuous temperature solution= true
-    #set Global composition maximum= 1, 1, 1, 1 #, 1, 1
-    #set Global composition minimum= 0, 0, 0, 0 #, 0, 0
+    set Global composition maximum= 1, 1, 1, 1, 1.5 #, 1, 1
+    set Global composition minimum= 0, 0, 0, 0, 0.5 #, 0, 0
 
     #set Use artificial viscosity smoothing = true
     set Global temperature minimum= 273
@@ -55,7 +55,7 @@ end
 subsection Checkpointing
   #~28mins: set Time between checkpoint = 1700
   #set Time between checkpoint= 1700
-  set Steps between checkpoint= 1
+  set Steps between checkpoint= 5
 end
 
 subsection Boundary temperature model
@@ -93,8 +93,8 @@ subsection Boundary velocity model
   set Prescribed velocity boundary indicators = left x: function # left x: function #, right x: function #, bottom y: function
   subsection Function
     set Variable names = x, y
-    # 40km: oFlowBlcFactor= -0.07850911974623187
-    # 80km ioFlowBlcFactor=
+    # 40km: ioFlowBlcFactor= 
+    # 60km, 3.5cm/y: ioFlowBlcFactor= -0.11384111384111345
     set Function constants  = velcmyLHS= 4.5, \
                               velcmyRHS= 0.0, \
                               cm2m=0.01, \
@@ -102,14 +102,14 @@ subsection Boundary velocity model
                               bottomDepth=700e3, \ 
                               xdim= 1500e3, \
                               switchDepthRHS=40e3, \
-                              switchDepthLHS=80e3, \
-                              ioFlowBlcFactor= -0.07850911974623187
+                              switchDepthLHS=60e3, \
+                              ioFlowBlcFactor= -0.11384111384111345
  
     set Function expression = if ( x >= xdim/2, \
                                      if (y > (bottomDepth-switchDepthRHS), \
-                                          velcmyLHS*(cm2m/year), \
+                                          velcmyRHS*(cm2m/year), \
                                           if ( y >= (bottomDepth-switchDepthRHS-20e3), \
-                                             velcmyLHS*(cm2m/year)*((y - (bottomDepth-switchDepthRHS-20e3))*35.0)/bottomDepth, \
+                                             velcmyRHS*(cm2m/year)*((y - (bottomDepth-switchDepthRHS-20e3))*35.0)/bottomDepth, \
                                              if ( y >= (bottomDepth-switchDepthRHS-40e3), \
                                                 ioFlowBlcFactor*velcmyRHS*(cm2m/year)*(((bottomDepth-switchDepthRHS-20e3)-y)*35.0)/bottomDepth, \
                                                 ioFlowBlcFactor*velcmyRHS*(cm2m/year) ) ) ), \
@@ -215,10 +215,10 @@ subsection Material model
   # (except for the Activation volumes which is 15.e-6 instead of 20.e-6
   # olmWS prefactor = prefactor*10 for the start 
   #                                               bkg(asth) basGabCrust  oLithMtl  asth.     olmWS     total_strain
-  set Prefactors for dislocation creep          = 2.42e-16, 5.04e-28,    2.42e-16, 2.42e-16, 2.42e-14, 1.0e-50
+  set Prefactors for dislocation creep          = 2.42e-16, 5.04e-28,    2.42e-16, 2.42e-16, 2.42e-16, 1.0e-50
   set Stress exponents for dislocation creep    =      3.5,      4.7,         3.5,      3.5,      3.5,     1.0
-  set Activation energies for dislocation creep =   540.e3,   485.e3,      540.e3,   540.e3,   430.e3,     0.0
-  set Activation volumes for dislocation creep  =    5.e-6,       0.,      15.e-6,    5.e-6,   11.e-6,     0.0
+  set Activation energies for dislocation creep =   540.e3,   485.e3,      540.e3,   540.e3,   540.e3,     0.0
+  set Activation volumes for dislocation creep  =    5.e-6,       0.,      15.e-6,    5.e-6,   15.e-6,     0.0
 
   # Plasticity parameters from Maffione et al., 2015: https://doi.org/10.1002/2015GC005746
   set Angles of internal friction =   15.,    15.,   15.,   15., 15.  , 30.
