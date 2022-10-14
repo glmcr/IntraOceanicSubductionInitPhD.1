@@ -325,9 +325,9 @@ composGeomDict= {
 
 #--- Need to have the same order for compo fields names in
 #    both composGeomDict and initCompoFieldsList
-assert tuple(composGeomDict.keys()) == tuple(initCompoFieldsList), \
-    "Inconsistency between initCompoFieldsList and composGeomDict.keys():" + \
-    " initCompoFieldsList="+str(initCompoFieldsList)+", composGeomDict.keys()="+str(tuple(composGeomDict.keys()))
+#assert tuple(composGeomDict.keys()) == tuple(initCompoFieldsList), \
+#    "Inconsistency between initCompoFieldsList and composGeomDict.keys():" + \
+#   " initCompoFieldsList="+str(initCompoFieldsList)+", composGeomDict.keys()="+str(tuple(composGeomDict.keys()))
 
 # --- Adding two dummy fields (0.0 compos everywhere) to
 #     possibly be used for strain weakening stuff.
@@ -377,9 +377,10 @@ for y in range(0,int(nbYPts)):
                # --- All compos. are defined using float 1.0
                #composLineList[compoCounter] = "1.0"
 
-               # --- Use the column indice to discriminate materials between them.
-               composLineList[compoCounter] = str(1.0*composGeomDict[compoField]["col"]-1.0) #"1.0"
-
+               # --- Use the column indice to discriminate materials between them(no need to do that now).
+               #composLineList[compoCounter] = str(1.0*composGeomDict[compoField]["col"]-1.0) #"1.0"
+               composLineList[compoCounter] = "1.0"
+ 
                #print("\ncompoField="+compoField)
                print("pointInside: x,y in [km]="+str(x)+","+str(y))
                print("polygonPoints"+str(polygonPoints))
