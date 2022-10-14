@@ -128,7 +128,8 @@ initCompoFieldsDict= relevantSubsectionsDict["subsection"+sep+"Compositional"+se
 initCompoFieldsList= initCompoFieldsDict["set"+sep+"Names"+sep+ "of"+sep+"fields"+sep]
 
 initCompoFp.write("# POINTS: "+nbXPts+" "+nbYPts+"\n")
-initCompoFp.write("# Columns: x y "+ " ".join(initCompoFieldsList)+" SWDummy1 SWDummy2\n")
+initCompoFp.write("# Columns: x y "+ " ".join(initCompoFieldsList)+"\n")
+#initCompoFp.write("# Columns: x y "+ " ".join(initCompoFieldsList)+" SWDummy1 SWDummy2\n")
 
 #--- lthos-asthenos bnd: 120km
 #LABDepth= 90.0 # yDim - 610.0
@@ -331,7 +332,8 @@ composGeomDict= {
 
 # --- Adding two dummy fields (0.0 compos everywhere) to
 #     possibly be used for strain weakening stuff.
-composTemplate= ["0.0"]*(len(initCompoFieldsList)+2)
+#composTemplate= ["0.0"]*(len(initCompoFieldsList)+2)
+composTemplate= ["0.0"]*len(initCompoFieldsList)
 
 for y in range(0,int(nbYPts)):
    for x in range(0,int(nbXPts)):
