@@ -128,8 +128,7 @@ initCompoFieldsDict= relevantSubsectionsDict["subsection"+sep+"Compositional"+se
 initCompoFieldsList= initCompoFieldsDict["set"+sep+"Names"+sep+ "of"+sep+"fields"+sep]
 
 initCompoFp.write("# POINTS: "+nbXPts+" "+nbYPts+"\n")
-initCompoFp.write("# Columns: x y "+ " ".join(initCompoFieldsList)+"\n")
-#initCompoFp.write("# Columns: x y "+ " ".join(initCompoFieldsList)+" SWDummy1 SWDummy2\n")
+initCompoFp.write("# Columns: x y "+ " ".join(initCompoFieldsList)+" SWDummy1 SWDummy2\n")
 
 #--- lthos-asthenos bnd: 120km
 #LABDepth= 90.0 # yDim - 610.0
@@ -228,9 +227,10 @@ composGeomDict= {
         "polygons": 
             [ # ---  
               [ [contVsOcean+SCLMThkn,CLCFloor],[contVsOcean+SCLMThkn,CLCCeil],[contVsOcean+SCLMThkn+CLCThkn,CLCCeil] ],
-              [ [0.0,CLCFloor],[0.0,CLCCeil],[contVsOcean+SCLMThkn,CLCCeil],[contVsOcean+SCLMThkn,CLCFloor] ] ]
+              [ [0.0,CLCFloor],[0.0,CLCCeil],[contVsOcean+SCLMThkn,CLCCeil],[contVsOcean+SCLMThkn,CLCFloor] ] , # ],
               # --- For having a small CLC WS protruding in the SOLM
-              #[ [0.0,CLCFloor],[0.0,CLCCeil],[contVsOcean+SCLMThkn+CLCThkn,CLCCeil],[contVsOcean+SCLMThkn+CLCThkn,CLCFloor] ] ]  
+              [ [0.0,CLCFloor],[0.0,CLCCeil],[contVsOcean+SCLMThkn+CLCThkn,CLCCeil],[contVsOcean+SCLMThkn+CLCThkn,CLCFloor] ]
+           ]  
     },
     "contUppCrust":{
         "col": 5,
@@ -326,14 +326,13 @@ composGeomDict= {
 
 #--- Need to have the same order for compo fields names in
 #    both composGeomDict and initCompoFieldsList
-#assert tuple(composGeomDict.keys()) == tuple(initCompoFieldsList), \
-#    "Inconsistency between initCompoFieldsList and composGeomDict.keys():" + \
-#   " initCompoFieldsList="+str(initCompoFieldsList)+", composGeomDict.keys()="+str(tuple(composGeomDict.keys()))
+assert tuple(composGeomDict.keys()) == tuple(initCompoFieldsList), \
+    "Inconsistency between initCompoFieldsList and composGeomDict.keys():" + \
+    " initCompoFieldsList="+str(initCompoFieldsList)+", composGeomDict.keys()="+str(tuple(composGeomDict.keys()))
 
 # --- Adding two dummy fields (0.0 compos everywhere) to
 #     possibly be used for strain weakening stuff.
-#composTemplate= ["0.0"]*(len(initCompoFieldsList)+2)
-composTemplate= ["0.0"]*len(initCompoFieldsList)
+composTemplate= ["0.0"]*(len(initCompoFieldsList)+2)
 
 for y in range(0,int(nbYPts)):
    for x in range(0,int(nbXPts)):
@@ -379,10 +378,11 @@ for y in range(0,int(nbYPts)):
                # --- All compos. are defined using float 1.0
                #composLineList[compoCounter] = "1.0"
 
-               # --- Use the column indice to discriminate materials between them(no need to do that now).
+               # --- Use the column indice to discriminate materials (not really necessary now)
                #composLineList[compoCounter] = str(1.0*composGeomDict[compoField]["col"]-1.0) #"1.0"
+               #  traditional 1.0 value for compos.
                composLineList[compoCounter] = "1.0"
- 
+
                #print("\ncompoField="+compoField)
                print("pointInside: x,y in [km]="+str(x)+","+str(y))
                print("polygonPoints"+str(polygonPoints))
