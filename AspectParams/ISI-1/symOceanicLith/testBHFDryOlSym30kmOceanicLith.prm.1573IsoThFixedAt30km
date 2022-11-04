@@ -210,8 +210,7 @@ subsection Material model
   # testing the mantle convection supression using a K Th of 52.5 in the asth. 
   #        - th. conduct.      4.47         1.5         2.7      4.47     2.7       2.5(dummies for SW)
   #                           bkg(asth.) basGabCrust  ocLithMtl  asth.    olmWS     nips  ps
-  # 1573 fixed at 30km set Thermal diffusivities = 7.72e-5,    4.76e-07,   7.63e-07,  7.72e-5, 7.63e-07,  3.3e-3, 3.3e-3
-  set Thermal diffusivities = 5.61e-5,    4.76e-07,   7.63e-07,  5.61e-5, 7.63e-07,  3.3e-3, 3.3e-3  
+  set Thermal diffusivities = 7.72e-5,    4.76e-07,   7.63e-07,  7.72e-5, 7.63e-07,  3.3e-3, 3.3e-3  
   set Heat capacities       =   1050.,       1050.,      1050.,    1050.,    1050.,    750.,   750.
   set Densities             =   3370.,       3000.,      3370.,    3370.,     3370,     1.0,    1.0
   set Thermal expansivities =    3e-5,      2.8e-5,      3e-5 ,     3e-5,     3e-5,    2e-5,    2e-5
