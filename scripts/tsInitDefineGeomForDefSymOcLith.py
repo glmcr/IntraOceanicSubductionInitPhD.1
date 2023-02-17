@@ -5,6 +5,7 @@ import numpy
 
 import geomDefBtlAndBea2017EPSL as geom
 
+
 aspectParamsFile= sys.argv[1]
 
 aspectParamsFp= open(aspectParamsFile,"r")
