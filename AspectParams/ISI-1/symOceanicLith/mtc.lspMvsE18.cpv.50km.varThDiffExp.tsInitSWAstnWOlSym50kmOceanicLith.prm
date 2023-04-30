@@ -217,6 +217,13 @@ subsection Initial composition model
                               if(y< 650e3, 1, 0); \
                               if(y>= 699e3, 1, 0); \
                               0; \
+                              0; \
+                              0; \
+                              0; \
+                              0; \
+                              0; \
+                              0; \
+                              0; \
                               if(y<=691.5e3 && y>=682.5e3 && x>=748e3 && x<=753.5e3, 0.5 + rand_seed(10.0), 0);
   end
 end
