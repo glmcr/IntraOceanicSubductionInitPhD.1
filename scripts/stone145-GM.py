@@ -44,11 +44,73 @@ def readvtu(file):
     npDataDict= {}
 
     #idx = field_names.index("eclogites")
-    field_vtk_array = reader.GetOutput().GetPointData().GetArray(field_names.index("eclogites"))
-    npDataDict["eclogites"] = numpy_support.vtk_to_numpy(field_vtk_array)
+    #field_vtk_array = reader.GetOutput().GetPointData().GetArray(field_names.index("eclogites"))
+    #npDataDict["eclogites"] = numpy_support.vtk_to_numpy(field_vtk_array)
 
-    field_vtk_array = reader.GetOutput().GetPointData().GetArray(field_names.index("greenschists"))
-    npDataDict["greenschists"] = numpy_support.vtk_to_numpy(field_vtk_array)
+    #field_vtk_array = reader.GetOutput().GetPointData().GetArray(field_names.index("greenschists"))
+    #npDataDict["greenschists"] = numpy_support.vtk_to_numpy(field_vtk_array)
+
+    #field_vtk_array = reader.GetOutput().GetPointData().GetArray(field_names.index("greenschists"))
+    #npDataDict["greenschists"] = numpy_support.vtk_to_numpy(field_vtk_array)
+    
+    #allTogether= np.zeros(npDataDict["eclogites"].shape)
+
+    #for fn in field_names:
+    #    print("fn="+fn)
+
+    npDataDict= {
+                  "oceanicCrust": [ 1.0, None],
+                  "oceanicLithMantle": [ 2.0, None],
+                  "asthenosphere": [ 0.0, None],
+                  "oceanicSeds": [ 3.0, None],
+                  "oceanicCrustSSZ": [ 4.0, None],
+                  "oceanicLithMantleSSZ": [ 5.0, None],
+                  "greenschists": [ 6.0, None],
+                  "blueschists": [ 7.0, None],
+                  "amphibolites": [ 8.0, None],
+                  "granulites": [ 9.0, None],
+                  "eclogites": [ 10.0, None],
+                  "pmeltedSszAsth": [ 11.0, None]
+               }
+
+
+    for mn in npDataDict:
+
+        print("reading material: "+mn+" from file: "+file)
+
+        if mn not in field_names:
+           print("Material: "+mn+" not found in the vtu file(s)!")
+           sys.exit(1)
+        # ---
+
+        #field_vtk_array = reader.GetOutput().GetPointData().GetArray(field_names.index(mn))
+        npDataDict[mn][1] = \
+            numpy_support.vtk_to_numpy(reader.GetOutput().GetPointData().GetArray(field_names.index(mn)))
+    # ---       
+    #sys.exit(0)
+
+    mn0= tuple(npDataDict.keys())[0]
+
+    allTogether= np.zeros(npDataDict[mn0][1].shape)
+    
+    for pti in range(0,allTogether.size):
+
+        #if npDataDict["eclogites"][pti] >= 0.5:  allTogether[pti]= npDataDict["eclogites"][0]
+        #elif npDataDict["greenschists"][pti] >= 0.5: allTogether[pti]= 2.0
+        #if npDataDict[][pti] >= 0.5:
+
+        #mix= 0.0
+        allTogether[pti]= 0.0
+
+        for mn in npDataDict:
+          #if npDataDict[mn][1][pti] >= 0.75:
+          #  allTogether[pti]= npDataDict[mn][0]
+
+          allTogether[pti] += npDataDict[mn][1][pti]*npDataDict[mn][0]  
+          # ---
+        # ---
+
+    #print("numpy.array(npDataDict[eclogites].shape="+str(npDataDict["eclogites"].shape))
     
     # compute the equivalent shear stress
     #tau_eq=np.zeros(len(strain_rate))     
@@ -64,7 +126,8 @@ def readvtu(file):
     #    #tau_eq[i]=2*viscosity[i]*strain_rate[i]
     #    #print('J2, ', tau_eq)
 
-    return x,y,z,npDataDict
+    return x,y,z,allTogether
+    #return x,y,z,npDataDict
     #return x,y,z,number_of_fields,strain_rate,viscosity
 
 ###################################################################################################
@@ -77,11 +140,12 @@ pvtuFiles= glob.glob(sys.argv[1]+"/*.pvtu")
 
 outdir= sys.argv[2]
 
-for fich in pvtuFiles: #glob.glob(f'solution-*.pvtu'):
+for fich in sorted(pvtuFiles): #glob.glob(f'solution-*.pvtu'):
 
     #x,y,z,nb,sr,eta=readvtu(fich)
     
-    x,y,z,npDataDict=readvtu(fich)
+    #x,y,z,npDataDict=readvtu(fich)
+    x,y,z,all=readvtu(fich)
     
     ################################
     # export to png via scatter plot
@@ -94,9 +158,9 @@ for fich in pvtuFiles: #glob.glob(f'solution-*.pvtu'):
     #ax= plt.plot( kind="scatter",  c=npDataDict["eclogites"], s=3, cmap='viridis', vmin=0, vmax=1, label="eclo")
     #plt.plot( kind="scatter", c=npDataDict["greenschists"], s=3, cmap='viridis', vmin=0, vmax=1, label="grg",ax=ax)
     
-    plt.scatter(x, y, c=npDataDict["eclogites"], s=3, cmap='viridis', vmin=0, vmax=1, label="eclo")
-    plt.figure().add_subplot(111)
-    plt.scatter(x, y, c=npDataDict["greenschists"],s=3, cmap='viridis', vmin=0, vmax=1, label="grg") #ax=ax)
+    plt.scatter(x, y, c=all, s=3, cmap='viridis', vmin=0, vmax=12) # label="a")
+    #plt.figure().add_subplot(111)
+    #plt.scatter(x, y, c=npDataDict["greenschists"],s=3, cmap='viridis', vmin=0, vmax=1, label="grg") #ax=ax)
     #plt.xlim(0, 1)
     #plt.ylim(0, 1)
     plt.axis('scaled')
