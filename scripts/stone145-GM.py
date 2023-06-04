@@ -59,18 +59,18 @@ def readvtu(file):
     #    print("fn="+fn)
 
     npDataDict= {
-                  "oceanicCrust": [ 1.0, None],
-                  "oceanicLithMantle": [ 2.0, None],
-                  "asthenosphere": [ 0.0, None],
-                  "oceanicSeds": [ 3.0, None],
-                  "oceanicCrustSSZ": [ 4.0, None],
-                  "oceanicLithMantleSSZ": [ 5.0, None],
-                  "greenschists": [ 6.0, None],
-                  "blueschists": [ 7.0, None],
-                  "amphibolites": [ 8.0, None],
-                  "granulites": [ 9.0, None],
-                  "eclogites": [ 10.0, None],
-                  "pmeltedSszAsth": [ 11.0, None]
+                  "eclogites": [ 2.0, None],
+                  "oceanicCrust": [ 10.0, None],
+                  "oceanicLithMantle": [ 100.0, None],
+                  "asthenosphere": [ 110.0, None],
+                  "oceanicSeds": [ 30.0, None],
+                  "oceanicCrustSSZ": [ 40.0, None],
+                  "oceanicLithMantleSSZ": [ 50.0, None],
+                  "greenschists": [ 60.0, None],
+                  "blueschists": [ 70.0, None],
+                  "amphibolites": [ 80.0, None],
+                  "granulites": [ 90.0, None],
+                  "pmeltedSszAsth": [ 0.0, None]
                }
 
 
@@ -158,7 +158,7 @@ for fich in sorted(pvtuFiles): #glob.glob(f'solution-*.pvtu'):
     #ax= plt.plot( kind="scatter",  c=npDataDict["eclogites"], s=3, cmap='viridis', vmin=0, vmax=1, label="eclo")
     #plt.plot( kind="scatter", c=npDataDict["greenschists"], s=3, cmap='viridis', vmin=0, vmax=1, label="grg",ax=ax)
     
-    plt.scatter(x, y, c=all, s=3, cmap='viridis', vmin=0, vmax=12) # label="a")
+    plt.scatter(x, y, c=all, s=1, cmap='viridis', vmin=0, vmax=110, alpha=1) # label="a")
     #plt.figure().add_subplot(111)
     #plt.scatter(x, y, c=npDataDict["greenschists"],s=3, cmap='viridis', vmin=0, vmax=1, label="grg") #ax=ax)
     #plt.xlim(0, 1)
@@ -166,7 +166,7 @@ for fich in sorted(pvtuFiles): #glob.glob(f'solution-*.pvtu'):
     plt.axis('scaled')
     plt.colorbar()
     
-    plt.savefig(outdir+"/materials_"+ os.path.basename(fich).split(".")[0] ) #str(fich[11:-1]))
+    plt.savefig(outdir+"/materials_"+ os.path.basename(fich).split(".")[0]+".pdf" ) #str(fich[11:-1]))
     
     #plt.savefig('strainrate_'+str(fich[10:14]))
     #plt.show()
