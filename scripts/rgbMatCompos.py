@@ -26,24 +26,38 @@ RGBComposValues= {
     "lusi pmeltedSszAsth"       : ( 192.0/255.0, 192.0/255.0, 192.0/255.0)
 }
 
+# --- oceanic crust + oceanic seds Hybrid rock material
+oCrustPlusSedsHybMatRGB= ( 153.0/255.0, 153.0/255.0, 0.0)
+
+white= ( 1.0, 1.0, 1.0)
+
 dataDict= {}
 
 vtuFilesIn= glob.glob(sys.argv[1] + os.sep + "*.vtu")
 
 reader= vtk.vtkXMLUnstructuredGridReader()
+writer= vtk.vtkXMLUnstructuredGridWriter()
 
 for vtuFileIn in vtuFilesIn:
 
    print("Processing vtuFileIn="+vtuFileIn)
+
+   reader= vtk.vtkXMLUnstructuredGridReader()
    
    reader.SetFileName(vtuFileIn)
    reader.Update()
 
+   print("aft reader.Update()")
+
    dataIn= reader.GetOutput()
+
+   print("aft reader.GetOutput()")
 
    # --- Deep copy of all the vtu file content.
    dataOut= dsa.WrapDataObject(dataIn)
 
+   print("aft dsa.WrapDataObject(dataIn)")
+   
    # --- Trick: Use the velocity data 3D vector for the RGB compositions output
    #    (Assuming that velocity data 3D vector is in the vtu in file)
    rgbVectorData= dataOut.GetPointData().GetArray("velocity") 
@@ -67,8 +81,14 @@ for vtuFileIn in vtuFilesIn:
        #if dataDict[matCompo] is None: 
        
    # ---
-       
-   for pid in pidData:
+
+   pidDataSize= pidData.GetSize()
+   print("pidData size="+str(pidDataSize))
+   
+   emptyParticles= 0
+   
+   #for pid in sorted(pidData):
+   for pid in range(pidDataSize):
 
       #print("pid="+str(int(pid))) 
       #rgbVector= rgbVectorData.GetTuple(int(pid))
@@ -81,7 +101,7 @@ for vtuFileIn in vtuFilesIn:
       for matCompo in RGBComposValues:
 
           #print("matCompo="+matCompo)
-          tmpMatCompo= dataDict[matCompo].GetTuple(int(pid))[0]
+          tmpMatCompo= dataDict[matCompo].GetTuple(pid)[0]
 
           if tmpMatCompo > compoMax:
              compoMax= tmpMatCompo
@@ -89,18 +109,47 @@ for vtuFileIn in vtuFilesIn:
           # ---   
       # ---
 
+      if domMatCompo is None:
+         print("WARNING: No dominant compo for pid: "+str(pid)+" at p. pos: "+
+               str(pPos.GetTuple(int(pid)))+", skipping this particle")
+         emptyParticles += 1
+         rgbVectorData.SetTuple(pid,white)
+         continue
+      
+      #assert domMatCompo is not None, \
+      #   "No dominant compo for pid: "+str(pid)+" at p. pos: "+str(pPos.GetTuple(int(pid)))
+      
       #rgbVector= RGBComposValues[domMatCompo]
-      rgbVectorData.SetTuple(int(pid),RGBComposValues[domMatCompo])
+      #rgbVectorData.SetTuple(int(pid),RGBComposValues[domMatCompo])
       
       #print("rgbVector="+str(rgbVectorData.GetTuple(int(pid))))
-      
-      #sys.exit(0)
+
+      # --- Check if we have a mix between seds and oc. crust
+      #     at the surface (depth <= ~1km)
+      if domMatCompo == "lusi oceanicCrust":
+
+         if dataDict["lusi oceanicSeds"].GetTuple(pid)[0] >= 0.5:
+
+            # --- We have seds here, use the crust + seds mixture RGB
+            rgbVectorData.SetTuple(int(pid),oCrustPlusSedsHybMatRGB)
+            #print("oc. crust + oc. seds mixture, p. position="+str(pPos.GetTuple(int(pid))))
+            #sys.exit(0)
+         # ---
+      else:
+         rgbVectorData.SetTuple(pid,RGBComposValues[domMatCompo])
+         
+      # ---      
    # ---
-      
-   #sys.exit(0)
+
+   print("Done with loop on particles")
+   
+   if emptyParticles > 0:
+      print("WARNING: Found "+str(emptyParticles)+
+            " particles with no composition at all for file: "+vtuFileIn)
+      #sys.exit(0)
    
    # --- Now write the output fields in the new vtu file
-   writer= vtk.vtkXMLUnstructuredGridWriter()
+   #writer= vtk.vtkXMLUnstructuredGridWriter()
 
    # --- Use a temp. output vtu file
    tmpVTUFile= vtuFileIn+".tmp"
@@ -114,6 +163,8 @@ for vtuFileIn in vtuFilesIn:
    # ---
    writer.Write()
 
+   print("aft writer.Write()")
+   
    # --- Rename the temp vtu file to the initial vtu file to
    #     fool the particles.pvd file
    #os.rename(tmpVTUFile, vtuFileIn)
@@ -145,7 +196,13 @@ for vtuFileIn in vtuFilesIn:
    #os.rename(newPvtuFile, pvtuFile)
 
    print("done with vtuFileIn="+vtuFileIn)
+
+   #del reader
+   #del writer
+   #del rgbVectorData
+   #del dataIn
+   #del dataOut
    
-   sys.exit(0)
+   #sys.exit(0)
    
 # ---
