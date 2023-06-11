@@ -120,7 +120,7 @@ for vtuFileIn in vtuFilesIn:
       #   "No dominant compo for pid: "+str(pid)+" at p. pos: "+str(pPos.GetTuple(int(pid)))
       
       #rgbVector= RGBComposValues[domMatCompo]
-      #rgbVectorData.SetTuple(int(pid),RGBComposValues[domMatCompo])
+      rgbVectorData.SetTuple(int(pid),RGBComposValues[domMatCompo])
       
       #print("rgbVector="+str(rgbVectorData.GetTuple(int(pid))))
 
@@ -135,8 +135,8 @@ for vtuFileIn in vtuFilesIn:
             #print("oc. crust + oc. seds mixture, p. position="+str(pPos.GetTuple(int(pid))))
             #sys.exit(0)
          # ---
-      else:
-         rgbVectorData.SetTuple(pid,RGBComposValues[domMatCompo])
+      #else:
+      #   rgbVectorData.SetTuple(pid,RGBComposValues[domMatCompo])
          
       # ---      
    # ---
