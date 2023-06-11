@@ -12,7 +12,7 @@ from vtk.util.numpy_support import vtk_to_numpy
 # --- TODO: Read this from a YAML or a Json input file.
 RGBComposValues= {
 
-    "lusi oceanicCrust"         : (        0.0,  102.0/255.0,         0.0), # Deep green
+    "lusi oceanicCrust"         : (        0.0,  102.0/255.0,         0.0), # Forest green
     "lusi oceanicLithMantle"    : (        0.0,  204.0/255.0,         0.0),
     "lusi asthenosphere"        : (  51.0/255.0, 255.0/255.0,  51.0/255.0),
     "lusi oceanicSeds"          : ( 255.0/255.0, 255.0/255.0,         0.0),
@@ -26,7 +26,7 @@ RGBComposValues= {
     "lusi pmeltedSszAsth"       : ( 192.0/255.0, 192.0/255.0, 192.0/255.0)
 }
 
-# --- oceanic crust + oceanic seds Hybrid rock material
+# --- oceanic crust + oceanic seds Hybrid rock material (not present in the direct output files)
 oCrustPlusSedsHybMatRGB= ( 153.0/255.0, 153.0/255.0, 0.0)
 
 white= ( 1.0, 1.0, 1.0)
@@ -47,16 +47,16 @@ for vtuFileIn in vtuFilesIn:
    reader.SetFileName(vtuFileIn)
    reader.Update()
 
-   print("aft reader.Update()")
+   #print("aft reader.Update()")
 
    dataIn= reader.GetOutput()
 
-   print("aft reader.GetOutput()")
+   #print("aft reader.GetOutput()")
 
    # --- Deep copy of all the vtu file content.
    dataOut= dsa.WrapDataObject(dataIn)
 
-   print("aft dsa.WrapDataObject(dataIn)")
+   #print("aft dsa.WrapDataObject(dataIn)")
    
    # --- Trick: Use the velocity data 3D vector for the RGB compositions output
    #    (Assuming that velocity data 3D vector is in the vtu in file)
@@ -116,10 +116,8 @@ for vtuFileIn in vtuFilesIn:
          rgbVectorData.SetTuple(pid,white)
          continue
       
-      #assert domMatCompo is not None, \
-      #   "No dominant compo for pid: "+str(pid)+" at p. pos: "+str(pPos.GetTuple(int(pid)))
-      
-      #rgbVector= RGBComposValues[domMatCompo]
+      # --- Set the RGB vector at the particle location according to
+      #     the dominant compo RGB vector.
       rgbVectorData.SetTuple(int(pid),RGBComposValues[domMatCompo])
       
       #print("rgbVector="+str(rgbVectorData.GetTuple(int(pid))))
@@ -130,14 +128,11 @@ for vtuFileIn in vtuFilesIn:
 
          if dataDict["lusi oceanicSeds"].GetTuple(pid)[0] >= 0.5:
 
-            # --- We have seds here, use the crust + seds mixture RGB
+            # --- We have seds here then use the crust + seds mixture RGB
             rgbVectorData.SetTuple(int(pid),oCrustPlusSedsHybMatRGB)
             #print("oc. crust + oc. seds mixture, p. position="+str(pPos.GetTuple(int(pid))))
             #sys.exit(0)
          # ---
-      #else:
-      #   rgbVectorData.SetTuple(pid,RGBComposValues[domMatCompo])
-         
       # ---      
    # ---
 
@@ -152,12 +147,12 @@ for vtuFileIn in vtuFilesIn:
    #writer= vtk.vtkXMLUnstructuredGridWriter()
 
    # --- Use a temp. output vtu file
-   tmpVTUFile= vtuFileIn+".tmp"
+   newVTUFile= vtuFileIn+".new"
    
-   writer.SetFileName(vtuFileIn+".tmp")
+   writer.SetFileName(newVTUFile)
 
-   # --- We will copy all the input (except the velocity) and the
-   #     newly defined RGBCompos vector data
+   # --- We copy all the input (except the velocity) and the
+   #     newly defined RGBCompos vector data in the new vtu file
    writer.SetInputData(dataOut.VTKObject)
 
    # ---
@@ -167,7 +162,7 @@ for vtuFileIn in vtuFilesIn:
    
    # --- Rename the temp vtu file to the initial vtu file to
    #     fool the particles.pvd file
-   #os.rename(tmpVTUFile, vtuFileIn)
+   os.rename(newVTUFile, vtuFileIn)
 
    # --- Need to also replace the "velocity" vector field name
    #     by the "RGBCompos" name in the pvtu file to again fool
@@ -184,7 +179,9 @@ for vtuFileIn in vtuFilesIn:
    newPvtuFile= pvtuFile+".new"
    newPvtuFp= open(newPvtuFile,"w")
 
-   # --- 
+   # --- Copy all ASCII lines in the new pvtu file
+   #     but we replace the "velocity" string in the related
+   #     line but the "RGBCompos" string
    for pvtuFileLine in pvtuFileLines:
 
        #print("line written="+ pvtuFileLine.replace("velocity","RGBCompos"))
@@ -193,7 +190,7 @@ for vtuFileIn in vtuFilesIn:
    newPvtuFp.close()
 
    # --- Rename new pvtu as the initial one.
-   #os.rename(newPvtuFile, pvtuFile)
+   os.rename(newPvtuFile, pvtuFile)
 
    print("done with vtuFileIn="+vtuFileIn)
 
