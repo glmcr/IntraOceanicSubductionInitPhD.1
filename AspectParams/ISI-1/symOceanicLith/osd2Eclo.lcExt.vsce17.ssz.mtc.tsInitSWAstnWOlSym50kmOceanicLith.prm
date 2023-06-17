@@ -1,5 +1,5 @@
-#set Resume computation  = true
-set Resume computation   = false
+set Resume computation  = true
+#set Resume computation   = false
 set Start time                             = 0
 set End time                               = 8.85e5 #150e6
 set Use years in output instead of seconds = true
@@ -9,7 +9,7 @@ set Nonlinear solver tolerance             = 2e-7
 set Max nonlinear iterations               = 100 #40 #25 #40 #70
 set CFL number                             = 0.2 #0.45
 set Output directory = \
-/home/gimer47/scratch/Crunch/Aspect/ISI-1/osd2Eclo.lcExt.vsce18.ssz.mtc.tsInitSWAstnWOlSym50kmOceanicLith
+/home/gimer47/scratch/Crunch/Aspect/ISI-1/osd2Eclo.lcExt.vsce17.ssz.mtc.tsInitSWAstnWOlSym50kmOceanicLith
 set Timing output frequency                = 1
 set Pressure normalization                 = no
 #set Maximum time step                      = 5e3 #1e4
@@ -246,7 +246,7 @@ subsection Material model
   set Reference temperature = 293 #1600 #273
   # set Reference viscosity = 1e21 #22
 
-  set Minimum viscosity = 1e18 #5e17 #18
+  set Minimum viscosity = 1e17 #5e17 #18
   set Maximum viscosity = 1e25 #25
 
   set Minimum strain rate = 1.e-20
