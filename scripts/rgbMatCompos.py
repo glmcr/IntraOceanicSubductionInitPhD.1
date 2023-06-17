@@ -43,20 +43,25 @@ for vtuFileIn in vtuFilesIn:
    print("Processing vtuFileIn="+vtuFileIn)
 
    reader= vtk.vtkXMLUnstructuredGridReader()
+
+   #print("aft 
    
    reader.SetFileName(vtuFileIn)
+
+   print("aft reader.SetFileName(vtuFileIn)")
+
    reader.Update()
 
-   #print("aft reader.Update()")
+   print("aft reader.Update()")
 
    dataIn= reader.GetOutput()
 
-   #print("aft reader.GetOutput()")
+   print("aft reader.GetOutput()")
 
    # --- Deep copy of all the vtu file content.
    dataOut= dsa.WrapDataObject(dataIn)
 
-   #print("aft dsa.WrapDataObject(dataIn)")
+   print("aft dsa.WrapDataObject(dataIn)")
    
    # --- Trick: Use the velocity data 3D vector for the RGB compositions output
    #    (Assuming that velocity data 3D vector is in the vtu in file)
@@ -66,7 +71,10 @@ for vtuFileIn in vtuFilesIn:
    rgbVectorData.SetName("RGBCompos")
 
    #--- particles position data for the timestamp
-   pPos= dataOut.GetPointData().GetArray("position")   
+   pPos= dataOut.GetPointData().GetArray("position")
+
+   #print("pPos="+str(pPos))
+   #sys.exit(0)
 
    pidData= dataOut.GetPointData().GetArray("id")
    
@@ -84,6 +92,8 @@ for vtuFileIn in vtuFilesIn:
 
    pidDataSize= pidData.GetSize()
    print("pidData size="+str(pidDataSize))
+
+   pressurePField= dataOut.GetPointData().GetArray("p")
    
    emptyParticles= 0
    
@@ -126,13 +136,21 @@ for vtuFileIn in vtuFilesIn:
       #     at the surface (depth <= ~1km)
       if domMatCompo == "lusi oceanicCrust":
 
-         if dataDict["lusi oceanicSeds"].GetTuple(pid)[0] >= 0.5:
+         if dataDict["lusi oceanicSeds"].GetTuple(pid)[0] >= 0.5 :# and pressurePField[pid] < 1.5e7:  #pPos[pid][1] >= 699500.0:
 
-            # --- We have seds here then use the crust + seds mixture RGB
-            rgbVectorData.SetTuple(int(pid),oCrustPlusSedsHybMatRGB)
-            #print("oc. crust + oc. seds mixture, p. position="+str(pPos.GetTuple(int(pid))))
-            #sys.exit(0)
-         # ---
+            if pPos[pid][1] >= 699500.0:
+               # --- Sediments only at depths < 500m
+               #rgbVectorData.SetTuple(int(pid),oCrustPlusSedsHybMatRGB)
+               #print("oc. crust + oc. seds mixture, p. position="+str(pPos.GetTuple(int(pid))))
+
+               rgbVectorData.SetTuple(int(pid),RGBComposValues["lusi oceanicSeds"])
+               #print("pPos[pid][1]="+str(pPos[pid][1])+", oc. seds compo here")
+               #sys.exit(0)
+               
+            elif pressurePField[pid] < 2e7:
+               # --- oc. crust + oc. seds mixture here
+               rgbVectorData.SetTuple(int(pid),oCrustPlusSedsHybMatRGB)   
+            # ---
       # ---      
    # ---
 
