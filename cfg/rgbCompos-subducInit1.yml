@@ -1,0 +1,63 @@
+---
+# --- Need to have 0.0 -> 1.0 float values
+#     for paraview RGB vectors, not integers
+lusi oceanicCrust:
+   # --- Forest green, basalts & gabbros
+   Red: 0.0
+   Green: 0.4   # 102.0/255.0
+   Blue: 0.0
+lusi oceanicLithMantle:
+   # --- light green, harzburgite & dunite
+   Red: 0.2    # 51.0/255.0
+   Green: 1.0  # 255.0/255.0
+   Blue: 0.2   # 51.0/255.0
+lusi asthenosphere:
+   # --- intermediate green, lerzholite
+   Red: 0.0
+   Green: 0.8  # 204.0/255.0
+   Blue: 0.0
+lusi oceanicSeds:
+   # --- yellow
+   Red: 1.0    # 255.0/255.0
+   Green: 1.0  #  255.0/255.0
+   Blue: 0.0
+lusi oceanicCrustSSZ:
+   # --- Violet
+   Red: 0.4    # 102.0/255.0
+   Green: 0.0
+   Blue: 0.4   # 102.0/255.0
+lusi oceanicLithMantleSSZ:
+   # --- Fuschia
+   Red: 0.8    # 204.0/255.0
+   Green: 0.0
+   Blue: 0.8   # 204.0/255.0
+lusi greenschists:
+   # --- Brownish green (or greenish brown)
+   Red: 0.4    # 102.0/255.0
+   Green: 0.4  # 102.0/255.0
+   Blue: 0.0
+lusi blueschists:
+   # --- Pure blue (of course!)
+   Red: 0.0
+   Green: 0.0
+   Blue: 1.0   # 255.0/255.0
+lusi amphibolites:
+   # --- Orange
+   Red: 1.0        # 255.0/255.0
+   Green: 0.50196  #  128.0/255.0
+   Blue: 0.0
+lusi granulites:
+   # --- Pure red
+   Red: 1.0    # 255.0/255.0
+   Green: 0.0
+   Blue: 0.0
+lusi eclogites:
+   # --- Black
+   Red: 0.0
+   Green: 0.0
+   Blue: 0.0
+lusi pmeltedSszAsth:
+   # --- Silver
+   Red: 0.75294    # 192.0/255.0
+   Green: 0.75294  # 192.0/255.0
+   Blue: 0.75294   # 192.0/255.0
