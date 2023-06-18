@@ -12,9 +12,11 @@ from vtk.util.numpy_support import vtk_to_numpy
 # --- TODO: Read this from a YAML or a Json input file.
 RGBComposValues= {
 
-    "lusi oceanicCrust"         : (        0.0,  102.0/255.0,         0.0), # Forest green
-    "lusi oceanicLithMantle"    : (        0.0,  204.0/255.0,         0.0),
-    "lusi asthenosphere"        : (  51.0/255.0, 255.0/255.0,  51.0/255.0),
+    "lusi oceanicCrust"         : (        0.0,  102.0/255.0,         0.0), # Forest green, basalts & gabbros
+    #"lusi oceanicLithMantle"    : (        0.0,  204.0/255.0,         0.0),
+    "lusi oceanicLithMantle"    : ( 51.0/255.0, 255.0/255.0,  51.0/255.0),  # light green, harzburgite & dunite 
+    #"lusi asthenosphere"        : (  51.0/255.0, 255.0/255.0,  51.0/255.0),
+    "lusi asthenosphere"        : (        0.0,  204.0/255.0,         0.0), # intermediate green, lerzholite
     "lusi oceanicSeds"          : ( 255.0/255.0, 255.0/255.0,         0.0),
     "lusi oceanicCrustSSZ"      : ( 102.0/255.0,         0.0, 102.0/255.0),
     "lusi oceanicLithMantleSSZ" : ( 204.0/255.0,         0.0, 204.0/255.0),
@@ -26,8 +28,8 @@ RGBComposValues= {
     "lusi pmeltedSszAsth"       : ( 192.0/255.0, 192.0/255.0, 192.0/255.0)
 }
 
-# --- oceanic crust + oceanic seds Hybrid rock material (not present in the direct output files)
-oCrustPlusSedsHybMatRGB= ( 153.0/255.0, 153.0/255.0, 0.0)
+## --- oceanic crust + oceanic seds Hybrid rock material (not present in the direct output files)
+#oCrustPlusSedsHybMatRGB= ( 153.0/255.0, 153.0/255.0, 0.0)
 
 white= ( 1.0, 1.0, 1.0)
 
@@ -38,7 +40,7 @@ vtuFilesIn= glob.glob(sys.argv[1] + os.sep + "*.vtu")
 reader= vtk.vtkXMLUnstructuredGridReader()
 writer= vtk.vtkXMLUnstructuredGridWriter()
 
-for vtuFileIn in vtuFilesIn:
+for vtuFileIn in sorted(vtuFilesIn):
 
    print("Processing vtuFileIn="+vtuFileIn)
 
@@ -132,25 +134,20 @@ for vtuFileIn in vtuFilesIn:
       
       #print("rgbVector="+str(rgbVectorData.GetTuple(int(pid))))
 
-      # --- Check if we have a mix between seds and oc. crust
-      #     at the surface (depth <= ~1km)
-      if domMatCompo == "lusi oceanicCrust":
-
-         if dataDict["lusi oceanicSeds"].GetTuple(pid)[0] >= 0.5 :# and pressurePField[pid] < 1.5e7:  #pPos[pid][1] >= 699500.0:
-
-            if pPos[pid][1] >= 699500.0:
-               # --- Sediments only at depths < 500m
-               #rgbVectorData.SetTuple(int(pid),oCrustPlusSedsHybMatRGB)
-               #print("oc. crust + oc. seds mixture, p. position="+str(pPos.GetTuple(int(pid))))
-
-               rgbVectorData.SetTuple(int(pid),RGBComposValues["lusi oceanicSeds"])
-               #print("pPos[pid][1]="+str(pPos[pid][1])+", oc. seds compo here")
-               #sys.exit(0)
-               
-            elif pressurePField[pid] < 2e7:
-               # --- oc. crust + oc. seds mixture here
-               rgbVectorData.SetTuple(int(pid),oCrustPlusSedsHybMatRGB)   
-            # ---
+      ## --- Check if we have a mix between seds and oc. crust
+      ##     at the surface (depth <= ~1km)
+      #if domMatCompo == "lusi oceanicCrust":
+      #   if dataDict["lusi oceanicSeds"].GetTuple(pid)[0] >= 0.5 :# and pressurePField[pid] < 1.5e7:  #pPos[pid][1] >= 699500.0:
+      #      if pPos[pid][1] >= 699500.0:
+      #         # --- Sediments only at depths < 500m
+      #         #print("oc. crust + oc. seds mixture, p. position="+str(pPos.GetTuple(int(pid))))
+      #         rgbVectorData.SetTuple(int(pid),RGBComposValues["lusi oceanicSeds"])
+      #         #print("pPos[pid][1]="+str(pPos[pid][1])+", oc. seds compo here")
+      #         #sys.exit(0)
+      #      elif pressurePField[pid] < 2e7:
+      #         # --- oc. crust + oc. seds mixture here
+      #         rgbVectorData.SetTuple(int(pid),oCrustPlusSedsHybMatRGB)   
+      #      # ---
       # ---      
    # ---
 
