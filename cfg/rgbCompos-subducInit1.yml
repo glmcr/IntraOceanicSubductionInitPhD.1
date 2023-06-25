@@ -17,10 +17,14 @@ lusi asthenosphere:
    Green: 0.8  # 204.0/255.0
    Blue: 0.0
 lusi oceanicSeds:
-   # --- very light blue-green
-   Red: 0.4    # 102.0/255.0
-   Green: 1.0  # 255.0/255.0
-   Blue: 0.6980392156862745  # 178.0/255.0
+   ## --- Dijon's Mustard greenish-yellow
+   Red: 0.8    # 204.0/255.0
+   Green: 0.8  # 204.0/255.0
+   Blue: 0.0   # 0.0/255.0
+   ## --- very light blue-green
+   #Red: 0.4    # 102.0/255.0
+   #Green: 1.0  # 255.0/255.0
+   #Blue: 0.6980392156862745  # 178.0/255.0
    ## --- yellow
    #Red: 1.0    # 255.0/255.0
    #Green: 1.0  #  255.0/255.0
