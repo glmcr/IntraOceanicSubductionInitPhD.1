@@ -12,10 +12,14 @@ lusi oceanicLithMantle:
    Green: 1.0  # 255.0/255.0
    Blue: 0.2   # 51.0/255.0
 lusi asthenosphere:
-   # --- intermediate green, lerzholite
-   Red: 0.0
-   Green: 0.8  # 204.0/255.0
-   Blue: 0.0
+   # --- plain white a-la-SOPALE
+   Red: 1.0
+   Green: 1.0  # 204.0/255.0
+   Blue: 1.0
+   ## --- intermediate green, lerzholite
+   #Red: 0.0
+   #Green: 0.8  # 204.0/255.0
+   #Blue: 0.0
 lusi oceanicSeds:
    ## --- Dijon's Mustard greenish-yellow
    Red: 0.8    # 204.0/255.0
