@@ -69,7 +69,11 @@ lusi eclogites:
    Green: 0.0
    Blue: 0.0
 lusi pmeltedSszAsth:
-   # --- Silver
-   Red: 0.75294    # 192.0/255.0
-   Green: 0.75294  # 192.0/255.0
-   Blue: 0.75294   # 192.0/255.0
+   # --- blueish grayish
+   Red: 0.4    # 102.0/255.0
+   Green: 0.4  # 102.0/255.0
+   Blue: 1.0   # 255.0/255.0
+   ## --- Silver (too close to asth. which is now in plain white)
+   #Red: 0.75294    # 192.0/255.0
+   #Green: 0.75294  # 192.0/255.0
+   #Blue: 0.75294   # 192.0/255.0
