@@ -1,0 +1,33 @@
+# --- 
+subsection Boundary velocity model
+  set Prescribed velocity boundary indicators = right: function, left: function #, bottom y: function
+  subsection Function
+    set Variable names = x, y
+    # 60km, 5cm/y: 5cm spread velo., ctFact= -0.12903225806451613 
+    # 120km, 5cm/y , ctFact= -0.25
+    set Function constants  = velcmyLHS= 5.0, \
+                              velcmyRHS= -5.0, \
+                              cm2m=0.01, \
+                              year=1, \
+                              bottomDepth=700e3, \
+                              xdim= 1500e3, \
+                              begSwitchDRHS=120e3, \
+                              begSwitchDLHS=120e3, \
+                              switchDLen=40e3, \
+                              ctFact= -0.25
+    # ---
+    set Function expression = if ( x >= xdim/2, \
+                               if (y >= (bottomDepth-begSwitchDRHS), \
+                                velcmyRHS*(cm2m/year), \
+                                if ( y > (bottomDepth-begSwitchDRHS-switchDLen), \
+                                 0.5*velcmyRHS*(cm2m/year)*(1.0 - ctFact)*(y-(bottomDepth-begSwitchDRHS))/switchDLen + ctFact*velcmyRHS*(cm2m/year), \
+                                 0.5*ctFact*velcmyRHS*(cm2m/year)), \
+                               if (y >= (bottomDepth-begSwitchDLHS), \
+                                0.0*velcmyLHS*(cm2m/year), \
+                                if ( y < (bottomDepth-begSwitchDRHS-switchDLen) + \
+                                  ctFact*velcmyLHS*(cm2m/year)*(switchDLen)/(velcmyLHS*(cm2m/year)*(ctFact-1.0))), \
+                                 0.5*velcmyLHS*(cm2m/year)*(1.0 - ctFact)*(y-(bottomDepth-begSwitchDLHS))/switchDLen + ctFact*velcmyLHS*(cm2m/year), \
+                                 0.5*ctFact*velcmyLHS*(cm2m/year) ) \
+                              ); 0.0  # 0.0 vertical y velo. on sides
+  end
+end
