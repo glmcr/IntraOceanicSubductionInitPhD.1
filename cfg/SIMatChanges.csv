@@ -1,0 +1,41 @@
+# rock type (p,T) point, p (kBar), T (Celsius)
+greenschists_pT1,  2.5,  300.0
+greenschists_pT2,  2.8,  500.0 
+greenschists_pT3, 13.5,  500.0
+greenschists_pT4,  8.0,  300.0
+
+amphibolites_pT1,  2.8,  500.0
+amphibolites_pT2,  3.0,  700.0
+amphibolites_pT3, 13.5,  500.0
+amphibolites_pT4, 14.0,  700.0
+
+granulites_pT1,    3.0,  700.0
+granulites_pT2,   14.0,  700.0
+granulites_pT3,   15.0, 1300.0
+granulites_pT4,    3.0, 1300.0
+
+eclogites_pT1,    13.5,  500.0
+eclogites_pT2,    30.0,  500.0
+eclogites_pT3,    15.0, 1300.0
+eclogites_pT4,    30.0,  200.0
+
+blueschists_pT1,   5.0,  100.0
+blueschists_pT2,  30.0,  200.0
+blueschists_pT3,  13.5,  500.0
+
+pmSSZAsth_pt1,     0.001, 1100.0
+pmSSZAsth_pt2,     0.001, 1300.0
+pmSSZAsth_pt3,    10.0  , 1300.0
+
+sszOcLithMtl_pT1,  2.2,    0.0
+sszOcLithMtl_pT2,  2.2, 1200.0
+sszOcLithMtl_pT3,  5.0, 1300.0
+sszOcLithMtl_pT4,  5.0,    0.0
+
+sszOcLithMtl_pT1,  0.001,    0.0
+sszOcLithMtl_pT2,  0.001, 1100.0
+sszOcLithMtl_pT3,  2.2  , 1200.0
+sszOcLithMtl_pT4,  2.2  ,    0.0
+
+
+

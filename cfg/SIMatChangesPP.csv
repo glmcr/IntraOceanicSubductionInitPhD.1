@@ -1,0 +1,12 @@
+# p (kBar), T (Celsius), rock types presence.
+ 2.5,  300.0, greenschists
+ 2.8,  500.0, greenschists, amphibolites
+13.5,  500.0, greenschists, amphibolites, eclogites, blueschists
+ 3.0,  700.0, amphibolites, granulites
+14.0,  700.0, amphibolites, granulites, eclogites
+ 8.0,  300.0, greenschists, blueschists
+ 5.0,  100.0, blueschists
+30.0,  200.0, blueschists, eclogites
+ 3.0, 1300.0, granulites
+15.0, 1300.0, granulites, eclogites
+30.0,  500.0, eclogites
