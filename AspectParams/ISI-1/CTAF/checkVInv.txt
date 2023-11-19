@@ -1,0 +1,9 @@
+(y-y1)*(vin - vout)/(y2-y1) = -vout
+
+(y-y1)*(vout - vin) = vout*(y2-y1)
+
+(y-y1)= vout*(y2-y1)/(vout - vin)
+
+y= vout*(y2-y1)/(vout - vin) + y1
+
+
