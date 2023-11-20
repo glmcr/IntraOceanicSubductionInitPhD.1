@@ -1,12 +1,12 @@
-# p (kBar), T (Celsius), rock types presence.
- 2.5,  300.0, greenschists
- 2.8,  500.0, greenschists, amphibolites
-13.5,  500.0, greenschists, amphibolites, eclogites, blueschists
- 3.0,  700.0, amphibolites, granulites
-14.0,  700.0, amphibolites, granulites, eclogites
- 8.0,  300.0, greenschists, blueschists
- 5.0,  100.0, blueschists
-30.0,  200.0, blueschists, eclogites
- 3.0, 1300.0, granulites
-15.0, 1300.0, granulites, eclogites
-30.0,  500.0, eclogites
+# pointId, p (kBar), T (Celsius), rock types presence.
+pt1,   2.5,  300.0, greenschists
+pT2,   2.8,  500.0, greenschists, amphibolites
+pT3,  13.5,  500.0, greenschists, amphibolites, eclogites, blueschists
+pT4,   3.0,  700.0, amphibolites, granulites
+pT5,  14.0,  700.0, amphibolites, granulites, eclogites
+pT6,   8.0,  300.0, greenschists, blueschists
+pT7,   5.0,  100.0, blueschists
+pT8,  30.0,  200.0, blueschists, eclogites
+pT9,   3.0, 1300.0, granulites
+pT10, 15.0, 1300.0, granulites, eclogites
+pT11, 30.0,  500.0, eclogites
