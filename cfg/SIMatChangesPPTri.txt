@@ -1,0 +1,16 @@
+grnTri1: pt1,pt2,pt3
+grnTri2: pt1,pt6,pt3
+
+ampTri1: pt2,pt4,pt5
+ampTri1: pt2,pt3,pt5
+
+glrTri1: pt4,pt9,pt10
+glrTri2: pt4,pt5,pt10
+
+blsTri1: pt6,pt7,pt8
+blsTri2: pt6,pt3,pt8
+
+eclTri1: pt3,pt8,pt11
+eclTri2: pt3,pt5,pt11
+eclTri3: pt5,pt10,pt11
+
