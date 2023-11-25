@@ -1,15 +1,15 @@
-#set Resume computation  = true
-set Resume computation   = false
+set Resume computation  = true
+#set Resume computation   = false
 set Start time                             = 0
-set End time                               = 8.0e5 #150e6
+set End time                               = 35e6 #150e6
 set Use years in output instead of seconds = true
 set Nonlinear solver scheme                = single Advection, iterated Stokes
 #set Nonlinear solver scheme                = iterated Advection and Stokes
-set Nonlinear solver tolerance             = 2e-7
-set Max nonlinear iterations               = 100 #40 #25 #40 #70
-set CFL number                             = 0.2 #0.45
+set Nonlinear solver tolerance             = 5e-7
+set Max nonlinear iterations               = 50 #40 #25 #40 #70
+set CFL number                             = 0.3 #0.45
 set Output directory = \
-/home/gimer47/scratch/Crunch/Aspect/ISI-1/ctfaf.sszLithTCorr.FSD.ssz.mtc.tsInitSWAstnWOlSym45kmOceanicLith
+/home/gimer47/scratch/Crunch/Aspect/ISI-1/rc.sszOLMPCorr.ctfaf.noMTCOnSides.sszLithTCorr.FSD.ssz.mtc.tsInitSWAstnWOlSym45kmOceanicLith
 set Timing output frequency                = 1
 set Pressure normalization                 = no
 #set Maximum time step                      = 5e3 #1e4
@@ -55,8 +55,8 @@ end
 # point.
 subsection Checkpointing
   #~28mins: set Time between checkpoint = 1700
-  #set Time between checkpoint= 1700
-  set Steps between checkpoint= 1
+  set Time between checkpoint= 1700
+  #set Steps between checkpoint= 1
 end
 
 subsection Boundary temperature model
@@ -92,7 +92,7 @@ subsection Mesh deformation
     # in a smoother free surface and lower topography
     # amplitudes.
     #set Hillslope transport coefficient = 1.e-8
-    set Hillslope transport coefficient = 5.e-7
+    set Hillslope transport coefficient = 1.e-6
   end
 end
 
@@ -104,38 +104,39 @@ subsection Boundary composition model
 end
 
 subsection Boundary velocity model
-  set Tangential velocity boundary indicators = bottom, right #, left
+   set Tangential velocity boundary indicators = bottom #, left #, right #, left
 end
 
 # --- 
 subsection Boundary velocity model
-  set Prescribed velocity boundary indicators = left: function #, right: function #, bottom y: function
+  set Prescribed velocity boundary indicators = right: function, left: function #, bottom y: function
   subsection Function
     set Variable names = x, y
     # 60km, 5cm/y: 5cm spread velo., ctFact= -0.12903225806451613 
     # 120km, 5cm/y , ctFact= -0.25
-    set Function constants  = velcmyLHS= -5.0, \
-                              velcmyRHS= 0.0, \
+    set Function constants  = velcmyLHS= 5.0, \
+                              velcmyRHS= -5.0, \
                               cm2m=0.01, \
                               year=1, \
                               bottomDepth=700e3, \
                               xdim= 1500e3, \
-                              begSwitchDRHS=60e3, \
-                              begSwitchDLHS=60e3, \
+                              begSwitchDRHS=120e3, \
+                              begSwitchDLHS=120e3, \
                               switchDLen=40e3, \
-                              ctFact= -0.12903225806451613
+                              ctFact= -0.25
     # ---
     set Function expression = if ( x >= xdim/2, \
                                if (y >= (bottomDepth-begSwitchDRHS), \
                                 velcmyRHS*(cm2m/year), \
                                 if ( y > (bottomDepth-begSwitchDRHS-switchDLen), \
-                                 ((1.0 - ctFact)*((y-(bottomDepth-begSwitchDLHS))/switchDLen) + 1.0)*velcmyLHS*(cm2m/year), \
-                                 ctFact*velcmyRHS*(cm2m/year))), \
-                               if (y >= (bottomDepth-begSwitchDLHS), \
-                                velcmyLHS*(cm2m/year), \
-                                if ( y > (bottomDepth-begSwitchDLHS-switchDLen), \
-                                 ((1.0 - ctFact)*((y-(bottomDepth-begSwitchDLHS))/switchDLen) + 1.0)*velcmyLHS*(cm2m/year), \
-                                 ctFact*velcmyLHS*(cm2m/year))) \
+                                 0.5*((1.0 - ctFact)*((y-(bottomDepth-begSwitchDRHS))/switchDLen) + 1.0)*velcmyRHS*(cm2m/year), \
+                                 0.5*ctFact*velcmyRHS*(cm2m/year))), \
+                               if (y >= (bottomDepth-begSwitchDRHS-switchDLen) + \
+                                  (ctFact*velcmyLHS*(cm2m/year)*switchDLen)/(velcmyLHS*(cm2m/year)*(ctFact-1.0)), \
+                                0.0*velcmyLHS*(cm2m/year), \
+                                if ( y > (bottomDepth-begSwitchDRHS-switchDLen), \
+                                 0.5*((1.0 - ctFact)*((y-(bottomDepth-begSwitchDLHS))/switchDLen) + 1.0)*velcmyLHS*(cm2m/year), \
+                                 0.5*ctFact*velcmyLHS*(cm2m/year))) \
                               ); 0.0  # 0.0 vertical y velo. on sides
   end
 end
