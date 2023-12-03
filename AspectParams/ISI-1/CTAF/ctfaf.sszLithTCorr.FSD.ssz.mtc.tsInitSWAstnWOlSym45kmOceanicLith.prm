@@ -129,7 +129,7 @@ subsection Boundary velocity model
                                if (y >= (bottomDepth-begSwitchDRHS), \
                                 velcmyRHS*(cm2m/year), \
                                 if ( y > (bottomDepth-begSwitchDRHS-switchDLen), \
-                                 ((1.0 - ctFact)*((y-(bottomDepth-begSwitchDLHS))/switchDLen) + 1.0)*velcmyLHS*(cm2m/year), \
+                                 ((1.0 - ctFact)*((y-(bottomDepth-begSwitchDRHS))/switchDLen) + 1.0)*velcmyRHS*(cm2m/year), \
                                  ctFact*velcmyRHS*(cm2m/year))), \
                                if (y >= (bottomDepth-begSwitchDLHS), \
                                 velcmyLHS*(cm2m/year), \
