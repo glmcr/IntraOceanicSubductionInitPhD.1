@@ -78,7 +78,7 @@ lusi pmeltedSszAsth:
    #Green: 0.75294  # 192.0/255.0
    #Blue: 0.75294   # 192.0/255.0
 lusi asthOLMHybMat:
-   # --- pinkish
-   Red: 1.0    # 255.0/255.0
-   Green: 0.0  # 0.0/255.0
-   Blue: 0.4980392156862745   # 127.0/255.0
+   # --- turquoise
+   Red: 0.0    # 255.0/255.0
+   Green: 1.0  # 0.0/255.0
+   Blue: 1.0  # 
