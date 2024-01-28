@@ -9,12 +9,12 @@ set Nonlinear solver tolerance             = 1e-7
 set Max nonlinear iterations               = 50 #40 #25 #40 #70
 set CFL number                             = 0.35 #0.45
 set Output directory = \
-/home/gimer47/scratch/Crunch/Aspect/ISI-1/symExt.allStuff.oSeds0.5AtSurf.resetSSZATSAt0.hybAsthOLMMat.pTU.LUSICompoParticles
+/home/gimer47/scratch/Crunch/Aspect/ISI-1/noCL.symExt.allStuff.oSeds0.5AtSurf.resetSSZATSAt0.hybAsthOLMMat.pTU.LUSICompoParticles
 set Timing output frequency                = 1
 set Pressure normalization                 = no
 #set Maximum time step                      = 5e3 #1e4
 set Maximum relative increase in time step = 2
-set World builder file = /home/gimer47/Dev/AspectParamsFiles/ISI-1/symOceanicLith/contExtSym110km.wb
+set World builder file = /home/gimer47/Dev/AspectParamsFiles/ISI-1/symOceanicLith/noHybMatSym45kmOceanicLith.wb
 #set Adiabatic surface temperature = 1573
 
 subsection Discretization
@@ -121,10 +121,10 @@ subsection Boundary velocity model
                               year=1, \
                               bottomDepth=700e3, \
                               xdim= 1500e3, \
-                              begSwitchDRHS=120e3, \
-                              begSwitchDLHS=120e3, \
+                              begSwitchDRHS=60e3, \
+                              begSwitchDLHS=60e3, \
                               switchDLen=40e3, \
-                              ctFact= -0.25
+                              ctFact= -0.12903225806451613
     # ---
     set Function expression = if ( x >= xdim/2, \
                                if (y >= (bottomDepth-begSwitchDRHS), \
@@ -215,10 +215,10 @@ subsection Initial composition model
   set Model name = function
   subsection Function
     set Variable names      = x,y
-    set Function expression = 0; \
-                              0; \
-                              0; \
-                              0; \
+    set Function expression = if(y>= 692.5e3, 1, 0); \
+                              if(y< 692.5e3 && y>= 655e3, 1, 0); \
+                              if(y< 655e3, 1, 0); 
+                              if(y> 699.5e3, 1, 0); 
                               0; \
                               0; \
                               0; \
