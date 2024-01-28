@@ -217,8 +217,8 @@ subsection Initial composition model
     set Variable names      = x,y
     set Function expression = if(y>= 692.5e3, 1, 0); \
                               if(y< 692.5e3 && y>= 655e3, 1, 0); \
-                              if(y< 655e3, 1, 0); 
-                              if(y> 699.5e3, 1, 0); 
+                              if(y< 655e3, 1, 0); \
+                              if(y> 699.5e3, 1, 0); \ 
                               0; \
                               0; \
                               0; \
