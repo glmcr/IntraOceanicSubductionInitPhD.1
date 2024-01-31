@@ -1,7 +1,7 @@
 #set Resume computation  = true
 set Resume computation   = false
 set Start time                             = 0
-set End time                               = 75e6 #35e6 #150e6
+set End time                               = 125e6 #35e6 #150e6
 set Use years in output instead of seconds = true
 set Nonlinear solver scheme                = single Advection, iterated Stokes
 #set Nonlinear solver scheme                = iterated Advection and Stokes
@@ -217,7 +217,7 @@ subsection Initial composition model
     set Variable names      = x,y
     set Function expression = 0; \
                               0; \
-                              0; \
+                              if(y< 590e3, 1, 0); \
                               0; \
                               0; \
                               0; \
@@ -233,7 +233,7 @@ subsection Initial composition model
 			      if(y< 660e3 && y>= 590e3, 1, 0); \
 			      0; \
                               0; \
-                              if(y<=665.5e3 && y>=655.5e3 && x>=747.5e3 && x<=752.5e3, 0.5 + rand_seed(10.0), 0);
+                              if(y<=674e3 && y>=656e3 && x>=742.5e3 && x<=757.5e3, 0.5 + rand_seed(10.0), 0);
   end
 end
 
@@ -276,16 +276,27 @@ subsection Material model
   #     exec crashes without outputing a meaninful error message.  
   #set Start prefactor strain weakening intervals = 0. 
   #set End prefactor strain weakening intervals = 1.0,
-  set Start prefactor strain weakening intervals = 1e24, 5., 5., 1e24, 5., 1e24, 1e24, 5., 5., 5., 5., 5., 1e24, 1e24, 1e24, 1e24, 1e24, 1e24, 5., 5.
-  set End prefactor strain weakening intervals =   1e25, 10., 10., 1e25, 10.0, 1e25, 1e25, 10., 10., 10.0, 10., 10., 1e25, 1e25, 1e25, 1e25, 1e25, 1e25, 10., 10.
-  set Prefactor strain weakening factors =         1., 0.1, 0.1, 1., 0.1, 1., 1., 0.01, 0.01, 0.01, 0.01, 0.1, 1., 1., 1., 1., 1., 1., 0.1,  0.1
-  #set Prefactor strain weakening factors = 0.5 
+  set Start prefactor strain weakening intervals = \
+1e24, 1e24, 1e24, 1e24, 5., 1e24, 1e24, 5., 5., 5., 5., 5., 1e24, 1e24, 1e24, 1e24, 1e24, 1e24, 5., 5.
+
+  set End prefactor strain weakening intervals = \
+1e25, 1e25, 1e25, 1e25, 10.0, 1e25, 1e25, 10., 10., 10.0, 10., 10., 1e25, 1e25, 1e25, 1e25, 1e25, 1e25, 10., 10.
+
+  set Prefactor strain weakening factors = \
+1., 1., 1., 1., 0.1, 1., 1., 0.01, 0.01, 0.01, 0.01, 0.1, 1., 1., 1., 1., 1., 1., 0.1,  0.1
 
   # --- Plastic strain w.
-  set Start plasticity strain weakening intervals = 1e24, 0.5, 0.5, 1e24, 0.5, 1e24, 1e24, 0.5, 0.5, 0.5, 0.5, 0.5, 1e24, 1e24, 1e24, 1e24, 1e24, 1e24, 0.5, 0.5 
-  set End plasticity strain weakening intervals   = 1e25, 1.5, 1.5, 1e25, 1.5, 1e25, 1e25, 1.5, 1.5, 1.5, 1.5, 1.5, 1e25, 1e25, 1e25, 1e25, 1e25, 1e25, 1.5, 1.5
-  set Cohesion strain weakening factors           = 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1.
-  set Friction strain weakening factors           = 1., 0.13, 0.13, 1., 0.13, 1., 1., 0.13, 0.13, 0.13, 0.13, 0.13, 1., 1., 1., 1., 1., 1., 1., 1.
+  set Start plasticity strain weakening intervals = \
+1e24, 1e24, 1e24, 1e24, 0.5, 1e24, 1e24, 0.5, 0.5, 0.5, 0.5, 0.5, 1e24, 1e24, 1e24, 1e24, 1e24, 1e24, 0.5, 0.5 
+
+  set End plasticity strain weakening intervals = \
+1e25, 1e25, 1e25, 1e25, 1.5, 1e25, 1e25, 1.5, 1.5, 1.5, 1.5, 1.5, 1e25, 1e25, 1e25, 1e25, 1e25, 1e25, 1.5, 1.5
+
+  set Cohesion strain weakening factors = \
+1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1.
+
+  set Friction strain weakening factors = \
+1., 1., 1., 1., 0.13, 1., 1., 0.13, 0.13, 0.13, 0.13, 0.13, 1., 1., 1., 1., 1., 1., 1., 1.
 
   #set Friction strain weakening factors            = 1.0, 1.0, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.35
 
@@ -325,7 +336,7 @@ subsection Material model
   #
   # bkg(asth) ocCrust   oLithMtl  asth   oc. seds  ssz occ  ssz olm   grs bls amp gra eclo pmAstSSZ (dummies for SW)  
   set Prefactors for dislocation creep=\
-  1.76e-14, 2.9e-22, 1.1e-15, 1.76e-14, 8.57e-28, 2.9e-22, 1.1e-15, 2.9e-22, 2.9e-22, 2.9e-22, 2.9e-22, 5.8e-27, \
+  1.76e-14, 5.78e-26, 1.1e-15, 1.76e-14, 8.57e-28, 5.78e-26, 1.1e-15, 5.78e-26, 5.78e-26, 5.78e-26, 5.78e-26, 5.8e-27, \
   5.28e-14, 1.76e-14, 1.71e-27, 1.156e-25, 1.1e-15,5.28e-14, 1.e-50, 1.e-50
   
   set Stress exponents for dislocation creep=\
