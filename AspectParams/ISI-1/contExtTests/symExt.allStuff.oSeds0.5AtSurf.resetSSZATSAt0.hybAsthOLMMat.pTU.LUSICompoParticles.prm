@@ -268,7 +268,7 @@ subsection Material model
   #set Names of fields = oceanicCrustMRB, oceanicLithMantleMRB, asthenosphere, oceanicSeds, \
   #                      oceanicCrustSSZ, oceanicLithMantleSSZ, greenschists, blueschists, \
   #                      amphibolites, granulites, eclogites, pmeltedSszAsth, asthOLMHybMat, \
-  #                      contUppCrust, contLowCrust, SCLM, pmeltedMrbAsth,noninitial_plastic_strain, total_strain
+  #                      contUppCrust, contLowCrust, SCLM, pmeltedMrbAsth, noninitial_plastic_strain, total_strain
 
   # --- Viscous strain w. 
   #     WARNING: the End intervals MUST be > than the Start intervals
@@ -326,7 +326,7 @@ subsection Material model
   # bkg(asth) ocCrust   oLithMtl  asth   oc. seds  ssz occ  ssz olm   grs bls amp gra eclo pmAstSSZ (dummies for SW)  
   set Prefactors for dislocation creep=\
   1.76e-14, 2.9e-22, 1.1e-15, 1.76e-14, 8.57e-28, 2.9e-22, 1.1e-15, 2.9e-22, 2.9e-22, 2.9e-22, 2.9e-22, 5.8e-27, \
-  5.28e-14, 1.76e-14, 1.71e-27, 1.156e-25, 1.1e-15,5.28e-14, 1.e-50, 1.e-50
+  5.28e-14, 1.76e-14, 1.71e-27, 1.156e-25, 1.1e-15, 5.28e-14, 1.e-50, 1.e-50
   
   set Stress exponents for dislocation creep=\
   3.0, 4.7, 3.5, 3.0, 4.0, 4.7, 3.5, 4.7, 4.7, 4.7, 4.7, 4.7, 3.0, 3.0, 4.0, 4.7, 3.5, 3.0, 1.0, 1.0

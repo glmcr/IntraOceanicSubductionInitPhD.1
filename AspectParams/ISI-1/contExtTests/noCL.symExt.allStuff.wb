@@ -13,11 +13,11 @@
 
    {"model":"mantle layer", "name":"asthenosphere", "coordinates":[[-1e3,-1e3],[1500e3,-1e3],[1500e3,1e3],[-1e3,1e3]],
         "temperature models":[{"model":"linear", "min depth":55e3, "max depth":700e3, "top temperature": 1573, "bottom temperature":1825}],
-        "composition models":[{"model":"uniform", "compositions":[2], "min depth":55e3, "max depth":700e3}]} //,
+        "composition models":[{"model":"uniform", "compositions":[2], "min depth":55e3, "max depth":700e3}]},
 
-   //{"model": "oceanic plate", "name":"oceanic plate lith. mantle WS", "coordinates":[[750e3,-1e3],[755e3,-1e3],[755e3,1e3],[750e3,1e3]],
-     //   "temperature models":[ {"model":"linear", "min depth":9.5e3, "max depth":12.5e3, "top temperature": 1150, "bottom temperature":1250 }],
-       // "composition models":[ {"model":"uniform", "compositions":[3], "min depth":9.5e3, "max depth":12.5e3}]} //,
+   {"model": "oceanic plate", "name":"oceanic plate lith. mantle WS", "coordinates":[[745e3,-1e3],[755e3,-1e3],[755e3,1e3],[745e3,1e3]],
+     "temperature models":[ {"model":"linear", "min depth":8.5e3, "max depth":18.5e3, "top temperature": 1175, "bottom temperature":1300 }],
+     "composition models":[ {"model":"uniform", "compositions":[3], "min depth":8.5e3, "max depth":18.5e3}]} //,
 
    //{"model":"mantle layer", "name":"MTZ", "coordinates":[[-1e3,-1e3],[1500e3,-1e3],[1500e3,1e3],[-1e3,1e3]],
    //     "temperature models":[{"model":"linear", "min depth":420e3, "max depth":672e3, "top temperature": 1700, "bottom temperature":1725}],
