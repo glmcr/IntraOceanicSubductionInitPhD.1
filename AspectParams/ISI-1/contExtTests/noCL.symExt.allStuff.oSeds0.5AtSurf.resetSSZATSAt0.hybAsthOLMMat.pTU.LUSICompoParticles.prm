@@ -56,7 +56,7 @@ end
 subsection Checkpointing
   #~28mins: set Time between checkpoint = 1700
   set Time between checkpoint= 1700
-  #  set Steps between checkpoint= 1
+  #set Steps between checkpoint= 1
 end
 
 subsection Boundary temperature model
@@ -289,6 +289,7 @@ subsection Material model
   set Friction strain weakening factors           = 1.0,  .13, .13,  1.0, .13,  .1,  .1, .13, .13, .13, .13,  1.0,  1.0,  1.0,  .1,  .1,  .1, 1.0,   .1, .1
 
   #set Friction strain weakening factors            = 1.0, 1.0, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.35
+
   # ---
   # cont. ext. cookbook for the dummy strain fields.  
   #
