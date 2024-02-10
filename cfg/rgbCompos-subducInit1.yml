@@ -1,12 +1,12 @@
 ---
 # --- Need to have 0.0 -> 1.0 float values
 #     for paraview RGB vectors, not integers
-lusi oceanicCrust:
+lusi oceanicCrustMRB:
    # --- Forest green, basalts & gabbros
    Red: 0.0
    Green: 0.4   # 102.0/255.0
    Blue: 0.0
-lusi oceanicLithMantle:
+lusi oceanicLithMantleMRB:
    # --- light green, harzburgite & dunite
    Red: 0.2    # 51.0/255.0
    Green: 1.0  # 255.0/255.0
@@ -81,4 +81,19 @@ lusi asthOLMHybMat:
    # --- turquoise
    Red: 0.0    # 255.0/255.0
    Green: 1.0  # 0.0/255.0
-   Blue: 1.0  # 
+   Blue: 1.0  #
+lusi contUppCrust:
+   # --- pure yellow
+   Red: 1.0    # 255.0/255.0
+   Green: 1.0  #  255.0/255.0
+   Blue: 0.0
+lusi contLowCrust:
+   # --- navy blue
+   Red: 0.0    # 255.0/255.0
+   Green: 0.0  #  255.0/255.0
+   Blue: 0.5   #  128.0/255.0
+lusi SCLM:
+   ## --- intermediate green, lerzholite
+   Red: 0.0
+   Green: 0.8  # 204.0/255.0
+   Blue: 0.0

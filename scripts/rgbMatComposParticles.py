@@ -98,6 +98,8 @@ for vtuFileIn in sorted(vtuFilesIn):
    #pressurePField= dataOut.GetPointData().GetArray("p")
    
    emptyParticles= 0
+
+   
    
    # --- Loop on all the markers found
    #     in the vtu file being processed.
@@ -108,8 +110,10 @@ for vtuFileIn in sorted(vtuFilesIn):
       #rgbVector= rgbVectorData.GetTuple(int(pid))
       #print("rgbVector="+str(rgbVector))
 
+      nonZeroThreshold= 1e-42
+      
       # --- Temp. local compo max and dominant compo id.
-      compoMax= 0.0
+      compoMax= nonZeroThreshold #0.0
       domMatCompo= None
 
       # --- Loop on the material compos names.
@@ -122,6 +126,8 @@ for vtuFileIn in sorted(vtuFilesIn):
           #print("matCompo="+matCompo)
           # --- Extract the compo value for this matCompo on
           #     the markera having the id "pid"
+          if matCompo not in matComposValuesDict: continue
+         
           tmpMatCompo= matComposValuesDict[matCompo].GetTuple(pid)[0]
 
           # --- Check if tmpMatCompo is the new compo maximum. 
@@ -130,6 +136,13 @@ for vtuFileIn in sorted(vtuFilesIn):
              # --- Update the compoMax and domMatCompo key accordingly
              compoMax= tmpMatCompo
              domMatCompo= matCompo
+
+             #if not compoMax > nonZeroThreshold :
+             #print("WARNING: tmpMatCompo <= 1e-32 at p. pos: "+str(pPos.GetTuple(int(pid))));
+             #  sys.exit(0)
+          #else:
+          #   print("WARNING: tmpMatCompo <= nonZeroThreshold at p. pos: "+str(pPos.GetTuple(int(pid))));
+          #   sys.exit(0)
           # ---   
       # ---
 
