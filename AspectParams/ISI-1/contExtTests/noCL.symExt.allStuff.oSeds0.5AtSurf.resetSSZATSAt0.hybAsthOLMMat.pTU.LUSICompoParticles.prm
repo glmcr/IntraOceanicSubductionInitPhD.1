@@ -1,5 +1,5 @@
-#set Resume computation  = true
-set Resume computation   = false
+set Resume computation  = true
+#set Resume computation   = false
 set Start time                             = 0
 set End time                               = 125e6 #35e6 #150e6
 set Use years in output instead of seconds = true
@@ -234,7 +234,7 @@ subsection Initial composition model
 			      0; \
 			      0; \
                               0; \
-                              if(y<=690.5e3 && y>=678.5e3 && x>=747e3 && x<=753e3, 0.5 + rand_seed(10.0), 0);
+                              if(y<=690.5e3 && y>=682.5e3 && x>=748e3 && x<=752e3, 0.5 + rand_seed(10.0), 0);
   end
 end
 
@@ -277,16 +277,16 @@ subsection Material model
   #     exec crashes without outputing a meaninful error message.  
   #set Start prefactor strain weakening intervals = 0. 
   #set End prefactor strain weakening intervals = 1.0,
-  set Start prefactor strain weakening intervals = 1e24, 5.,   5., 1e24,  5.,  5.,  5.,  5.,  5.,   5.,  5., 1e24, 1e24, 1e24,  5.,  5.,  5., 1e24,  5., 5.
+  set Start prefactor strain weakening intervals = 1e24,  5.,  5., 1e24,  5.,  5.,  5.,  5.,  5.,   5.,  5., 1e24, 1e24, 1e24,  5.,  5.,  5., 1e24,  5., 5.
   set End prefactor strain weakening intervals =   1e25, 10., 10., 1e25, 10., 10., 10., 10., 10., 10.0, 10., 1e25, 1e25, 1e25, 10., 10., 10., 1e25, 10., 10.
-  set Prefactor strain weakening factors =          1.0,  .1,  .1,  1.0,  .1,  .1,  .1, .01, .01,  .01, .01,  1.0,  1.0,  1.0,  .1,  .1,  .1,  1.0,  .1, .1
+  set Prefactor strain weakening factors =          1.0,  .5,  .5,  1.0,  .1,  .5,  .5, .01, .01,  .01, .01,  1.0,  1.0,  1.0,  .1,  .1,  .5,  1.0,  .1, .1
   #set Prefactor strain weakening factors = 0.5 
 
   # --- Plastic strain w.
   set Start plasticity strain weakening intervals = 1e24,  .5,  .5, 1e24,  .5,  .5,  .5,  .5,  .5,  .5,  .5, 1e24, 1e24, 1e24,  .5,  .5,  .5, 1e24,  .5, .5
   set End plasticity strain weakening intervals   = 1e25, 1.5, 1.5, 1e25, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1e25, 1e25, 1e25, 1.5, 1.5, 1.5, 1e25, 1.5, 1.5
-  set Cohesion strain weakening factors           = 1.0,   .1,  .1,  1.0,  .1,  .1,  .1,  .1,  .1,  .1,  .1,  1.0,  1.0,  1.0,  .1,  .1,  .1, 1.0,   .1, .1
-  set Friction strain weakening factors           = 1.0,  .13, .13,  1.0, .13,  .1,  .1, .13, .13, .13, .13,  1.0,  1.0,  1.0,  .1,  .1,  .1, 1.0,   .1, .1
+  set Cohesion strain weakening factors           = 1.0,  1.0, 1.0,  1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0,  1.0,  1.0,  1.0, 1.0, 1.0, 1.0, 1.0,  1.0, 1.0
+  set Friction strain weakening factors           = 1.0,  .5, .5,    1.0, .13,  .5,  .5, .13, .13, .13, .13,  1.0,  1.0,  1.0, .13, .13,  .5, 1.0,  1.0, 1.0
 
   #set Friction strain weakening factors            = 1.0, 1.0, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.35
 
