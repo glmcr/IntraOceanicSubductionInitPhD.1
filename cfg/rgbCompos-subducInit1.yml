@@ -6,11 +6,21 @@ lusi oceanicCrustMRB:
    Red: 0.0
    Green: 0.4   # 102.0/255.0
    Blue: 0.0
+#lusi oceanicCrust:
+#   # --- Forest green, basalts & gabbros
+#   Red: 0.0
+#   Green: 0.4   # 102.0/255.0
+#   Blue: 0.0
 lusi oceanicLithMantleMRB:
    # --- light green, harzburgite & dunite
    Red: 0.2    # 51.0/255.0
    Green: 1.0  # 255.0/255.0
    Blue: 0.2   # 51.0/255.0
+#lusi oceanicLithMantle:
+#   # --- light green, harzburgite & dunite
+#   Red: 0.2    # 51.0/255.0
+#   Green: 1.0  # 255.0/255.0
+#   Blue: 0.2   # 51.0/255.0
 lusi asthenosphere:
    # --- plain white a-la-SOPALE
    Red: 1.0

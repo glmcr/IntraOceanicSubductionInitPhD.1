@@ -99,8 +99,6 @@ for vtuFileIn in sorted(vtuFilesIn):
    
    emptyParticles= 0
 
-   
-   
    # --- Loop on all the markers found
    #     in the vtu file being processed.
    #     (Note the usage of the range(pidDataSize) 
@@ -127,7 +125,9 @@ for vtuFileIn in sorted(vtuFilesIn):
           # --- Extract the compo value for this matCompo on
           #     the markera having the id "pid"
           if matCompo not in matComposValuesDict: continue
-         
+
+          #if matComposValuesDict[matCompo] is VTKNoneArray: continue
+          
           tmpMatCompo= matComposValuesDict[matCompo].GetTuple(pid)[0]
 
           # --- Check if tmpMatCompo is the new compo maximum. 
