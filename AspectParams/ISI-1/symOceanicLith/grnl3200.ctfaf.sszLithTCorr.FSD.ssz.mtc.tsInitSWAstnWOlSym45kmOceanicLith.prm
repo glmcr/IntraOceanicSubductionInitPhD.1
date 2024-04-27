@@ -153,7 +153,11 @@ end
 
 subsection Postprocess
   set List of postprocessors = visualization, temperature statistics, velocity statistics, \
-                               heat flux statistics, heat flux densities, particles
+                               heat flux statistics, heat flux densities, particles, topography
+  subsection Topography
+    set Output to file = true
+    set Time between text output = 5e5 
+  end
   subsection Visualization
     #set Output format = gnuplot
     set Output format = vtu #, gnuplot
@@ -173,24 +177,25 @@ subsection Postprocess
     set Minimum particles per cell = 15
     set Allow cells without particles = true
     set List of particle properties = pT path, position, initial composition, lusi composition, \
-                                      initial position, velocity, viscoplastic strain invariants, strain rate
+                                      initial position, velocity, viscosity, strain rate
+                                      #initial position, velocity, viscoplastic strain invariants, strain rate
   end
 end
 
 subsection Compositional fields
-  set Number of fields = 14
-  set Names of fields = oceanicCrust, oceanicLithMantle, asthenosphere, oceanicSeds, \ 
+  set Number of fields = 19
+  set Names of fields = oceanicCrustMRB, oceanicLithMantleMRB, asthenosphere, oceanicSeds, \ 
                         oceanicCrustSSZ, oceanicLithMantleSSZ, greenschists, blueschists, \
-                        amphibolites, granulites, eclogites, pmeltedSszAsth, \
-                        noninitial_plastic_strain, total_strain #, plastic_strain
+                        amphibolites, granulites, eclogites, pmeltedSszAsth, asthOLMHybMat,\
+                        contUppCrust, contLowCrust, SCLM, pmeltedMrbAsth, noninitial_plastic_strain, total_strain #, plastic_strain
 
-  set Compositional field methods = particles, particles, particles, particles, \
-                                    particles, particles, particles, particles, \
-                                    particles, particles, particles, particles, \
-                                    particles, particles
+  set Compositional field methods = particles, particles, particles, particles, particles, \
+                                    particles, particles, particles, particles, particles, \
+                                    particles, particles, particles, particles, particles, \
+                                    particles, particles, particles, particles
 
-  set Mapped particle properties  = oceanicCrust:lusi oceanicCrust, \
-                                    oceanicLithMantle:lusi oceanicLithMantle, \
+  set Mapped particle properties  = oceanicCrustMRB:lusi oceanicCrustMRB, \
+                                    oceanicLithMantleMRB:lusi oceanicLithMantleMRB, \
                                     asthenosphere:lusi asthenosphere, \
                                     oceanicSeds:lusi oceanicSeds, \
                                     oceanicCrustSSZ:lusi oceanicCrustSSZ, \
@@ -201,8 +206,13 @@ subsection Compositional fields
                                     granulites:lusi granulites, \
                                     eclogites:lusi eclogites, \
                                     pmeltedSszAsth:lusi pmeltedSszAsth, \
-                                    noninitial_plastic_strain:noninitial_plastic_strain, \
-                                    total_strain:total_strain
+                                    asthOLMHybMat:lusi asthOLMHybMat, \
+				    contUppCrust:lusi contUppCrust, \
+				    contLowCrust:lusi contLowCrust, \
+				    SCLM:lusi SCLM, \
+				    pmeltedMrbAsth:lusi pmeltedMrbAsth, \
+                                    noninitial_plastic_strain:lusi noninitial_plastic_strain, \
+                                    total_strain:lusi total_strain
 end
 
 # ---
@@ -255,9 +265,10 @@ subsection Material model
 
   set Strain weakening mechanism = total strain
 
-  #set Names of fields = oceanicCrust, oceanicLithMantle, asthenosphere, oceanicSeds, \
+  #set Names of fields = oceanicCrustMRB, oceanicLithMantleMRB, asthenosphere, oceanicSeds, \
   #                      oceanicCrustSSZ, oceanicLithMantleSSZ, greenschists, blueschists, \
-  #                      amphibolites, granulites, eclogites, pmeltedSszAsth, noninitial_plastic_strain, total_strain
+  #                      amphibolites, granulites, eclogites, pmeltedSszAsth, asthOLMHybMat, \
+  #                      contUppCrust, contLowCrust, SCLM, pmeltedMrbAsth,noninitial_plastic_strain, total_strain
 
   # --- Viscous strain w. 
   #     WARNING: the End intervals MUST be > than the Start intervals
@@ -265,16 +276,16 @@ subsection Material model
   #     exec crashes without outputing a meaninful error message.  
   #set Start prefactor strain weakening intervals = 0. 
   #set End prefactor strain weakening intervals = 1.0
-  set Start prefactor strain weakening intervals = 1e24, 5.0,   5.0, 1e24,  5.0, 1e24, 1e24,  5.0,  5.0,  5.0, 5.0,  5.0,  1e24,  5.0,  5.0
-  set End prefactor strain weakening intervals =   1e25, 10.0, 10.0, 1e25, 10.0, 1e25, 1e25, 10.0, 10.0, 10.0, 10.0, 10.0, 1e25, 10.0, 10.0
-  set Prefactor strain weakening factors =         1.0,  0.1,   0.1,  1.0,  0.1,  1.0,  1.0, 0.01, 0.01, 0.01, 0.01,  0.1,  1.0,  0.1,  0.1
+  set Start prefactor strain weakening intervals = 1e24, 5.,   5., 1e24,  5.,  5.,  5.,  5.,  5.,   5.,  5., 1e24, 1e24, 1e24,  5.,  5.,  5., 1e24,  5., 5.
+  set End prefactor strain weakening intervals =   1e25, 10., 10., 1e25, 10., 10., 10., 10., 10.,  10., 10., 1e25, 1e25, 1e25, 10., 10., 10., 1e25, 10., 10.
+  set Prefactor strain weakening factors =         1.0,  0.1, 0.1,  1.0,  .1, 1.0, 1.0, .01, .01,  .01, .01,  1.0,  1.0,  1.0,  .1,  .1,  .5,  1.0, 1.0, 1.0
   #set Prefactor strain weakening factors = 0.5 
 
   # --- Plastic strain w.
-  set Start plasticity strain weakening intervals  = 1e24,  0.5,  0.5, 1e24, 0.5, 1e24, 1e24,  0.5,  0.5,  0.5,  0.5,  0.5, 1e24, 0.5, 0.5 
-  set End plasticity strain weakening intervals    = 1e25,  1.5,  1.5, 1e25, 1.5, 1e25, 1e25,  1.5,  1.5,  1.5,  1.5,  1.5, 1e25, 1.5, 1.5
-  set Cohesion strain weakening factors            =  1.0,  1.0,  1.0,  1.0, 1.0,  1.0,  1.0,  1.0,  1.0,  1.0,  1.0,  1.0,  1.0, 1.0, 1.0
-  set Friction strain weakening factors            =  1.0, 0.13, 0.13,  1.0, 0.13, 1.0,  1.0, 0.13, 0.13, 0.13, 0.13, 0.13,  1.0, 1.0, 1.0
+  set Start plasticity strain weakening intervals  = 1e24,  0.5,  0.5, 1e24,  .5,  .5,  .5,  .5,  .5,  .5,  .5, 1e24, 1e24, 1e24,  .5,  .5,  .5, 1e24,  .5, .5
+  set End plasticity strain weakening intervals    = 1e25,  1.5,  1.5, 1e25, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1e25, 1e25, 1e25, 1.5, 1.5, 1.5, 1e25, 1.5, 1.5
+  set Cohesion strain weakening factors            =  1.0,  1.0, 1.0,  1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0,  1.0,  1.0,  1.0, 1.0, 1.0, 1.0, 1.0,  1.0, 1.0
+  set Friction strain weakening factors            =  1.0, 0.13, 0.13, 1.0, .13, 1.0, 1.0, .13, .13, .13, .13,  1.0,  1.0,  1.0, .13, .13,  .5, 1.0,  1.0, 1.0 
 
   #set Friction strain weakening factors            = 1.0, 1.0, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.35
 
@@ -285,11 +296,18 @@ subsection Material model
   # eclogites STP density at 3350kg/m3 as in BB2017-EPSL
   # partially melted SSZ asth density: 3340 kg/m3 (larger volume because of the partial melt presence)
   #                          bkg(asth.) ocCrust ocLithMtl  asth.  oc. seds  ssz occ  ssz olm  greensch  bluesch  amph    gran     ecl     pmAstSSZ                 
-set Thermal diffusivities= 1.25e-5,   1.33e-6, 1.07e-6, 1.25e-5,  1.33e-6, 1.33e-6, 1.07e-06, 1.33e-6, 1.33e-6, 1.33e-6, 1.33e-6, 1.33e-6, 1.07e-6, 3.3e-3, 3.3e-3
-set Heat capacities      =   1250.,     750.,    1250.,    1250.,   750.,    750.,    1250.,    750.,    750.,    750.,    750.,    750.,    1250., 750.,    750.
-set Densities            =   3370.,    2900.,    3370.,    3370.,   2700.,   2900.,    3370.,   2900.,   3150.,   2900.,  3200.,   3350.,   3340., 1.0, 1.0
-#set Densities =   3370.,    2900.,    3370.,    3370.,   2700.,   2900.,    3370.,   2900.,   2900.,   2900.,   2900.,   2900.,   2900., 1.0, 1.0
-set Thermal expansivities=    3e-5,   2.8e-5,    3e-5 ,     3e-5,    0.0,   2.8e-5,     3e-5,  2.8e-5,  2.8e-5,  2.8e-5,   2.8e-5,  2.8e-5,  3e-5, 2e-5,     2e-5
+ set Thermal diffusivities=\
+1.25e-5, 1.33e-6, 1.07e-6, 1.25e-5, 1.33e-6, 1.33e-6, 1.07e-6, 1.33e-6, 1.33e-6, 1.33e-6, 1.33e-6, 1.33e-6, \
+1.07e-6, 1.07e-6, 1.19e-6, 1.15e-6, 1.07e-6, 1.07e-6, 3.3e-3, 3.3e-3
+
+ set Heat capacities=\
+ 1250., 750., 1250., 1250., 750., 750., 1250., 750., 750., 750., 750., 750., 1250., 1250., 750., 750., 1250, 1250, 750., 750.
+  
+ set Densities=\
+ 3370., 2900., 3370., 3370., 2700., 2900., 3370., 2900., 3150., 2900., 3200., 3350., 3370., 3370., 2800., 2900., 3370., 3370., 1.0, 1.0
+
+ set Thermal expansivities=\
+ 3e-5, 2.8e-5, 3e-5, 3e-5, 0.0, 2.8e-5, 3e-5, 2.8e-5, 2.8e-5, 2.8e-5, 2.8e-5, 2.8e-5, 3e-5, 3e-5, 2e-5, 2e-5, 3e-5, 3e-5, 3e-5, 3e-5
 
   # Harmonic viscosity averaging
   set Viscosity averaging scheme = harmonic
@@ -304,27 +322,41 @@ set Thermal expansivities=    3e-5,   2.8e-5,    3e-5 ,     3e-5,    0.0,   2.8e
   # all mtc for oc. crust are keeping the same params as their protolith (DMC prefactor adjusted as if we would 
   # apply a scaling fact of 0.1 outside of the exponential operator as in SOPALE)
   # partially melted SSZ asth prefact is 3*asth which means that it is 3 fold less viscous at the same T
-  #
-  #                                              bkg(asth) ocCrust   oLithMtl  asth      oc. seds  ssz occ   ssz olm   grs bls amp gra eclo pmAstSSZ (dummies for SW)  
-  #set Prefactors for dislocation creep         = 1.76e-14, 5.78e-26, 1.09e-15, 1.76e-14, 8.57e-28, 5.78e-26, 1.09e-15, 5.78e-26, 5.78e-26, 5.78e-26, 5.78e-26, 1.156e-27, 5.28e-14, 1.0e-50, 1.0e-50
-  set Prefactors for dislocation creep         = 1.76e-14, 2.896e-22, 1.09e-15, 1.76e-14, 8.57e-28, 2.896e-22, 1.09e-15, 2.896e-22, 2.896e-22, 2.896e-22, 2.896e-22, 5.8e-27, 5.28e-14, 1.0e-50, 1.0e-50
-  set Stress exponents for dislocation creep   = 3.0,      4.7,      3.5,      3.0,      4.0,      4.7,      3.5,        4.7,      4.7,      4.7,  4.7, 4.7, 3.0, 1.0,     1.0
-  set Activation energies for dislocation creep= 430.e3,   485.e3,   540.e3,   430.e3,   223.e3,   485.e3,   540.e3,     485.e3,  485.e3,   485.e3, 485.e3, 485.e3, 430.e3, 0.,     0.
-  set Activation volumes for dislocation creep = 7.5e-6,       0.,   20.e-6,   7.5e-6,      0.0,       0.,   20.e-6,     0.0,  0.,       0.0, 0.0,      0., 7.5e-6, 0., 0.
+  #  
+  set Prefactors for dislocation creep=\
+  1.76e-14, 2.9e-22, 1.1e-15, 1.76e-14, 8.57e-28, 2.9e-22, 1.1e-15, 2.9e-22, 2.9e-22, 2.9e-22, 2.9e-22, 5.8e-27, \
+  1.76e-14, 1.76e-14, 1.71e-27, 1.156e-25, 1.1e-15, 1.76e-14, 1.e-50, 1.e-50
+  
+  set Stress exponents for dislocation creep=\
+  3.0, 4.7, 3.5, 3.0, 4.0, 4.7, 3.5, 4.7, 4.7, 4.7, 4.7, 4.7, 3.0, 3.0, 4.0, 4.7, 3.5, 3.0, 1.0, 1.0
+  
+  set Activation energies for dislocation creep=\
+  430.e3,  485.e3, 540.e3, 430.e3, 223.e3, 485.e3, 540.e3, 485.e3, 485.e3, 485.e3, 485.e3, 485.e3, 430.e3, 430.e3, 223.e3, 485.e3, 540.e3, 430.e3, 0., 0.
+  
+  set Activation volumes for dislocation creep=\
+  7.5e-6, 0., 20.e-6, 7.5e-6, 0., 0., 20.e-6, 0., 0., 0., 0., 0., 7.5e-6, 7.5e-6, 0., 0., 20.e-6, 7.5e-6,  0., 0.
 
   # Plasticity parameters from Maffione et al., 2015: https://doi.org/10.1002/2015GC005746
   # cont. ext. cookbook for the dummy strain fields.
   # oc. crust and oc. seds values divided by two to help starting the subduc. slab rollback at the trench
-  set Angles of internal friction =   15.,  15.,   15.,   15.,     8.,  15.,   15.,  15.,  15.,  15.,  15.,  15.,   15.,  30.,   30.
-  set Cohesions                   = 20.e6,  5.e6, 20.e6, 20.e6, 2.5e6, 5.e6, 20.e6, 5.e6, 5.e6, 5.e6, 5.e6, 5.e6, 20.e6, 20.e6, 20.e6
+  set Angles of internal friction=\
+  15., 15., 15., 15., 8., 15., 15., 15., 15., 15., 15., 15., 15., 15., 10., 20., 15., 15., 30., 30.
+  
+  set Cohesions=\
+  20.e6, 5.e6, 20.e6, 20.e6, 2.5e6, 5.e6, 20.e6, 5.e6, 5.e6, 5.e6, 5.e6, 5.e6, 20.e6, 20.e6, 5.e6, 20.e6, 20.e6, 20.e6, 20.e6, 20.e6
  
   ## diffusion creep section. Taken from table 8 of Glerum et al., https://doi.org/10.1002/2015GC005746
   # prefact. adjusted (reduced by 1e3) because of the small (1e-3) default grain size used by aspect
   #  olmWS prefactor = prefactor*10 for the start
   # cont. ext. cookbook for the dummy strain fields.       
-set Prefactors for diffusion creep         = 6.08e-18, 6.08e-48, 6.08e-48, 6.08e-18, 6.08e-48, 6.08e-48, 6.08e-48, 6.08e-48, 6.08e-48, 6.08e-48, 6.08e-48, 6.08e-48, 6.08e-18, 1.0e-50, 1.0e-50
-set Activation energies for diffusion creep=   335.e3,   335.e3,   335.e3,   335.e3,   335.e3,  335.e3,    335.e3,   335.e3,   335.e3,   335.e3, 335.e3, 335.e3, 335.e3, 0.0,     0.0
-set Activation volumes for diffusion creep =    6.e-6,    6.e-6,    6.e-6,    6.e-6,    6.e-6,   6.e-6,     6.e-6,    6.e-6,    6.e-6,    6.e-6, 6.e-6, 6.e-6, 6.e-6, 0.0,     0.0
+  set Prefactors for diffusion creep=\
+  6.1e-18, 6.e-48, 6.e-48, 6.1e-18, 6.e-48, 6.e-48, 6.e-48, 6.e-48, 6.e-48, 6.e-48, 6.e-48, 6.e-48, 6.1e-18, 6.1e-18, 6.e-48, 6.e-48, 6.e-48, 6.e-18, 1.e-50, 1.e-50
+ 
+  set Activation energies for diffusion creep=\
+  335.e3, 335.e3, 335.e3, 335.e3, 335.e3, 335.e3, 335.e3, 335.e3, 335.e3, 335.e3, 335.e3, 335.e3, 335.e3, 335.e3, 335.e3, 335.e3, 335.e3, 335.e3, 0.0, 0.0
+
+  set Activation volumes for diffusion creep=\
+  6.e-6, 6.e-6, 6.e-6, 6.e-6, 6.e-6, 6.e-6, 6.e-6, 6.e-6, 6.e-6, 6.e-6, 6.e-6, 6.e-6, 6.e-6, 6.e-6, 6.e-6, 6.e-6, 6.e-6, 6.e-6, 0.0,     0.0
 
  end #--- visco plastic
 end
