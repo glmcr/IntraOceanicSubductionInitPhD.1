@@ -32,9 +32,9 @@ lusi asthenosphere:
    #Blue: 0.0
 #lusi oceanicSeds:
 lusi asthOLMHybMat:
-   # --- blueish pastel
-   Red: 0.4 #102.0/255
-   Green: 0.4
+   # --- blueish lilac pastel
+   Red: 0.6 #102.0/255
+   Green: 0.6
    Blue: 1.0
    ## --- Dijon's Mustard greenish-yellow (too close to upper cont. crust)
    #Red: 0.8    # 204.0/255.0
