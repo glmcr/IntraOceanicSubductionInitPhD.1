@@ -32,6 +32,13 @@ RGBComposValuesFp= open(sys.argv[2],"r")
 RGBComposValues= yaml.load(RGBComposValuesFp,Loader= yaml.SafeLoader)
 RGBComposValuesFp.close()
 
+for rbgItem in RGBComposValues:
+
+   print("rbgItem="+rbgItem+": RGBComposValues[rbgItem]="+str(RGBComposValues[rbgItem]))
+# ---
+#print("Debug exit 0")
+#sys.exit(0)
+
 # --- Create the vtk reader and writer objects.
 reader= vtk.vtkXMLUnstructuredGridReader()
 writer= vtk.vtkXMLUnstructuredGridWriter()
@@ -88,8 +95,12 @@ for vtuFileIn in sorted(vtuFilesIn):
 
        # --- TODO add check for compo existence here:
        assert matComposValuesDict[matCompo] is not None, \
-          "ERROR: matComposValuesDict[matCompo] is None !!" 
+          "ERROR: matComposValuesDict[matCompo] is None !!"
+
+       #print("matCompo="+matCompo+": matComposValuesDict[matCompo]="+str(matComposValuesDict[matCompo]))
    # ---
+   #print("Debug exit 0")
+   #sys.exit(0)
 
    # --- Print the number of markers found in the vtu file.
    pidDataSize= pidData.GetSize()

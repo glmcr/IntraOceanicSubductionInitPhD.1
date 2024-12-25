@@ -32,14 +32,18 @@ lusi asthenosphere:
    #Blue: 0.0
 #lusi oceanicSeds:
 lusi asthOLMHybMat:
+   # --- blueish pastel
+   Red: 0.4 #102.0/255
+   Green: 0.4
+   Blue: 1.0
    ## --- Dijon's Mustard greenish-yellow (too close to upper cont. crust)
    #Red: 0.8    # 204.0/255.0
    #Green: 0.8  # 204.0/255.0
    #Blue: 0.0   # 0.0/255.0
    ## --- very light blue-green
-   Red: 0.4    # 102.0/255.0
-   Green: 1.0  # 255.0/255.0
-   Blue: 0.6980392156862745  # 178.0/255.0
+   #Red: 0.4    # 102.0/255.0
+   #Green: 1.0  # 255.0/255.0
+   #Blue: 0.6980392156862745  # 178.0/255.0
    ## --- yellow
    #Red: 1.0    # 255.0/255.0
    #Green: 1.0  #  255.0/255.0
@@ -88,7 +92,6 @@ lusi pmeltedSszAsth:
    #Red: 0.75294    # 192.0/255.0
    #Green: 0.75294  # 192.0/255.0
    #Blue: 0.75294   # 192.0/255.0
-#lusi asthOLMHybMat:
 lusi oceanicSeds:
    # --- turquoise
    Red: 0.0    # 255.0/255.0
@@ -114,3 +117,25 @@ lusi pmeltedMrbAsth:
    Red: 0.0
    Green: 0.50196 #128.0/225.0
    Blue: 0.50196 #128.0/225.0
+lusi hydratedOLM:
+   # --- light grey
+   Red: 0.5019607843137255 # 128.0/255
+   Green: 0.5019607843137255
+   Blue: 0.5019607843137255
+   ## --- grey-greenish
+   #Red: 0.0
+   #Green: 0.4  #102.0/255
+   #Blue: 0.2  #51.0/255
+   ## --- dijon mustard like
+   #Red: 0.6  # 153.0/255
+   #Green: 0.6 # 153.0/255
+   #Blue: 0.0
+   ## ---  deep pink 255,20,147
+   #Red: 1.0
+   #Green: 0.0784313725490196 # 20.0/255.0
+   #Blue: 0.5764705882352941  #147.0/255
+lusi serpentinite:
+   # --- very light pink
+   Red: 1.0
+   Green: 0.6  # 204.0/255.0
+   Blue: 0.6
