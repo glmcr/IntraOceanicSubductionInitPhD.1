@@ -21,13 +21,12 @@ subsection Boundary velocity model
                                 velcmyRHS*(cm2m/year), \
                                 if ( y > (bottomDepth-begSwitchDRHS-switchDLen), \
                                  0.5*velcmyRHS*(cm2m/year)*(1.0 - ctFact)*(y-(bottomDepth-begSwitchDRHS))/switchDLen + ctFact*velcmyRHS*(cm2m/year), \
-                                 0.5*ctFact*velcmyRHS*(cm2m/year)), \
-                               if (y >= (bottomDepth-begSwitchDLHS), \
+                                 0.5*ctFact*velcmyRHS*(cm2m/year))), \
+                               if (y >= (bottomDepth-begSwitchDLHS-switchDLen)+ctFact*velcmyLHS*(cm2m/year)*switchDLen/(velcmyLHS*(cm2m/year)*(ctFact-1.0)), \
                                 0.0*velcmyLHS*(cm2m/year), \
-                                if ( y < (bottomDepth-begSwitchDRHS-switchDLen) + \
-                                  ctFact*velcmyLHS*(cm2m/year)*(switchDLen)/(velcmyLHS*(cm2m/year)*(ctFact-1.0))), \
+                                if ( y > (bottomDepth-begSwitchDLHS-switchDLen), \
                                  0.5*velcmyLHS*(cm2m/year)*(1.0 - ctFact)*(y-(bottomDepth-begSwitchDLHS))/switchDLen + ctFact*velcmyLHS*(cm2m/year), \
-                                 0.5*ctFact*velcmyLHS*(cm2m/year) ) \
+                                 0.5*ctFact*velcmyLHS*(cm2m/year))) \
                               ); 0.0  # 0.0 vertical y velo. on sides
   end
 end
