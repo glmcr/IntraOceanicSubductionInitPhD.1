@@ -1,0 +1,23 @@
+material, metam or other change(s), notes
+*oceanicCrustMRB, greenschist or amphibolite or granulite or blueschist or eclogite, density increase for blueschist and eclogite
+*oceanicLithMantleMRB, serpentinite or hydratedOLM(?), density decrease for serpentinite and hydratedOLM
+*asthenosphere, asthOLMHybMat or pmeltedMrbAsth or pmeltedSszAsth, wet oliv
+*oceanicSeds, greenschist or amphibolite or granulite or blueschist or eclogite, always density increase 2700 -> 2900 or 3150 or 3350
+*oceanicCrustSSZ, greenschist or amphibolite or granulite or blueschist or eclogite, density increase for blueschist and eclogite
+*oceanicLithMantleSSZ, serpentinite or hydratedOLM(?), density decrease for serpentinite and hydratedOLM
+*greenschists, amphibolite or granulite or blueschist or eclogite, density increase for blueschist and eclogite
+*blueschists, eclogite, density increase for eclogite
+*amphibolites, granulite or eclogite, density increase for eclogite
+*granulites, eclogite, density increase for eclogite
+*eclogites,,
+*pmeltedSszAsth, oceanicLithMantleSSZ or oceanicCrustSSZ, dry oliv
+*asthOLMHybMat, asthenosphere or pmeltedMrbAsth or pmeltedSszAsth, 1). wet oliv 2). can re-transform to asthenosphere if heated over 1280C
+*pmeltedMrbAsth, oceanicCrustMRB or oceanicLithMantleMRB or pmeltedSszAsth, dry oliv
+serpentinite, hydratedOLM(?),
+hydratedOLM(?), serpentinite,
+**contUppCrust,, only used in the large domain
+**contLowCrust,, only used in the large domain
+**SCLM,, only used in the large domain
+
+ 
+
