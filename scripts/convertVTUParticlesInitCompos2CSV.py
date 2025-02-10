@@ -22,7 +22,7 @@ vtuPData= {}
 
 # Only consider oceanic crust particles that have Pressure
 # and Temperature values over those low limits thresholds
-ocPLow= 4e8 # GPa, 4e8 == shorcut for 4*math.pow(10,8)
+ocPLow= 1.2e8 # GPa, 4e8 == shorcut for 4*math.pow(10,8)
 ocTLow= 373 # Kelvin -> 100C
 
 # Only consider particle ids for oceanic crust particles
@@ -75,7 +75,11 @@ for vtuPFile in vtuPFiles:
    #ocCrustData= dataTmp.GetPointData().GetArray("oceanicCrust")
    ocCrustData= dataTmp.GetPointData().GetArray("initial oceanicCrustMRB")
    ocSedsData=  dataTmp.GetPointData().GetArray("initial oceanicSeds")
+   asthData=    dataTmp.GetPointData().GetArray("initial asthenosphere")
 
+   newOcCrust= dataTmp.GetPointData().GetArray("lusi oceanicCrustMRB")
+   newSeds=    dataTmp.GetPointData().GetArray("lusi oceanicSeds")
+   
    greenSchData= dataTmp.GetPointData().GetArray("lusi greenschists")
    amphiData= dataTmp.GetPointData().GetArray("lusi amphibolites")
    granuData= dataTmp.GetPointData().GetArray("lusi granulites")
@@ -112,30 +116,39 @@ for vtuPFile in vtuPFiles:
        ocpP= pPData.GetTuple(pid)[0]
        ocpT= pTData.GetTuple(pid)[0]
 
+       asthCrt= asthData.GetTuple(pid)[0]
        sedsCrt= ocSedsData.GetTuple(pid)[0]
+       
        greenSchCrt= greenSchData.GetTuple(pid)[0]
        amphiCrt= amphiData.GetTuple(pid)[0]
        granuCrt= granuData.GetTuple(pid)[0]
 
-       checkMetam= greenSchCrt + amphiCrt + granuCrt
+       #checkMetam= greenSchCrt + amphiCrt + granuCrt
+       checkMetam= amphiCrt + granuCrt
+
+       newOcCrustCrt = newOcCrust.GetTuple(pid)[0]
+       newSedsCrt = newSeds.GetTuple(pid)[0]
        
        #depth= gridYMeters - ocpPos[1]
        
-       if (ocpCrt >= ocCrtThr or sedsCrt >= ocCrtThr) and ocpP >= ocPLow and ocpT >= ocTLow and checkMetam >= 0.2: # and depth > 12000.0:
+       if ocpP >= ocPLow and ocpT >= ocTLow and \
+          ((ocpCrt >= ocCrtThr or sedsCrt >= ocCrtThr) and checkMetam >= ocCrtThr) or \
+           (asthCrt >= ocCrtThr and checkMetam >= ocCrtThr) or (newOcCrustCrt >= ocCrtThr or newSedsCrt >= ocCrtThr) :
+           #(checkMetam >= ocCrtThr or newOcCrustCrt >= ocCrtThr or newSedsCrt >= ocCrtThr)): # and depth > 12000.0:
            
           ocpPos= pPos.GetTuple(pid)
 
           ipPos= ipPosData.GetTuple(pid)
 
-          if not (mrkXRange[0] <= ipPos[0] and ipPos[0] <= mrkXRange[1] \
-                and mrkYRange[0] <= ipPos[1] and ipPos[1] <= mrkYRange[1]):
-             continue
+          #if not (mrkXRange[0] <= ipPos[0] and ipPos[0] <= mrkXRange[1] \
+          #      and mrkYRange[0] <= ipPos[1] and ipPos[1] <= mrkYRange[1]):
+          #   continue
           
           #print("ocpCrt="+str(ocpCrt))
-          print("valid init pos fpr ocpPos="+str(ocpPos)+",pid="+str(pid))
+          print("valid new pos for ocpPos="+str(ocpPos)+",pid="+str(pid))
           #print("ocpP="+str(ocpP))
           #print("ocpT="+str(ocpT))
-          print("ipPos="+str(ipPos)+"\n")
+          print("initial ipPos="+str(ipPos)+"\n")
           #print("mrkXRange="+str(mrkXRange))
           #print("mrkYRange="+str(mrkYRange))
           #sys.exit(0)
@@ -160,9 +173,12 @@ for vtuPFile in vtuPFiles:
        #--- end if block
    #--- end for loop
    #sys.exit(0)
+
+   if dataTime not in tuple(vtuPData.keys()):
+      vtuPData[dataTime]= {}
    
    #--- Index the the oceanic particles data with the timestamp
-   vtuPData[dataTime]= relevantOCrustAndSedsData
+   vtuPData[dataTime][vtuPFile]= relevantOCrustAndSedsData
 
    print(" done with file: "+vtuPFile+"\n")
    
@@ -182,29 +198,31 @@ print("vtuPData keys="+str(tuple(vtuPData.keys())))
 for dataTime in tuple(vtuPData.keys()):
 
    print("dataTime="+str(dataTime))
-   
-   vtuPDataT= vtuPData[dataTime]
-
-   #print("vtuPDataT keys="+str(tuple(vtuPDataT.keys())))
 
    TCAvgList= []
    PGAvgList= []
    DepthsAvgList= []
-   
-   for pid in tuple(vtuPDataT.keys()):
 
-      vtuPDataTPid= vtuPDataT[pid]
+   for vtuFname in tuple(vtuPData[dataTime].keys()):
+   
+       vtuPDataT= vtuPData[dataTime][vtuFname]
+
+       #print("vtuPDataT keys="+str(tuple(vtuPDataT.keys())))
+   
+       for pid in tuple(vtuPDataT.keys()):
+
+          vtuPDataTPid= vtuPDataT[pid]
       
-      csvFile.write(str(dataTime)+","+str(pid)+","+str(vtuPDataTPid["concentration oc. crust"])+","+
+          csvFile.write(str(dataTime)+","+str(pid)+","+str(vtuPDataTPid["concentration oc. crust"])+","+
                     str(vtuPDataTPid["concentration oc. seds"])+","+str(vtuPDataTPid["concentration greenSch"])+","+
                     str(vtuPDataTPid["concentration amphi"])+","+str(vtuPDataTPid["concentration granu"])+","+
                     str(vtuPDataTPid["Pressure(GPa)"])+","+str(vtuPDataTPid["Temperature(C)"])+","+
                     str(vtuPDataTPid["Temperature(K)"])+","+str(vtuPDataTPid["Depth(y[m])"])+","+str(vtuPDataTPid["Position(x[m])"])+"\n")
 
-      TCAvgList.append(vtuPDataTPid["Temperature(C)"])
-      PGAvgList.append(vtuPDataTPid["Pressure(GPa)"])
-      DepthsAvgList.append(vtuPDataTPid["Depth(y[m])"])
-      
+          TCAvgList.append(vtuPDataTPid["Temperature(C)"])
+          PGAvgList.append(vtuPDataTPid["Pressure(GPa)"])
+          DepthsAvgList.append(vtuPDataTPid["Depth(y[m])"])
+      # ---   
    # ---
 
    #print("TCAvgList[0:2]="+str(TCAvgList[0:2]))
