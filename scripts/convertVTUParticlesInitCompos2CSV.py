@@ -22,7 +22,7 @@ vtuPData= {}
 
 # Only consider oceanic crust particles that have Pressure
 # and Temperature values over those low limits thresholds
-ocPLow= 1.2e8 # GPa, 4e8 == shorcut for 4*math.pow(10,8)
+ocPLow= 2.5e8 # GPa, 4e8 == shorcut for 4*math.pow(10,8)
 ocTLow= 373 # Kelvin -> 100C
 
 # Only consider particle ids for oceanic crust particles
@@ -132,8 +132,8 @@ for vtuPFile in vtuPFiles:
        #depth= gridYMeters - ocpPos[1]
        
        if ocpP >= ocPLow and ocpT >= ocTLow and \
-          ((ocpCrt >= ocCrtThr or sedsCrt >= ocCrtThr) and checkMetam >= ocCrtThr) or \
-           (asthCrt >= ocCrtThr and checkMetam >= ocCrtThr) or (newOcCrustCrt >= ocCrtThr or newSedsCrt >= ocCrtThr) :
+          (((ocpCrt >= ocCrtThr or sedsCrt >= ocCrtThr) and checkMetam >= ocCrtThr) or \
+           (asthCrt >= ocCrtThr and checkMetam >= ocCrtThr) or (newOcCrustCrt >= ocCrtThr or newSedsCrt >= ocCrtThr)) :
            #(checkMetam >= ocCrtThr or newOcCrustCrt >= ocCrtThr or newSedsCrt >= ocCrtThr)): # and depth > 12000.0:
            
           ocpPos= pPos.GetTuple(pid)
