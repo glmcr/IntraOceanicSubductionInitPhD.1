@@ -32,6 +32,13 @@ RGBComposValuesFp= open(sys.argv[2],"r")
 RGBComposValues= yaml.load(RGBComposValuesFp,Loader= yaml.SafeLoader)
 RGBComposValuesFp.close()
 
+for rbgItem in RGBComposValues:
+
+   print("rbgItem="+rbgItem+": RGBComposValues[rbgItem]="+str(RGBComposValues[rbgItem]))
+# ---
+#print("Debug exit 0")
+#sys.exit(0)
+
 # --- Create the vtk reader and writer objects.
 reader= vtk.vtkXMLUnstructuredGridReader()
 writer= vtk.vtkXMLUnstructuredGridWriter()
@@ -87,9 +94,20 @@ for vtuFileIn in sorted(vtuFilesIn):
        matComposValuesDict[matCompo]= dataOut.GetPointData().GetArray(matCompo)
 
        # --- TODO add check for compo existence here:
-       assert matComposValuesDict[matCompo] is not None, \
-          "ERROR: matComposValuesDict[matCompo] is None !!" 
+       #assert matComposValuesDict[matCompo] is not None, \
+       #   "ERROR: matComposValuesDict[matCompo] is None !!"
+
+       if type(matComposValuesDict[matCompo]) is \
+          vtk.numpy_interface.dataset_adapter.VTKNoneArray:
+
+          print("WARNING: matCompo -> \""+matCompo+"\" not found in the VTK point data, skipping this mat. compo!")
+          del(matComposValuesDict[matCompo])
+          
+       #else: 
+       #  print("matCompo="+matCompo+": matComposValuesDict[matCompo] type="+str(type(matComposValuesDict[matCompo])))
    # ---
+   #print("Debug exit 0")
+   #sys.exit(0)
 
    # --- Print the number of markers found in the vtu file.
    pidDataSize= pidData.GetSize()
@@ -119,13 +137,14 @@ for vtuFileIn in sorted(vtuFilesIn):
       #     names keys of the RGBComposValues dict
       #     MUST match the names of the material
       #     compositions names of the vtu file(s)
-      for matCompo in RGBComposValues:
+      #for matCompo in RGBComposValues:
+      for matCompo in matComposValuesDict:
 
           #print("matCompo="+matCompo)
           # --- Extract the compo value for this matCompo on
-          #     the markera having the id "pid"
-          if matCompo not in matComposValuesDict: continue
-
+          #     the marker having the id "pid"
+          #     Skip the matCompo if not in the matComposValuesDict as a key
+          #if matCompo not in matComposValuesDict: continue
           #if matComposValuesDict[matCompo] is VTKNoneArray: continue
           
           tmpMatCompo= matComposValuesDict[matCompo].GetTuple(pid)[0]

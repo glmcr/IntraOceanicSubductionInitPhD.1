@@ -76,7 +76,7 @@ subsection Boundary heat flux model
   subsection Function
     # 0.00575 W/m2 -> 0.575mW/m2
     #set Function expression = 0.00575 #-1.18e-05
-    set Function expression = -0.0975 #-0.0485 #-0.021 # 21mW/m2 BB2017
+    set Function expression = -0.021 # -0.0975 #-0.0485 #-0.021 # 21mW/m2 BB2017
   end
 end
   
@@ -211,7 +211,7 @@ subsection Material model
   #        - th. conduct.      4.47         1.5         2.7      4.47     2.7       2.5(dummies for SW)
   #                           bkg(asth.) basGabCrust  ocLithMtl  asth.    olmWS     nips  ps
   # 1573 fixed at 30km set Thermal diffusivities = 7.72e-5,    4.76e-07,   7.63e-07,  7.72e-5, 7.63e-07,  3.3e-3, 3.3e-3
-  set Thermal diffusivities = 5.61e-5,    4.76e-07,   7.63e-07,  5.61e-5, 7.63e-07,  3.3e-3, 3.3e-3  
+  set Thermal diffusivities = 1.208e-5,    4.76e-07,   7.63e-07,  1.208e-5, 7.63e-07,  3.3e-3, 3.3e-3  
   set Heat capacities       =   1050.,       1050.,      1050.,    1050.,    1050.,    750.,   750.
   set Densities             =   3370.,       3000.,      3370.,    3370.,     3370,     1.0,    1.0
   set Thermal expansivities =    3e-5,      2.8e-5,      3e-5 ,     3e-5,     3e-5,    2e-5,    2e-5
