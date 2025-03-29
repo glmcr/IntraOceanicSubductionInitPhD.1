@@ -105,7 +105,7 @@ subsection Boundary composition model
 end
 
 subsection Boundary velocity model
-  set Tangential velocity boundary indicators = bottom #, right #, left
+  set Tangential velocity boundary indicators = bottom, right #, left
 end
 
 # --- extension 
