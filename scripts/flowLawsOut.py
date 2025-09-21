@@ -14,8 +14,8 @@ def calcVisc(T, P, APrefact, ActEng, ActVol, StrExp, StrRate):
 
 dryOlA= 1.1e-15
 wetOlA= 1.76e-14
-mixOlA= 6.037e-15
-#mixOlA= 2e-15
+#mixOlA= 6.037e-15
+mixOlA= 7e-16
 
 dryOlActEng= 540e3
 wetOlActEng= 430e3
@@ -39,7 +39,7 @@ ofp= open(folderOut+"/viscWRTTempWithPConstAt1e9.csv","w")
 
 ofp.write("#T[K],wetv,dryv,mixv\n")
 
-for T in range(573,1600):
+for T in range(600,1600):
 
     # ---  calcVisc(T, P, APrefact, ActEng, ActVol, StrExp, StrRate)
     wetv= calcVisc(T, P, wetOlA, wetOlActEng, wetOlActVol, wetOlStrExp, StrRate)
@@ -52,7 +52,7 @@ for T in range(573,1600):
     mixv= calcVisc(T, P, mixOlA, mixOlActEng, mixOlActVol, mixOlStrExp, StrRate)
     #mixv= (strainRate**((1-mixOlStrExp)/mixOlStrExp))*(math.e**((mixOlActEng + Pressure*mixOlActVol)/(mixOlStrExp*perfectGasConst*T)))*(((1/mixOlA)**(1/mixOlStrExp)))
 
-    ofp.write(str(T)+","+str(wetv)+","+str(dryv)+","+str(mixv)+"\n")
+    ofp.write(str(T)+" "+str(math.log10(wetv))+" "+str(math.log10(dryv))+" "+str(math.log10(mixv))+"\n")
 # ---
     
 ofp.close()
@@ -63,7 +63,7 @@ ofp= open(folderOut+"/viscWRTTempWithPConstAt2e9.csv","w")
 
 ofp.write("#T[K],wetv,dryv,mixv\n")
 
-for T in range(573,1600):
+for T in range(600,1600):
 
     wetv= calcVisc(T, P, wetOlA, wetOlActEng, wetOlActVol, wetOlStrExp, StrRate)
     #wetv= (strainRate**((1-wetOlStrExp)/wetOlStrExp))*(math.e**((wetOlActEng + Pressure*wetOlActVol)/(wetOlStrExp*perfectGasConst*T)))*(((1/wetOlA)**(1/wetOlStrExp)))
@@ -74,7 +74,7 @@ for T in range(573,1600):
     mixv= calcVisc(T, P, mixOlA, mixOlActEng, mixOlActVol, mixOlStrExp, StrRate)
     #mixv= (strainRate**((1-mixOlStrExp)/mixOlStrExp))*(math.e**((mixOlActEng + Pressure*mixOlActVol)/(mixOlStrExp*perfectGasConst*T)))*(((1/mixOlA)**(1/mixOlStrExp)))
 
-    ofp.write(str(T)+","+str(wetv)+","+str(dryv)+","+str(mixv)+"\n")
+    ofp.write(str(T)+" "+str(math.log10(wetv))+" "+str(math.log10(dryv))+" "+str(math.log10(mixv))+"\n")
 # ---
     
 ofp.close()
@@ -101,7 +101,7 @@ for pit in range(0,2000):
     mixv= calcVisc(T, P, mixOlA, mixOlActEng, mixOlActVol, mixOlStrExp, StrRate)
     #mixv= (strainRate**((1-mixOlStrExp)/mixOlStrExp))*(math.e**((mixOlActEng + P*mixOlActVol)/(mixOlStrExp*perfectGasConst*T)))*(((1/mixOlA)**(1/mixOlStrExp)))
 
-    ofp.write(str(P)+","+str(wetv)+","+str(dryv)+","+str(mixv)+"\n")
+    ofp.write(str(P)+" "+str(wetv)+" "+str(dryv)+" "+str(mixv)+"\n")
 # ---
 
 ofp.close()
@@ -128,7 +128,7 @@ for pit in range(0,2000):
     mixv= calcVisc(T, P, mixOlA, mixOlActEng, mixOlActVol, mixOlStrExp, StrRate)
     #mixv= (strainRate**((1-mixOlStrExp)/mixOlStrExp))*(math.e**((mixOlActEng + P*mixOlActVol)/(mixOlStrExp*perfectGasConst*T)))*(((1/mixOlA)**(1/mixOlStrExp)))
 
-    ofp.write(str(P)+","+str(wetv)+","+str(dryv)+","+str(mixv)+"\n")
+    ofp.write(str(P)+" "+str(wetv)+" "+str(dryv)+" "+str(mixv)+"\n")
 # ---
 
 ofp.close()
