@@ -1,0 +1,334 @@
+#!/usr/bin/python3
+
+import os
+import sys
+import vtk #.vtk
+import glob
+import math
+import json
+import numpy as np
+from vtk.util.numpy_support import vtk_to_numpy #thats what you need 
+
+# -- VTU file with which the initial positions of the metam material(s)
+#    are intialized to go backward in time. This vtu file is not necessarily
+#    the final one.
+vtuParticlesInitFile= sys.argv[1]
+
+# directory where the VTU particles files are located
+vtuParticlesDir = sys.argv[2]
+metamGroupInfoFile= sys.argv[3]
+minCompoValue= float(sys.argv[4])
+csvFileOut= sys.argv[5]
+
+# --- Get the metam. mats. info from the metamGroupInfoFile
+metamGroupInfoFileP= open(metamGroupInfoFile,"r")
+metamGroupInfoDict= json.load(metamGroupInfoFileP)
+metamGroupInfoFileP.close()
+
+print("metamGroupInfoDict="+str(metamGroupInfoDict))
+
+#print("Debug exit 0")   
+#sys.exit(0)
+
+vtuPFiles= sorted(glob.glob(vtuParticlesDir + "/*.vtu"), reverse= True)
+
+# --- Remove the file that will be used for initialization from the other vtu files list
+#if vtuParticlesInitFile in vtuPFiles:
+#   vtuPFiles.remove(vtuParticlesInitFile)
+
+#print("Debug exit 0")   
+#sys.exit(0)
+
+reader= vtk.vtkXMLUnstructuredGridReader()
+
+print("Reading vtuParticlesInitFile: "+vtuParticlesInitFile)
+
+#vtuPFileName= os.path.basename(vtuPFile)
+                  
+reader.SetFileName(vtuParticlesInitFile)
+reader.Update()
+   
+#vtuPData[vtuPFileName]= reader.GetOutput()
+#--- Extract all the particles data
+dataTmp= reader.GetOutput()
+#--- Extract the timestamp (in years) as an int
+dataTime= int( dataTmp.GetFieldData().GetArray("TIME").GetTuple(0)[0] )
+
+pidData= dataTmp.GetPointData().GetArray("id")
+
+print("dataTime="+str(dataTime))
+
+pidDataSize= pidData.GetSize()
+print("pidData size="+str(pidDataSize)+"\n")
+
+#--- particles position data for the timestamp
+pPos= dataTmp.GetPointData().GetArray("position")
+
+vtuMetamData= {}
+vtuMetamPidPT= {}
+
+for metamMatName in metamGroupInfoDict:
+
+   print("metamMatName="+metamMatName)
+   
+   vtuMetamData[metamMatName]= dataTmp.GetPointData().GetArray(metamMatName)
+   vtuMetamPidPT[metamMatName]= {}
+
+   for groupId in metamGroupInfoDict[metamMatName]:
+      vtuMetamPidPT[metamMatName][groupId]= {}
+   # ---
+# --- 
+for pidIter in range(pidDataSize):
+#for pid in pidData:
+
+    pidPos= pPos.GetTuple(pidIter)
+    pid= int(pidData.GetTuple(pidIter)[0])
+
+    #print("pidPos="+str(pidPos))
+    #print("pid="+str(pid))
+    #print("Debug exit 0")   
+    #sys.exit(0)
+   
+    for metamMatName in vtuMetamPidPT:
+
+        # --- Compo for the metam. mat. at the pid position
+        metamMatCrt= vtuMetamData[metamMatName].GetTuple(pidIter)[0]
+       
+        for groupId in vtuMetamPidPT[metamMatName]:
+
+            groupIdDict= metamGroupInfoDict[metamMatName][groupId]
+           
+            if pidPos[0] > groupIdDict["x1"] and pidPos[1] < groupIdDict["y1"] \
+               and pidPos[0] < groupIdDict["x2"] and pidPos[1] > groupIdDict["y2"]:
+       
+               if metamMatCrt > minCompoValue:
+                  vtuMetamPidPT[metamMatName][groupId][pid]= {}
+
+                  #if groupId=="group1":
+                    #print("\nmetamMatName="+metamMatName)
+                    #print("groupId="+groupId)
+                    #print("metamMatCrt="+str(metamMatCrt))
+                    #print("pidPos="+str(pidPos))
+                    #print("pid="+str(pid))
+                    #print("groupIdDict="+str(groupIdDict))
+                    #sys.exit(0)
+               # ---
+            # ---
+        # --- 
+    # ---
+# ---
+#print("Debug exit 0")   
+#sys.exit(0)
+#del reader
+
+for metamMatName in vtuMetamPidPT:
+   for groupId in vtuMetamPidPT[metamMatName]:
+
+       checkLen= len(vtuMetamPidPT[metamMatName][groupId])
+
+       if checkLen==0:
+          print("ERROR: no valid markers found for group -> "+
+                groupId+", check its (x1,y1) vs (x2,y2) bounding box !!")
+          sys.exit(1)
+       # ---
+          
+       print("metamMatName="+metamMatName+", groupId="+groupId+", nb. markers found ="+str(checkLen))
+   # ---
+# --- 
+#print("Debug exit 0")   
+#sys.exit(0)
+
+#--- 
+for vtuPFile in vtuPFiles:
+                     
+   print("Reading vtuPFile: "+vtuPFile)
+   vtuPFileName= os.path.basename(vtuPFile)
+
+   #reader= vtk.vtkXMLUnstructuredGridReader()
+   
+   reader.SetFileName(vtuPFile)
+   reader.Update()
+   
+   #vtuPData[vtuPFileName]= reader.GetOutput()
+
+   #--- Extract all the particles data
+   dataTmp= reader.GetOutput()
+   
+   #--- Extract the timestamp (in years) as an int
+   dataTime= int( dataTmp.GetFieldData().GetArray("TIME").GetTuple(0)[0] )
+
+   #--- Index the the particles data with the timestamp
+   #vtuPData[dataTime]= dataTmp
+   #pidData= vtuPData[dataTime].GetPointData().GetArray("id")
+   pidData= dataTmp.GetPointData().GetArray("id")
+
+   print("dataTime="+str(dataTime))
+
+   pidDataSize= pidData.GetSize()
+   print("pidData size="+str(pidDataSize)+"\n")
+
+   #--- particles position data for the timestamp
+   pPos= dataTmp.GetPointData().GetArray("position")
+
+   #--- Initial position of the particles
+   #   (NOTE: could be read just once outside of the loop using the 1st file)
+   #ipPosData= dataTmp.GetPointData().GetArray("initial position")
+   
+   #--- Extract oceanic crust particles data:
+   #ocCrustData= dataTmp.GetPointData().GetArray("oceanicCrust")
+   #ocCrustData= dataTmp.GetPointData().GetArray("initial oceanicCrust")
+   
+   #--- Extract particle Pressure data:
+   pPData= dataTmp.GetPointData().GetArray("p")
+   
+   #--- Extract particles Temperature data:
+   pTData= dataTmp.GetPointData().GetArray("T")
+
+   # --- Get the markers data for the metam. mats. for this time
+   for metamMatName in vtuMetamPidPT:
+       vtuMetamData[metamMatName]= dataTmp.GetPointData().GetArray(metamMatName)
+
+   #continue
+   
+   # --- Loop on all the markers ids.
+   for pidIter in range(pidDataSize):
+
+       pidPos= pPos.GetTuple(pidIter)
+       pid= int(pidData.GetTuple(pidIter)[0])
+       #print("pidPos check="+str(pidPos)+",pid="+str(pid))
+
+       for metamMatName in vtuMetamPidPT:
+
+          # --- Compo for the metam. mat. at the pid position for the time being processed
+          metamMatCrt= vtuMetamData[metamMatName].GetTuple(pidIter)[0]
+
+          #print("metamMatCrt="+str(metamMatCrt))
+          
+          for groupId in vtuMetamPidPT[metamMatName]:
+             if pid in vtuMetamPidPT[metamMatName][groupId] and metamMatCrt > minCompoValue:
+          
+                vtuMetamPidPT[metamMatName][groupId][pid].update({
+                   dataTime: { "Pressure(Gpa)": pPData.GetTuple(pidIter)[0], "Temperature(K)": pTData.GetTuple(pidIter)[0]}
+                })
+
+                #if groupId == "group1":
+                #   print("pid="+str(pid)+", metamMatCrt="+str(metamMatCrt))
+                # ---
+
+                #print("Found valid marker with pid="+str(pid)+" for metamMatName="+metamMatName
+                #      +" for groupId="+groupId+" at dataTime="+str(dataTime)+" at pos"+str(pidPos))
+                #print("vtuMetamPidPT[metamMatName][groupId][pid][dataTime]="+str(vtuMetamPidPT[metamMatName][groupId][pid][dataTime]))
+                #print("Debug exit 0")   
+                #sys.exit(0)               
+                
+             # ---
+          # ---
+       # ---
+       #print("pidPos check="+str(pidPos))
+       
+   # --- pids loop
+
+   for metamMatName in vtuMetamPidPT:
+
+      #pavg= 0.0
+      #tavg= 0.0
+      #nbData= 0
+      
+      for groupId in vtuMetamPidPT[metamMatName]:
+         pavg= 0.0
+         tavg= 0.0
+         nbData= 0
+         
+         for pid in vtuMetamPidPT[metamMatName][groupId]:
+            if dataTime in vtuMetamPidPT[metamMatName][groupId][pid]:
+               pavg += vtuMetamPidPT[metamMatName][groupId][pid][dataTime]["Pressure(Gpa)"]
+               tavg += vtuMetamPidPT[metamMatName][groupId][pid][dataTime]["Temperature(K)"]
+               nbData += 1
+            # ---
+         # ---
+
+         if nbData >= 1:
+            print("\npavg for group: "+groupId+" at time: "+str(dataTime)+" is: "+str(pavg/nbData))
+            print("tavg for group: "+groupId+" at time: "+str(dataTime)+" is: "+str(tavg/nbData))
+            print("nbData for group: "+groupId+" at time: "+str(dataTime)+" is: "+str(nbData))
+         else:
+            print("WARNING: no valid markers found for group: "+groupId+" at time: "+str(dataTime))
+            
+         # ---
+      # --- 
+   # ---
+   print("done with VTU file: "+vtuPFile+"\n")
+
+   #del reader
+   #dataTime= vtuPData[vtuPFileName].GetPointData().GetArray("TIME")
+   #dataTime= vtuPData[vtuPFileName].GetFieldData().GetArray("TIME").GetTuple(
+
+#--- End for loop on VTU files
+
+print("Debug exit 0")   
+sys.exit(0)
+
+csvFile= open(csvFileOut,"w")
+csvStatsFile= open("stats-"+csvFileOut,"w")
+
+csvFile.write("time(years),particle id,concentration,Pressure(GPA),Temperature(C),Temperature(K),Depth(y[m]),Position(x[m])\n")
+csvStatsFile.write("time(years),TemperatureAvg(C),PressureAvg(GPA),DepthsAvg(y[m]),DepthsMin(y[m]),DepthsMax(y[m])\n")
+
+print("vtuPData keys="+str(tuple(vtuPData.keys())))
+
+for dataTime in tuple(vtuPData.keys()):
+
+   print("dataTime="+str(dataTime))
+   
+   vtuPDataT= vtuPData[dataTime]
+
+   #print("vtuPDataT keys="+str(tuple(vtuPDataT.keys())))
+
+   TCAvgList= []
+   PGAvgList= []
+   DepthsAvgList= []
+   
+   for pid in tuple(vtuPDataT.keys()):
+
+      vtuPDataTPid= vtuPDataT[pid]
+      
+      csvFile.write(str(dataTime)+","+str(pid)+","+str(vtuPDataTPid["concentration"])+","+
+                    str(vtuPDataTPid["Pressure(GPa)"])+","+str(vtuPDataTPid["Temperature(C)"])+","+
+                    str(vtuPDataTPid["Temperature(K)"])+","+str(vtuPDataTPid["Depth(y[m])"])+","+str(vtuPDataTPid["Position(x[m])"])+"\n")
+
+      TCAvgList.append(vtuPDataTPid["Temperature(C)"])
+      PGAvgList.append(vtuPDataTPid["Pressure(GPa)"])
+      DepthsAvgList.append(vtuPDataTPid["Depth(y[m])"])
+      
+   # ---
+
+   #print("TCAvgList[0:2]="+str(TCAvgList[0:2]))
+
+   if len( TCAvgList) != 0 :
+   
+      #TCAvgNp= np.array(TCAvgList, dtype=np.float64)
+      #PGAvgNp= np.array(PGAvgList, dtype=np.float64)
+      #print("shape TCAvgNp="+str(TCAvgNp))
+   
+      TCAvg= np.mean(np.array(TCAvgList, dtype=np.float64))
+      PGAvg= np.mean(np.array(PGAvgList, dtype=np.float64))
+
+      DepthsNp= np.array(DepthsAvgList, dtype=np.float64)
+      
+      DepthsAvg= np.mean(DepthsNp)
+
+      DepthsMin= np.min(DepthsNp)
+      DepthsMax= np.max(DepthsNp)
+      
+     #print("TCAvg="+str(TCAvg))
+     #print("PGAvg="+str(PGAvg))
+
+      csvStatsFile.write(str(dataTime)+","+str(TCAvg)+","+str(PGAvg)+","+str(DepthsAvg)+","+str(DepthsMin)+","+str(DepthsMax)+"\n")
+      #sys.exit(0)
+   #--- end if   
+#--- end for dataTime in tuple(vtuPData.keys()): loop
+
+#sys.exit(0)
+csvFile.close()
+csvStatsFile.close()
+ 
