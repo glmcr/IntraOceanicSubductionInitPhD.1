@@ -79,7 +79,6 @@ for metamMatName in metamGroupInfoDict:
    # ---
 # --- 
 for pidIter in range(pidDataSize):
-#for pid in pidData:
 
     pidPos= pPos.GetTuple(pidIter)
     pid= int(pidData.GetTuple(pidIter)[0])
@@ -102,7 +101,7 @@ for pidIter in range(pidDataSize):
                and pidPos[0] < groupIdDict["x2"] and pidPos[1] > groupIdDict["y2"]:
        
                if metamMatCrt > minCompoValue:
-                  vtuMetamPidPT[metamMatName][groupId][pid]= {}
+                  vtuMetamPidPT[metamMatName][groupId][pid]= {} # { "pidIter": pidIter }
 
                   #if groupId=="group1":
                     #print("\nmetamMatName="+metamMatName)
@@ -119,9 +118,14 @@ for pidIter in range(pidDataSize):
 # ---
 #print("Debug exit 0")   
 #sys.exit(0)
-#del reader
+del reader
+
+timeInfoDict= {}
 
 for metamMatName in vtuMetamPidPT:
+
+   timeInfoDict[metamMatName]= {}
+   
    for groupId in vtuMetamPidPT[metamMatName]:
 
        checkLen= len(vtuMetamPidPT[metamMatName][groupId])
@@ -133,10 +137,16 @@ for metamMatName in vtuMetamPidPT:
        # ---
           
        print("metamMatName="+metamMatName+", groupId="+groupId+", nb. markers found ="+str(checkLen))
+
+       timeInfoDict[metamMatName][groupId]= []
+       # ---
+       
    # ---
 # --- 
 #print("Debug exit 0")   
 #sys.exit(0)
+
+timeInfoList= []
 
 #--- 
 for vtuPFile in vtuPFiles:
@@ -144,7 +154,7 @@ for vtuPFile in vtuPFiles:
    print("Reading vtuPFile: "+vtuPFile)
    vtuPFileName= os.path.basename(vtuPFile)
 
-   #reader= vtk.vtkXMLUnstructuredGridReader()
+   reader= vtk.vtkXMLUnstructuredGridReader()
    
    reader.SetFileName(vtuPFile)
    reader.Update()
@@ -154,8 +164,10 @@ for vtuPFile in vtuPFiles:
    #--- Extract all the particles data
    dataTmp= reader.GetOutput()
    
-   #--- Extract the timestamp (in years) as an int
+   #--- Extract the timestamp (in years) as an int for this VTU file
    dataTime= int( dataTmp.GetFieldData().GetArray("TIME").GetTuple(0)[0] )
+
+   timeInfoList.append(dataTime)
 
    #--- Index the the particles data with the timestamp
    #vtuPData[dataTime]= dataTmp
@@ -187,7 +199,13 @@ for vtuPFile in vtuPFiles:
    # --- Get the markers data for the metam. mats. for this time
    for metamMatName in vtuMetamPidPT:
        vtuMetamData[metamMatName]= dataTmp.GetPointData().GetArray(metamMatName)
-
+       
+       #timeInfoDict[metamMatName]= {}
+       #for groupId in vtuMetamPidPT[metamMatName]:
+       #    timeInfoDict[metamMatName][groupId]= []
+       # ---
+   # ---
+       
    #continue
    
    # --- Loop on all the markers ids.
@@ -205,12 +223,16 @@ for vtuPFile in vtuPFiles:
           #print("metamMatCrt="+str(metamMatCrt))
           
           for groupId in vtuMetamPidPT[metamMatName]:
-             if pid in vtuMetamPidPT[metamMatName][groupId] and metamMatCrt > minCompoValue:
+             if pid in vtuMetamPidPT[metamMatName][groupId]: #and metamMatCrt > minCompoValue:
           
                 vtuMetamPidPT[metamMatName][groupId][pid].update({
-                   dataTime: { "Pressure(Gpa)": pPData.GetTuple(pidIter)[0], "Temperature(K)": pTData.GetTuple(pidIter)[0]}
+                   dataTime: { "Pressure(Gpa)": pPData.GetTuple(pidIter)[0], "Temperature(K)": pTData.GetTuple(pidIter)[0], "Compo(%)": metamMatCrt}
                 })
 
+                if dataTime not in timeInfoDict[metamMatName][groupId]:
+                   timeInfoDict[metamMatName][groupId].append(dataTime)
+                # ---
+                
                 #if groupId == "group1":
                 #   print("pid="+str(pid)+", metamMatCrt="+str(metamMatCrt))
                 # ---
@@ -228,46 +250,123 @@ for vtuPFile in vtuPFiles:
        
    # --- pids loop
 
+   #validPids= {}
+
    for metamMatName in vtuMetamPidPT:
 
       #pavg= 0.0
       #tavg= 0.0
       #nbData= 0
+      #validPids[metamMatName]= []
       
       for groupId in vtuMetamPidPT[metamMatName]:
          pavg= 0.0
          tavg= 0.0
+         cavg= 0.0
          nbData= 0
          
          for pid in vtuMetamPidPT[metamMatName][groupId]:
             if dataTime in vtuMetamPidPT[metamMatName][groupId][pid]:
                pavg += vtuMetamPidPT[metamMatName][groupId][pid][dataTime]["Pressure(Gpa)"]
                tavg += vtuMetamPidPT[metamMatName][groupId][pid][dataTime]["Temperature(K)"]
+               cavg += vtuMetamPidPT[metamMatName][groupId][pid][dataTime]["Compo(%)"]
                nbData += 1
             # ---
          # ---
 
          if nbData >= 1:
-            print("\npavg for group: "+groupId+" at time: "+str(dataTime)+" is: "+str(pavg/nbData))
-            print("tavg for group: "+groupId+" at time: "+str(dataTime)+" is: "+str(tavg/nbData))
-            print("nbData for group: "+groupId+" at time: "+str(dataTime)+" is: "+str(nbData))
+            print("\nmetamMatName: "+metamMatName+" nbData for group: "+groupId+" at time: "+str(dataTime)+" is: "+str(nbData))
+            print("metamMatName: "+metamMatName+" pavg for group: "+groupId+" at time: "+str(dataTime)+" is: "+str(pavg/nbData))
+            print("metamMatName: "+metamMatName+" tavg for group: "+groupId+" at time: "+str(dataTime)+" is: "+str(tavg/nbData))
+            print("metamMatName: "+metamMatName+" cavg for group: "+groupId+" at time: "+str(dataTime)+" is: "+str(cavg/nbData))
          else:
-            print("WARNING: no valid markers found for group: "+groupId+" at time: "+str(dataTime))
-            
+            print("WARNING: no valid markers found for metamMatName:"+metamMatName+" for group: "+groupId+" at time: "+str(dataTime))
          # ---
       # --- 
    # ---
    print("done with VTU file: "+vtuPFile+"\n")
 
-   #del reader
+   del reader
    #dataTime= vtuPData[vtuPFileName].GetPointData().GetArray("TIME")
    #dataTime= vtuPData[vtuPFileName].GetFieldData().GetArray("TIME").GetTuple(
 
 #--- End for loop on VTU files
 
+# --- 
+timeIncrTuple= tuple(sorted(timeInfoList))
+
+print("len(timeIncrTuple)="+str(len(timeIncrTuple)))
+
+validPidsPerGroup= {}
+
+for metamMatName in vtuMetamPidPT:
+
+   validPidsPerGroup[metamMatName]= {}
+   
+   for groupId in vtuMetamPidPT[metamMatName]:
+      
+       print("len(timeInfoDict[metamMatName]["+groupId+"])="+str(len(timeInfoDict[metamMatName][groupId])))
+
+       validPidsPerGroup[metamMatName][groupId]= []
+
+       for pid in vtuMetamPidPT[metamMatName][groupId]:
+          
+          timesForPid= tuple(vtuMetamPidPT[metamMatName][groupId][pid].keys())
+
+          #print("len(timesForPid)="+str(len(timesForPid)))
+
+          # --- Only keep the pid if it has all the wanted times keys in its vtuMetamPidPT[metamMatName][groupId][pid] dict  
+          if len(timesForPid) == timeInfoDict[metamMatName][groupId]:
+              validPidsPerGroup[metamMatName][groupId].append(pid) 
+          # --
+       # ---
+       
+       #for time in timeInfoDict[metamMatName][groupId]:
+       #for pid in vtuMetamPidPT[metamMatName][groupId]:
+       #      if time in vtuMetamPidPT[metamMatName][groupId][pid]:
+       #         if pid not in validPidsPerGroup[metamMatName][groupId]:
+       #            validPidsPerGroup[metamMatName][groupId].append(pid)
+             # ---
+          # ---
+       # ---
+       print("Nb. valid pids="+str(len(validPidsPerGroup[metamMatName][groupId]))+" for group "+groupId+" of "+metamMatName)
+       
+   # ---metamMatName
+# ---
 print("Debug exit 0")   
 sys.exit(0)
 
+
+#validMetamPidPT= {}
+#for time in timeInfoList:
+#   for metamMatName in vtuMetamPidPT:
+#       validMetamPidPT[metamMatName]= {}
+#       
+#       for groupId in vtuMetamPidPT[metamMatName]:
+#           validMetamPidPT[metamMatName][groupId]= {}          
+#           for pid in vtuMetamPidPT[metamMatName][groupId]:             
+#              if time in vtuMetamPidPT[metamMatName][groupId][pid]:
+#                  validMetamPidPT[metamMatName][groupId][pid]= { time: vtuMetamPidPT[metamMatName][groupId][pid][time]}
+#              else:
+#                  validMetamPidPT[metamMatName][groupId][pid]= { time: None }
+#              # ---
+#           # ---
+#        # ---
+#   # ---
+# ---
+#print("Debug exit 0")   
+#sys.exit(0)
+
+#for metamMatName in vtuMetamPidPT:
+#    metamMatNameReal= metamMatName.split(" ")[1]
+#    print("metamMatNameReal="+metamMatNameReal)
+#     for groupId in vtuMetamPidPT[metamMatName]:
+#        if len(timeInfoDict[metamMatName][groupId]) == len(timeIncrTuple):          
+              
+    
+print("Debug exit 0")   
+sys.exit(0)
+    
 csvFile= open(csvFileOut,"w")
 csvStatsFile= open("stats-"+csvFileOut,"w")
 
