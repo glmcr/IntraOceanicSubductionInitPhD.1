@@ -17,8 +17,11 @@ vtuParticlesInitFile= sys.argv[1]
 # directory where the VTU particles files are located
 vtuParticlesDir = sys.argv[2]
 metamGroupInfoFile= sys.argv[3]
+#csvFileOut= sys.argv[4]
 minCompoValue= float(sys.argv[4])
 csvFileOut= sys.argv[5]
+
+protholithCompoName="lusi oceanicCrustMRB"
 
 # --- Get the metam. mats. info from the metamGroupInfoFile
 metamGroupInfoFileP= open(metamGroupInfoFile,"r")
@@ -30,14 +33,273 @@ print("metamGroupInfoDict="+str(metamGroupInfoDict))
 #print("Debug exit 0")   
 #sys.exit(0)
 
-vtuPFiles= sorted(glob.glob(vtuParticlesDir + "/*.vtu"), reverse= True)
+vtuPFiles= sorted(glob.glob(vtuParticlesDir + "/*.vtu")) #,  reverse= True)
 
 # --- Remove the file that will be used for initialization from the other vtu files list
 #if vtuParticlesInitFile in vtuPFiles:
 #   vtuPFiles.remove(vtuParticlesInitFile)
 
-#print("Debug exit 0")   
-#sys.exit(0)
+vtuMetamData= {}
+markersTrackerDict= {}
+lusiPid= 0
+
+firstFile= vtuPFiles[0]
+
+print("Reading 1st file -> "+firstFile+" to init the markers tracking")
+
+reader= vtk.vtkXMLUnstructuredGridReader()
+   
+reader.SetFileName(firstFile)
+reader.Update()
+
+#--- Extract all the particles data
+dataTmp= reader.GetOutput()
+   
+#--- Extract the timestamp (in years) as an int for this VTU file
+dataTime0= int( dataTmp.GetFieldData().GetArray("TIME").GetTuple(0)[0] )
+
+markersTrackerDict= {}
+#markersTrackerDict[dataTime]= {}
+
+protholithCompoData= dataTmp.GetPointData().GetArray(protholithCompoName)
+
+pidData= dataTmp.GetPointData().GetArray("id")
+
+print("dataTime0="+str(dataTime0))
+
+pidDataSize= pidData.GetSize()
+print("pidData size="+str(pidDataSize)+"\n")
+
+#--- particles position data for the timestamp
+pPos= dataTmp.GetPointData().GetArray("position")
+
+#--- Extract particle Pressure data:
+pPData= dataTmp.GetPointData().GetArray("p")
+   
+#--- Extract particles Temperature data:
+pTData= dataTmp.GetPointData().GetArray("T")
+
+validPids= []
+
+for pidIter in range(0,pidDataSize):
+
+   pidPos= pPos.GetTuple(pidIter)
+   pid= int(pidData.GetTuple(pidIter)[0])
+
+   protholithCompoCrt= protholithCompoData.GetTuple(pidIter)[0]
+
+   if protholithCompoCrt > minCompoValue:
+
+      markersTrackerDict[lusiPid]= {
+         dataTime0: {
+            "Pressure(Gpa)": pPData.GetTuple(pidIter)[0],
+            "Temperature(K)": pTData.GetTuple(pidIter)[0],
+            "protholithCompo(%)": protholithCompoCrt,
+            "PidPos": pidPos, "aspectPid": pid, "pidIter": pidIter 
+         }
+      }
+
+      lusiPid += 1
+      
+   # ---
+# ---
+
+markersTrackerDictKeys= tuple(markersTrackerDict.keys())
+
+print("\ntentative nb. of tracked markers="+str(len(markersTrackerDictKeys)))
+      
+for lusiPid in markersTrackerDictKeys:
+
+    checkPid= markersTrackerDict[lusiPid][dataTime0]["aspectPid"]
+
+    if checkPid not in validPids:
+       validPids.append(checkPid)
+       #print("len(validPids)="+str(len(validPids)))
+    else:
+       #print("WARNING: duplicate pid -> "+str(checkPid)+" cannot track the related marker")
+       del markersTrackerDict[lusiPid]
+    # ---
+# ---
+
+nbLusiPids= len(markersTrackerDict)
+
+print("Tracking -> "+str(nbLusiPids)+" markers")
+
+print("\nmarkersTrackerDict[0]="+str(markersTrackerDict[0]))
+print("markersTrackerDict[nbLusiPids-1]="+str(markersTrackerDict[nbLusiPids-1]))
+
+print("Debug exit 0")   
+sys.exit(0)
+
+del reader
+
+#--- 
+for vtuPFile in vtuPFiles[1:]:
+                     
+   print("\nReading vtuPFile: "+vtuPFile)
+   vtuPFileName= os.path.basename(vtuPFile)
+
+   reader= vtk.vtkXMLUnstructuredGridReader()
+   
+   reader.SetFileName(vtuPFile)
+   reader.Update()
+   
+   #vtuPData[vtuPFileName]= reader.GetOutput()
+
+   #--- Extract all the particles data
+   dataTmp= reader.GetOutput()
+   
+   #--- Extract the timestamp (in years) as an int for this VTU file
+   dataTime= int( dataTmp.GetFieldData().GetArray("TIME").GetTuple(0)[0] )
+
+   markersTrackerDict[dataTime]= {}
+   
+   #--- Index the the particles data with the timestamp
+   #vtuPData[dataTime]= dataTmp
+   #pidData= vtuPData[dataTime].GetPointData().GetArray("id")
+   pidData= dataTmp.GetPointData().GetArray("id")
+
+   print("dataTime="+str(dataTime))
+
+   pidDataSize= pidData.GetSize()
+   print("pidData size="+str(pidDataSize)+"\n")
+
+   #--- particles position data for the timestamp
+   pPos= dataTmp.GetPointData().GetArray("position")
+
+   #--- Initial position of the particles
+   #   (NOTE: could be read just once outside of the loop using the 1st file)
+   #ipPosData= dataTmp.GetPointData().GetArray("initial position")
+   
+   #--- Extract oceanic crust particles data:
+   #ocCrustData= dataTmp.GetPointData().GetArray("oceanicCrust")
+   #ocCrustData= dataTmp.GetPointData().GetArray("initial oceanicCrust")
+   
+   #--- Extract particle Pressure data:
+   pPData= dataTmp.GetPointData().GetArray("p")
+   
+   #--- Extract particles Temperature data:
+   pTData= dataTmp.GetPointData().GetArray("T")
+
+   protholithCompoData= dataTmp.GetPointData().GetArray(protholithCompoName)
+
+   for metamMatName in metamGroupInfoDict:
+
+       print("metamMatName="+metamMatName)
+   
+       vtuMetamData[metamMatName]= dataTmp.GetPointData().GetArray(metamMatName)
+       #vtuMetamPidPT[metamMatName]= {}
+       #for groupId in metamGroupInfoDict[metamMatName]:
+       #    vtuMetamPidPT[metamMatName][groupId]= {}
+       # ---
+   # ---
+
+   markersTrackerDictKeys= tuple(markersTrackerDict.keys())
+
+   #for pidIter in range(0,pidDataSize):
+   for lusiPid in markersTrackerDictKeys:
+
+       #pidIter= markersTrackerDict[lusiPid][dataTime0]["pidIter"]
+       #pidPos= pPos.GetTuple(pidIter)
+       #pid= int(pidData.GetTuple(pidIter)[0])
+
+       print("lusiPid="+str(lusiPid))
+      
+       #if markersTrackerDict[lusiPid] is None:
+       #   continue
+
+       for pidIter in range(0,pidDataSize):
+          pidCheck= int(pidData.GetTuple(pidIter)[0])
+
+          #if markersTrackerDict[lusiPid] is None:
+          #   continue          
+
+          if pidCheck == markersTrackerDict[lusiPid][dataTime0]["aspectPid"]:
+
+             #print("Found matching pid -> "+str(pidCheck))
+
+             protholithCompoCrt= protholithCompoData.GetTuple(pidIter)[0]
+             pidPos= pPos.GetTuple(pidIter)
+
+             #print("pidIter="+str(pidIter))
+             #print("markersTrackerDict[lusiPid][dataTime0][pidIter]="+str(markersTrackerDict[lusiPid][dataTime0]["pidIter"]))
+             #print("protholithCompoCrt="+str(protholithCompoCrt))
+             #print("markersTrackerDict[lusiPid][dataTime0][protholithCompo(%)]="+
+             #      str(markersTrackerDict[lusiPid][dataTime0]["protholithCompo(%)"]))
+             #print("pidPos="+str(pidPos))
+             #print("markersTrackerDict[lusiPid][dataTime0][PidPos]="+str(markersTrackerDict[lusiPid][dataTime0]["PidPos"]))
+             #print("Debug exit 0")   
+             #sys.exit(0)             
+             #break
+
+             if dataTime not in markersTrackerDict[lusiPid]:
+
+                markersTrackerDict[lusiPid][dataTime]= {
+                     "Pressure(Gpa)": pPData.GetTuple(pidIter)[0],
+                     "Temperature(K)": pTData.GetTuple(pidIter)[0],
+                     "protholithCompo(%)": protholithCompoCrt,
+                     "PidPos": pidPos
+                } 
+                
+                #markersTrackerDict[lusiPid].append({
+                #    dataTime:{
+                #     "Pressure(Gpa)": pPData.GetTuple(pidIter)[0],
+                #     "Temperature(K)": pTData.GetTuple(pidIter)[0],
+                #     "protholithCompo(%)": protholithCompoCrt,
+                #     "PidPos": pidPos
+                #     } 
+                # })
+                
+             else:
+                print("WARNING: aspect pid duplicate -> "+str(pidCheck)+" for lusiPid -> "+str(lusiPid)+" Cannot track this marker anymore !!")
+                #markersTrackerDict[lusiPid]= None
+                del markersTrackerDict[lusiPid]
+                break
+             # ---
+          # --- if pidCheck == markersTrackerDict[lusiPid][dataTime0]["aspectPid"] block
+       # --- pidIter loop     
+
+       #if pid != markersTrackerDict[lusiPid][dataTime0]["pid"]:
+       #           
+
+       #protholithCompoCrt= protholithCompoData.GetTuple(pidIter)[0]
+
+       #if protholithCompoCrt > minCompoValue:
+       #   
+       #   markersTrackerDict[dataTime][lusiPid]= {
+       #                        "Pressure(Gpa)": pPData.GetTuple(pidIter)[0],
+       #                        "Temperature(K)": pTData.GetTuple(pidIter)[0],
+       #                        "protholithCompo(%)": protholithCompoCrt,
+       #                        "PidPos": pidPos, "aspectPid": pid, "pidIter": pidIter 
+       #   }
+       #   lusiPid += 1
+       # ---
+       
+       #for metamMatName in vtuMetamData:          
+       #    # --- Compo for the metam. mat. at the pid position
+       #   metamMatCrt= vtuMetamData[metamMatName].GetTuple(pidIter)[0]
+       #   for groupId in metamGroupInfoDict[metamMatName]:
+       #       if metamMatCrt > minCompoValue:               
+       #           markersTrackerDict[dataTime][lusiPid]= {
+       #                        "Pressure(Gpa)": pPData.GetTuple(pidIter)[0],
+       #                        "Temperature(K)": pTData.GetTuple(pidIter)[0],
+       #                        "protholithCompo(%)": protholithCompoCrt
+       #                        "metamCompo(%)": metamMatCrt, "PidPos": pidPos, "aspectPid": pid, "pidIter": pidIter
+       #           }
+       #         
+       #           lusiPid += 1
+       #      # ---
+       # ---      
+   # --- lusiPid loop
+
+   print("nb valid lusiPid="+str(len(markersTrackerDict))+" at dataTime -> "+str(dataTime))
+
+   print("Done with file -> "+vtuPFile)
+   
+# ---    
+print("total valid lusiPids for all times="+str(len(markersTrackerDict)))
+print("Debug exit 0")   
+sys.exit(0)
 
 reader= vtk.vtkXMLUnstructuredGridReader()
 
@@ -78,13 +340,13 @@ for metamMatName in metamGroupInfoDict:
       vtuMetamPidPT[metamMatName][groupId]= {}
    # ---
 # --- 
-for pidIter in range(pidDataSize):
+for pidIter in range(0,pidDataSize):
 
     pidPos= pPos.GetTuple(pidIter)
     pid= int(pidData.GetTuple(pidIter)[0])
 
-    #print("pidPos="+str(pidPos))
-    #print("pid="+str(pid))
+    #print("pid int="+str(pid))
+    #print("pid float="+str(pidData.GetTuple(pidIter)[0]))
     #print("Debug exit 0")   
     #sys.exit(0)
    
@@ -101,8 +363,20 @@ for pidIter in range(pidDataSize):
                and pidPos[0] < groupIdDict["x2"] and pidPos[1] > groupIdDict["y2"]:
        
                if metamMatCrt > minCompoValue:
-                  vtuMetamPidPT[metamMatName][groupId][pid]= {} # { "pidIter": pidIter }
 
+                  #print("\npidIter="+str(pidIter)+",pid="+str(pid))
+                  #print("pid int="+str(pid))
+                  #print("pid float="+str(pidData.GetTuple(pidIter)[0]))
+                  #print("pidPos="+str(pidPos))
+                  #print("metamMatCrt="+str(metamMatCrt))
+                  
+                  if pid not in vtuMetamPidPT[metamMatName][groupId]:
+                     vtuMetamPidPT[metamMatName][groupId][pid]= {} # { "pidIter": pidIter }
+                  else:
+                     print("Warning cannot have the same pid:"+str(pid)+" for two different pidIter !!")
+                     #sys.exit(1)
+                  # ---
+                  
                   #if groupId=="group1":
                     #print("\nmetamMatName="+metamMatName)
                     #print("groupId="+groupId)
@@ -116,6 +390,8 @@ for pidIter in range(pidDataSize):
         # --- 
     # ---
 # ---
+
+print("vtuMetamPidPT[metamMatName][group1]="+str(sorted(vtuMetamPidPT[metamMatName]["group1"].keys())))
 #print("Debug exit 0")   
 #sys.exit(0)
 del reader
@@ -138,11 +414,11 @@ for metamMatName in vtuMetamPidPT:
           
        print("metamMatName="+metamMatName+", groupId="+groupId+", nb. markers found ="+str(checkLen))
 
-       timeInfoDict[metamMatName][groupId]= []
+       timeInfoDict[metamMatName][groupId]= {}
        # ---
        
    # ---
-# --- 
+# ---
 #print("Debug exit 0")   
 #sys.exit(0)
 
@@ -201,15 +477,16 @@ for vtuPFile in vtuPFiles:
        vtuMetamData[metamMatName]= dataTmp.GetPointData().GetArray(metamMatName)
        
        #timeInfoDict[metamMatName]= {}
-       #for groupId in vtuMetamPidPT[metamMatName]:
-       #    timeInfoDict[metamMatName][groupId]= []
+       for groupId in vtuMetamPidPT[metamMatName]:
+           timeInfoDict[metamMatName][groupId][dataTime]= []
+           #vtuMetamPidPT[metamMatName][groupId][dataTime]= []
        # ---
    # ---
        
    #continue
-   
+
    # --- Loop on all the markers ids.
-   for pidIter in range(pidDataSize):
+   for pidIter in range(0,pidDataSize):
 
        pidPos= pPos.GetTuple(pidIter)
        pid= int(pidData.GetTuple(pidIter)[0])
@@ -221,17 +498,38 @@ for vtuPFile in vtuPFiles:
           metamMatCrt= vtuMetamData[metamMatName].GetTuple(pidIter)[0]
 
           #print("metamMatCrt="+str(metamMatCrt))
+
+          #vtuMetamPidPT[metamMatName][groupId][dataTime]= []
           
           for groupId in vtuMetamPidPT[metamMatName]:
-             if pid in vtuMetamPidPT[metamMatName][groupId]: #and metamMatCrt > minCompoValue:
-          
+             if pid in vtuMetamPidPT[metamMatName][groupId] and metamMatCrt > minCompoValue:
+
+                if dataTime in vtuMetamPidPT[metamMatName][groupId][pid]:
+                   print("\nalready existing P,T info for pid:"+str(pid)+"="+str(vtuMetamPidPT[metamMatName][groupId][pid][dataTime]))
+                   tmpDict= { "Pressure(Gpa)": pPData.GetTuple(pidIter)[0], "Temperature(K)": pTData.GetTuple(pidIter)[0],
+                              "Compo(%)": metamMatCrt, "PidPos": pidPos }
+                   print("Other P,T info="+str(tmpDict))
+                   #print("pidPos="+str(pidPos))
+                   #print("Debug exit 0")
+                   #sys.exit(0)
+                # ---
+                
                 vtuMetamPidPT[metamMatName][groupId][pid].update({
-                   dataTime: { "Pressure(Gpa)": pPData.GetTuple(pidIter)[0], "Temperature(K)": pTData.GetTuple(pidIter)[0], "Compo(%)": metamMatCrt}
+                   dataTime: { "Pressure(Gpa)": pPData.GetTuple(pidIter)[0],
+                               "Temperature(K)": pTData.GetTuple(pidIter)[0],
+                               "Compo(%)": metamMatCrt,
+                               "PidPos": pidPos
+                              }
                 })
 
-                if dataTime not in timeInfoDict[metamMatName][groupId]:
-                   timeInfoDict[metamMatName][groupId].append(dataTime)
+                timeInfoDict[metamMatName][groupId][dataTime].append(pid)
+
+                #print("vtuMetamPidPT[metamMatName][groupId][dataTime]="+str(vtuMetamPidPT[metamMatName][groupId][dataTime]))
+
+                #if dataTime not in timeInfoDict[metamMatName][groupId]:
+                #   timeInfoDict[metamMatName][groupId].append(dataTime)
                 # ---
+             #else:
                 
                 #if groupId == "group1":
                 #   print("pid="+str(pid)+", metamMatCrt="+str(metamMatCrt))
@@ -250,6 +548,8 @@ for vtuPFile in vtuPFiles:
        
    # --- pids loop
 
+   #print(
+
    #validPids= {}
 
    for metamMatName in vtuMetamPidPT:
@@ -260,6 +560,7 @@ for vtuPFile in vtuPFiles:
       #validPids[metamMatName]= []
       
       for groupId in vtuMetamPidPT[metamMatName]:
+         
          pavg= 0.0
          tavg= 0.0
          cavg= 0.0
@@ -282,15 +583,24 @@ for vtuPFile in vtuPFiles:
          else:
             print("WARNING: no valid markers found for metamMatName:"+metamMatName+" for group: "+groupId+" at time: "+str(dataTime))
          # ---
+
+         print("timeInfoDict[metamMatName][groupId][dataTime]="+str(sorted(timeInfoDict[metamMatName][groupId][dataTime])))
+         
       # --- 
    # ---
    print("done with VTU file: "+vtuPFile+"\n")
 
    del reader
+
+   print("Debug exit 0")   
+   sys.exit(0)
    #dataTime= vtuPData[vtuPFileName].GetPointData().GetArray("TIME")
    #dataTime= vtuPData[vtuPFileName].GetFieldData().GetArray("TIME").GetTuple(
 
 #--- End for loop on VTU files
+
+print("Debug exit 0")   
+sys.exit(0)
 
 # --- 
 timeIncrTuple= tuple(sorted(timeInfoList))
