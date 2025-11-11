@@ -12,14 +12,14 @@ from vtk.util.numpy_support import vtk_to_numpy #thats what you need
 # -- VTU file with which the initial positions of the metam material(s)
 #    are intialized to go backward in time. This vtu file is not necessarily
 #    the final one.
-vtuParticlesInitFile= sys.argv[1]
+#vtuParticlesInitFile= sys.argv[1]
 
 # directory where the VTU particles files are located
-vtuParticlesDir = sys.argv[2]
-metamGroupInfoFile= sys.argv[3]
+vtuParticlesDir = sys.argv[1]
+metamGroupInfoFile= sys.argv[2]
 #csvFileOut= sys.argv[4]
-minCompoValue= float(sys.argv[4])
-csvFileOut= sys.argv[5]
+minCompoValue= float(sys.argv[3])
+csvFileOut= sys.argv[4]
 
 #protolithCompoName="lusi oceanicCrustMRB"
 
@@ -45,7 +45,7 @@ lusiPid= 0
 
 lastFile= vtuPFiles[-1]
 
-print("Reading file -> "+lastFile+" to init the markers tracking")
+print("Reading last file -> "+lastFile+" to init the markers tracking with their final positions")
 
 reader= vtk.vtkXMLUnstructuredGridReader()
    
@@ -125,7 +125,14 @@ for pidIter in range(0,pidDataSize):
                   #sys.exit(0)
 
                   initialPosStr= "{:12.7f}".format(initialPos[0])+","+"{:12.7f}".format(initialPos[1])
+
+                  duplicateInitialPos= False
                   
+                  if initialPosStr not in initPosTrackingList:
+                     initPosTrackingList.append(initialPosStr)
+                  else:
+                     duplicateInitialPos= True
+                     
                   vtuMetamPidPT[metamMatName][groupId][initialPosStr]= {
                      "Time": dataTimeEnd,
                      "Pressure(Gpa)": pPData.GetTuple(pidIter)[0],
@@ -134,10 +141,12 @@ for pidIter in range(0,pidDataSize):
                      "protoCompo(%)": protoPData.GetTuple(pidIter)[0],
                      "ocSedsCompo(%)": ocSedPData.GetTuple(pidIter)[0],
                      "PidPos": pidPos,
-                     "aspectPid": int(pidData.GetTuple(pidIter)[0])
+                     "aspectPid": int(pidData.GetTuple(pidIter)[0]),
+                     "duplicateInitialPos": duplicateInitialPos
                   }
 
-                  initPosTrackingList.append(initialPosStr)
+                  #if initialPosStr not in initPosTrackingList:
+                  #   initPosTrackingList.append(initialPosStr)
 
                   #print("initialPosStr="+initialPosStr)
                   #print("vtuMetamPidPT[metamMatName][groupId][initialPosStr]="+str(vtuMetamPidPT[metamMatName][groupId][initialPosStr]))
@@ -152,6 +161,8 @@ for pidIter in range(0,pidDataSize):
 
 del reader
 
+print("len(initPosTrackingList)="+str(len(initPosTrackingList)))
+
 for metamMatName in vtuMetamPidPT:
    for groupId in vtuMetamPidPT[metamMatName]:
        print("Got "+str(len(vtuMetamPidPT[metamMatName][groupId]))+
@@ -162,7 +173,9 @@ for metamMatName in vtuMetamPidPT:
 reader= vtk.vtkXMLUnstructuredGridReader()
 
 firstFile= vtuPFiles[0]
-   
+
+print("Reading first file -> "+firstFile+" to init the markers tracking in the past")
+
 reader.SetFileName(firstFile)
 reader.Update()
 
@@ -205,7 +218,7 @@ for pidIter in range(0,pidDataSize):
     #aspectPid= pidData.GetTuple(pidIter)[0]
     ocSedCrt= ocSedPData.GetTuple(pidIter)[0]
 
-    if initialPosStr in initPosTrackingList and protolithCrt > minCompoValue :
+    if initialPosStr in initPosTrackingList:  #and protolithCrt > minCompoValue :
 
        pidPos= pPosData.GetTuple(pidIter)
        aspectPid= int(pidData.GetTuple(pidIter)[0])
