@@ -77,7 +77,9 @@ pPData= dataTmp.GetPointData().GetArray("p")
 #--- Extract particles Temperature data:
 pTData= dataTmp.GetPointData().GetArray("T")
 
-protolithPData= dataTmp.GetPointData().GetArray("lusi oceanicCrustMRB")
+protoPData= dataTmp.GetPointData().GetArray("lusi oceanicCrustMRB")
+
+ocSedPData= dataTmp.GetPointData().GetArray("lusi oceanicSeds")
 
 #validPids= []
 
@@ -129,7 +131,8 @@ for pidIter in range(0,pidDataSize):
                      "Pressure(Gpa)": pPData.GetTuple(pidIter)[0],
                      "Temperature(K)": pTData.GetTuple(pidIter)[0],
                      "metamCompo(%)": metamMatCrt,
-                     "protoCompo(%)": protolithPData.GetTuple(pidIter)[0],
+                     "protoCompo(%)": protoPData.GetTuple(pidIter)[0],
+                     "ocSedsCompo(%)": ocSedPData.GetTuple(pidIter)[0],
                      "PidPos": pidPos,
                      "aspectPid": int(pidData.GetTuple(pidIter)[0])
                   }
@@ -188,7 +191,9 @@ pPData= dataTmp.GetPointData().GetArray("p")
 #--- Extract particles Temperature data:
 pTData= dataTmp.GetPointData().GetArray("T")
 
-protolithPData= dataTmp.GetPointData().GetArray("lusi oceanicCrustMRB")
+protoPData= dataTmp.GetPointData().GetArray("lusi oceanicCrustMRB")
+
+ocSedPData= dataTmp.GetPointData().GetArray("lusi oceanicSeds")
 
 for pidIter in range(0,pidDataSize):
 
@@ -196,8 +201,9 @@ for pidIter in range(0,pidDataSize):
 
     initialPosStr= "{:12.7f}".format(initialPos[0])+","+"{:12.7f}".format(initialPos[1])
 
-    protolithCrt= protolithPData.GetTuple(pidIter)[0]
+    protolithCrt= protoPData.GetTuple(pidIter)[0]
     #aspectPid= pidData.GetTuple(pidIter)[0]
+    ocSedCrt= ocSedPData.GetTuple(pidIter)[0]
 
     if initialPosStr in initPosTrackingList and protolithCrt > minCompoValue :
 
@@ -216,6 +222,7 @@ for pidIter in range(0,pidDataSize):
                  if aspectPid == checkPid:
                     print("\nFound matching initialPosStr -> "+initialPosStr)
                     print("protolithCrt="+str(protolithCrt))
+                    print("ocSedCrt="+str(ocSedCrt))        
                     print("Pressure="+str(Pressure))
                     print("Temp="+str(Temp))
                     print("pidPos="+str(pidPos))
