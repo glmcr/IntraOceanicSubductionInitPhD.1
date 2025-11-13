@@ -124,26 +124,50 @@ for pidIter in range(0,pidDataSize):
                   #print("Debug exit 0")   
                   #sys.exit(0)
 
-                  initialPosStr= "{:12.7f}".format(initialPos[0])+","+"{:12.7f}".format(initialPos[1])
+                  aspectPid= int(pidData.GetTuple(pidIter)[0])
 
-                  duplicateInitialPos= False
+                  initialPosIdStr= "{:12.7f}".format(initialPos[0])+","+"{:12.7f}".format(initialPos[1])+":"+str(aspectPid)
+
+                  #duplicateInitialPos= False
                   
-                  if initialPosStr not in initPosTrackingList:
-                     initPosTrackingList.append(initialPosStr)
-                  else:
-                     duplicateInitialPos= True
+                  if initialPosIdStr in vtuMetamPidPT[metamMatName][groupId]: #initPosTrackingList:
+
+                     vtuMetamPidPT[metamMatName][groupId][initialPosIdStr][dataTimeEnd].append({
+                           "Pressure(Gpa)": pPData.GetTuple(pidIter)[0],
+                           "Temperature(K)": pTData.GetTuple(pidIter)[0],
+                           "metamCompo(%)": metamMatCrt,
+                           "protoCompo(%)": protoPData.GetTuple(pidIter)[0],
+                           "ocSedsCompo(%)": ocSedPData.GetTuple(pidIter)[0],
+                           "PidPos": pidPos
+                           #"aspectPid": int(pidData.GetTuple(pidIter)[0]),
+                           #"duplicateInitialPos": None
+                     })
+
+                     print("\nFound a duplicate for "+groupId+" with initial pos + id item -> \n"+initialPosIdStr+"->"+
+                           str(vtuMetamPidPT[metamMatName][groupId][initialPosIdStr][dataTimeEnd]))
+                     print("Debug exit 0")   
+                     sys.exit(0)
                      
-                  vtuMetamPidPT[metamMatName][groupId][initialPosStr]= {
-                     "Time": dataTimeEnd,
-                     "Pressure(Gpa)": pPData.GetTuple(pidIter)[0],
-                     "Temperature(K)": pTData.GetTuple(pidIter)[0],
-                     "metamCompo(%)": metamMatCrt,
-                     "protoCompo(%)": protoPData.GetTuple(pidIter)[0],
-                     "ocSedsCompo(%)": ocSedPData.GetTuple(pidIter)[0],
-                     "PidPos": pidPos,
-                     "aspectPid": int(pidData.GetTuple(pidIter)[0]),
-                     "duplicateInitialPos": duplicateInitialPos
-                  }
+                  else:
+
+                  #aspectPid= int(pidData.GetTuple(pidIter)[0])
+
+                     initPosTrackingList.append(initialPosIdStr)
+                     
+                     vtuMetamPidPT[metamMatName][groupId][initialPosIdStr]= {
+                        dataTimeEnd: [{
+                           "Pressure(Gpa)": pPData.GetTuple(pidIter)[0],
+                           "Temperature(K)": pTData.GetTuple(pidIter)[0],
+                           "metamCompo(%)": metamMatCrt,
+                           "protoCompo(%)": protoPData.GetTuple(pidIter)[0],
+                           "ocSedsCompo(%)": ocSedPData.GetTuple(pidIter)[0],
+                           "PidPos": pidPos
+                           #"aspectPid": int(pidData.GetTuple(pidIter)[0]),
+                           #"duplicateInitialPos": None
+                         }]
+                      }
+
+                  # ---
 
                   #if initialPosStr not in initPosTrackingList:
                   #   initPosTrackingList.append(initialPosStr)
@@ -169,6 +193,9 @@ for metamMatName in vtuMetamPidPT:
              " markers extracted for group "+groupId+" of "+metamMatName)
    # ---
 # ---
+
+print("Debug exit 0")   
+sys.exit(0)
 
 reader= vtk.vtkXMLUnstructuredGridReader()
 
@@ -211,29 +238,29 @@ ocSedPData= dataTmp.GetPointData().GetArray("lusi oceanicSeds")
 for pidIter in range(0,pidDataSize):
 
     initialPos= initPosData.GetTuple(pidIter)
+    aspectPid= int(pidData.GetTuple(pidIter)[0])
 
-    initialPosStr= "{:12.7f}".format(initialPos[0])+","+"{:12.7f}".format(initialPos[1])
+    initialPosIdStr= "{:12.7f}".format(initialPos[0])+","+"{:12.7f}".format(initialPos[1])+":"+str(aspectPid)
 
     protolithCrt= protoPData.GetTuple(pidIter)[0]
     #aspectPid= pidData.GetTuple(pidIter)[0]
     ocSedCrt= ocSedPData.GetTuple(pidIter)[0]
 
-    if initialPosStr in initPosTrackingList:  #and protolithCrt > minCompoValue :
+    if initialPosIdStr in initPosTrackingList:  #and protolithCrt > minCompoValue :
 
        pidPos= pPosData.GetTuple(pidIter)
-       aspectPid= int(pidData.GetTuple(pidIter)[0])
+       #aspectPid= int(pidData.GetTuple(pidIter)[0])
        Pressure= pPData.GetTuple(pidIter)[0]
        Temp= pTData.GetTuple(pidIter)[0]
 
        for metamMatName in vtuMetamPidPT:
           for groupId in vtuMetamPidPT[metamMatName]:
 
-              if initialPosStr in vtuMetamPidPT[metamMatName][groupId]:
+              if initialPosIdStr in vtuMetamPidPT[metamMatName][groupId]:
 
-                 checkPid= vtuMetamPidPT[metamMatName][groupId][initialPosStr]["aspectPid"]
-
-                 if aspectPid == checkPid:
-                    print("\nFound matching initialPosStr -> "+initialPosStr)
+                 #checkPid= vtuMetamPidPT[metamMatName][groupId].split(":")[1]
+                 #if aspectPid == checkPid:
+                    print("\nFound matching initialPosIdStr -> "+initialPosIdStr)
                     print("protolithCrt="+str(protolithCrt))
                     print("ocSedCrt="+str(ocSedCrt))        
                     print("Pressure="+str(Pressure))
@@ -241,8 +268,11 @@ for pidIter in range(0,pidDataSize):
                     print("pidPos="+str(pidPos))
                     print("aspectPid="+str(aspectPid))
                     print("metamMatName="+metamMatName+", groupId="+groupId)
-                    print("vtuMetamPidPT[metamMatName][groupId][initialPosStr]="+
-                          str(vtuMetamPidPT[metamMatName][groupId][initialPosStr]))
+                    print("vtuMetamPidPT[metamMatName][groupId][initialIdPosStr]="+
+                          str(vtuMetamPidPT[metamMatName][groupId][initialPosIdStr]))
+
+                    #print("Debug exit 0")
+                    #sys.exit(0)
               #---
           # ---
        # ---
