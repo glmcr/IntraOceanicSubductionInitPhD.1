@@ -7,6 +7,7 @@ import glob
 import math
 import json
 import numpy as np
+import pathlib
 from vtk.util.numpy_support import vtk_to_numpy #thats what you need 
 
 # -- VTU file with which the initial positions of the metam material(s)
@@ -19,7 +20,7 @@ vtuParticlesDir = sys.argv[1]
 metamGroupInfoFile= sys.argv[2]
 #csvFileOut= sys.argv[4]
 minCompoValue= float(sys.argv[3])
-csvFileOut= sys.argv[4]
+csvFilesOuputFolder= sys.argv[4]
 
 #protolithCompoName="lusi oceanicCrustMRB"
 
@@ -127,11 +128,12 @@ for pidIter in range(0,pidDataSizeEnd):
 
                   aspectPid= int(pidDataEnd.GetTuple(pidIter)[0])
 
-                  initialPosIdStr= "{:12.7f}".format(initialPos[0])+","+"{:12.7f}".format(initialPos[1])+":"+str(aspectPid)
+                  initialPosIdStr= "{:12.7f}".format(initialPos[0])+"_"+"{:12.7f}".format(initialPos[1])+"_"+str(aspectPid)
 
                   #duplicateInitialPos= False
                   
-                  if initialPosIdStr in vtuMetamPidPT[metamMatName][groupId]: #initPosTrackingList:
+                  if initialPosIdStr in vtuMetamPidPT[metamMatName][groupId]: # and \
+                     #dataTimeEnd in vtuMetamPidPT[metamMatName][groupId][initialPosIdStr]:
 
                      #vtuMetamPidPT[metamMatName][groupId][initialPosIdStr][dataTimeEnd].append({
                      #      "Pressure(Gpa)": pPDataEnd.GetTuple(pidIter)[0],
@@ -164,7 +166,7 @@ for pidIter in range(0,pidDataSizeEnd):
                         #dataTimeEnd: [{
                         dataTimeEnd: {
                         
-                           "Pressure(Gpa)": pPDataEnd.GetTuple(pidIter)[0],
+                           "Pressure(Pa)": pPDataEnd.GetTuple(pidIter)[0],
                            "Temperature(K)": pTDataEnd.GetTuple(pidIter)[0],
                            "metamCompo(%)": metamMatCrt,
                            "protoCompo(%)": protoPDataEnd.GetTuple(pidIter)[0],
@@ -209,6 +211,13 @@ for metamMatName in vtuMetamPidPT:
    for groupId in vtuMetamPidPT[metamMatName]:
        print("Got "+str(len(vtuMetamPidPT[metamMatName][groupId]))+
              " markers extracted at dataTimeEnd for group "+groupId+" of "+metamMatName)
+
+       #for initialPosIdStr in vtuMetamPidPT[metamMatName][groupId]:
+       #   print("initialPosIdStr="+initialPosIdStr+
+       #         ", vtuMetamPidPT[metamMatName][groupId][initialPosIdStr].keys()="+
+       #         str(tuple(vtuMetamPidPT[metamMatName][groupId][initialPosIdStr].keys())))
+       #   #print("Debug exit 0")   
+       #   #sys.exit(0)
    # ---
 # ---
 
@@ -260,7 +269,7 @@ for pidIter in range(0,pidDataSizeStart):
     initialPos= initPosDataStart.GetTuple(pidIter)
     aspectPid= int(pidDataStart.GetTuple(pidIter)[0])
 
-    initialPosIdStr= "{:12.7f}".format(initialPos[0])+","+"{:12.7f}".format(initialPos[1])+":"+str(aspectPid)
+    initialPosIdStr= "{:12.7f}".format(initialPos[0])+"_"+"{:12.7f}".format(initialPos[1])+"_"+str(aspectPid)
 
     #protolithCrt= protoPDataStart.GetTuple(pidIter)[0]
     #aspectPid= pidData.GetTuple(pidIter)[0]
@@ -272,13 +281,14 @@ for pidIter in range(0,pidDataSizeStart):
        #aspectPid= int(pidData.GetTuple(pidIter)[0])
        #Pressure= pPDataStart.GetTuple(pidIter)[0]
        #Temp= pTDataStart.GetTuple(pidIter)[0]
-       #protolithCrt= protoPDataStart.GetTuple(pidIter)[0]
+       protolithCrt= protoPDataStart.GetTuple(pidIter)[0]
        #aspectPid= pidData.GetTuple(pidIter)[0]
-       #ocSedCrt= ocSedPDataStart.GetTuple(pidIter)[0]       
+       ocSedCrt= ocSedPDataStart.GetTuple(pidIter)[0]       
 
        for metamMatName in vtuMetamPidPT:
 
-          vtuMetamData[metamMatName]= dataTmpStart.GetPointData().GetArray(metamMatName)
+          #vtuMetamData[metamMatName]= dataTmpStart.GetPointData().GetArray(metamMatName)
+          metamMatCrt= vtuMetamData[metamMatName].GetTuple(pidIter)[0]
           
           for groupId in vtuMetamPidPT[metamMatName]:
 
@@ -308,40 +318,23 @@ for pidIter in range(0,pidDataSizeStart):
                     
                  else:
 
-                   vtuMetamPidPT[metamMatName][groupId][initialPosIdStr][dataTimeStart]= {
-                         #dataTimeStart: [{
-                         #dataTimeStart: {
-                         #{
-                           "Pressure(Gpa)": pPDataStart.GetTuple(pidIter)[0],
+                   #if (metamMatCrt + protolithCrt + ocSedCrt) > minCompoValue:
+
+                     vtuMetamPidPT[metamMatName][groupId][initialPosIdStr][dataTimeStart]= {
+                           "Pressure(Pa)": pPDataStart.GetTuple(pidIter)[0],
                            "Temperature(K)": pTDataStart.GetTuple(pidIter)[0],
                            "metamCompo(%)": metamMatCrt,
-                           "protoCompo(%)": protoPDataStart.GetTuple(pidIter)[0],
-                           "ocSedsCompo(%)": ocSedPDataStart.GetTuple(pidIter)[0],
+                           "protoCompo(%)": protolithCrt, #protoPDataStart.GetTuple(pidIter)[0],
+                           "ocSedsCompo(%)": ocSedCrt,   #ocSedPDataStart.GetTuple(pidIter)[0],
                            "PidPos": pPosDataStart.GetTuple(pidIter)
                            #"aspectPid": int(pidData.GetTuple(pidIter)[0]),
                            #"duplicateInitialPos": None
                         }
-                        #}]
-                   #})
 
-                   print("\ntime start match for group:"+groupId+",item="+str(vtuMetamPidPT[metamMatName][groupId][initialPosIdStr]))
-                   #print("Debug exit 0")
-                   #sys.exit(0)   
- 
-                 #checkPid= vtuMetamPidPT[metamMatName][groupId].split(":")[1]
-                 #if aspectPid == checkPid:
-                 #   print("\nFound matching initialPosIdStr -> "+initialPosIdStr)
-                 #   print("protolithCrt="+str(protolithCrt))
-                 #   print("ocSedCrt="+str(ocSedCrt))        
-                 #   print("Pressure="+str(Pressure))
-                 #   print("Temp="+str(Temp))
-                 #   print("pidPos="+str(pidPos))
-                 #   print("aspectPid="+str(aspectPid))
-                 #   print("metamMatName="+metamMatName+", groupId="+groupId)
-                 #   print("vtuMetamPidPT[metamMatName][groupId][initialIdPosStr]="+
-                 #         str(vtuMetamPidPT[metamMatName][groupId][initialPosIdStr]))
-                    #print("Debug exit 0")
-                    #sys.exit(0)
+                     print("\ntime start match for group:"+groupId+",item="+str(vtuMetamPidPT[metamMatName][groupId][initialPosIdStr]))
+                     #print("Debug exit 0")
+                     #sys.exit(0)   
+                 # ---
               #---
           # ---
        # ---
@@ -356,6 +349,13 @@ for metamMatName in vtuMetamPidPT:
    for groupId in vtuMetamPidPT[metamMatName]:
        print("Got "+str(len(vtuMetamPidPT[metamMatName][groupId]))+
              " markers extracted at dataTimeStart for group "+groupId+" of "+metamMatName)
+
+       #for initialPosIdStr in vtuMetamPidPT[metamMatName][groupId]:
+       #   print("initialPosIdStr="+initialPosIdStr+
+       #         ", vtuMetamPidPT[metamMatName][groupId][initialPosIdStr].keys()="+
+       #         str(tuple(vtuMetamPidPT[metamMatName][groupId][initialPosIdStr].keys())))
+       #   #print("Debug exit 0")   
+       #   #sys.exit(0)       
    # ---
 # ---
 
@@ -365,7 +365,7 @@ for metamMatName in vtuMetamPidPT:
 del reader
 
 # --- Iterate on all the other vtu files not yet processed. 
-for vtuPFile in vtuPFiles[1:-1]:
+for vtuPFile in vtuPFiles[1:-1]: #vtuPFiles[1:2]: #vtuPFiles[1:-1]:
 
    print("Reading VTU file -> "+vtuPFile) 
    
@@ -403,17 +403,18 @@ for vtuPFile in vtuPFiles[1:-1]:
 
    for metamMatName in metamGroupInfoDict:
    #print("metamMatName="+metamMatName)
-      vtuMetamData[metamMatName]= dataTmp.GetPointData().GetArray(metamMatName)   
+      vtuMetamData[metamMatName]= dataTmp.GetPointData().GetArray(metamMatName)
+   # --
 
    for pidIter in range(0,pidDataSize):
 
      initialPos= initPosData.GetTuple(pidIter)
      aspectPid= int(pidData.GetTuple(pidIter)[0])
 
-     initialPosIdStr= "{:12.7f}".format(initialPos[0])+","+"{:12.7f}".format(initialPos[1])+":"+str(aspectPid)
+     initialPosIdStr= "{:12.7f}".format(initialPos[0])+"_"+"{:12.7f}".format(initialPos[1])+"_"+str(aspectPid)
 
-     #protolithCrt= protoPData.GetTuple(pidIter)[0]
-     #ocSedCrt= ocSedPData.GetTuple(pidIter)[0]
+     protolithCrt= protoPData.GetTuple(pidIter)[0]
+     ocSedCrt= ocSedPData.GetTuple(pidIter)[0]
 
      if initialPosIdStr in initPosTrackingList:  #and protolithCrt > minCompoValue :
 
@@ -422,21 +423,15 @@ for vtuPFile in vtuPFiles[1:-1]:
        #Temp= pTDataStart.GetTuple(pidIter)[0]
 
        for metamMatName in vtuMetamPidPT:
+
+          metamMatCrt= vtuMetamData[metamMatName].GetTuple(pidIter)[0]
+          
           for groupId in vtuMetamPidPT[metamMatName]:
 
               if initialPosIdStr in vtuMetamPidPT[metamMatName][groupId] and \
                  dataTimeEnd in vtuMetamPidPT[metamMatName][groupId][initialPosIdStr]:
 
                  if dataTime in vtuMetamPidPT[metamMatName][groupId][initialPosIdStr]:
-
-                    #vtuMetamPidPT[metamMatName][groupId][initialPosIdStr][dataTime].append({
-                    #       "Pressure(Gpa)": pPData.GetTuple(pidIter)[0],
-                    #       "Temperature(K)": pTData.GetTuple(pidIter)[0],
-                    #       "metamCompo(%)": metamMatCrt,
-                    #       "protoCompo(%)": protoPData.GetTuple(pidIter)[0],
-                    #       "ocSedsCompo(%)": ocSedPData.GetTuple(pidIter)[0],
-                    #       "PidPos": pPosData.GetTuple(pidIter)
-                    #})
                     
                     print("\nFound a duplicate for "+groupId+" at pidIter="+str(pidIter)+
                           " at time -> "+str(dataTime)+" with initial pos + id item -> \n"+initialPosIdStr+"->"+
@@ -447,20 +442,23 @@ for vtuPFile in vtuPFiles[1:-1]:
 
                  else:
 
-                   vtuMetamPidPT[metamMatName][groupId][initialPosIdStr][dataTime]= {
+                   #if (metamMatCrt + protolithCrt + ocSedCrt) > minCompoValue:
+                      
+                     vtuMetamPidPT[metamMatName][groupId][initialPosIdStr][dataTime]= {
                          #dataTime: [{
-                           "Pressure(Gpa)": pPData.GetTuple(pidIter)[0],
+                           "Pressure(Pa)": pPData.GetTuple(pidIter)[0],
                            "Temperature(K)": pTData.GetTuple(pidIter)[0],
                            "metamCompo(%)": metamMatCrt,
-                           "protoCompo(%)": protoPData.GetTuple(pidIter)[0],
-                           "ocSedsCompo(%)": ocSedPData.GetTuple(pidIter)[0],
+                           "protoCompo(%)": protolithCrt, #protoPData.GetTuple(pidIter)[0],
+                           "ocSedsCompo(%)": ocSedCrt , #ocSedPData.GetTuple(pidIter)[0],
                            "PidPos": pPosData.GetTuple(pidIter)
                            #"aspectPid": int(pidData.GetTuple(pidIter)[0]),
                            #"duplicateInitialPos": None
                          #}]
-                   }
+                     }
 
-                   print("\n intermediate time match for group:"+groupId+",item="+str(vtuMetamPidPT[metamMatName][groupId][initialPosIdStr]))
+                     print("\n intermediate time match for group:"+groupId+",item="+str(vtuMetamPidPT[metamMatName][groupId][initialPosIdStr]))
+                 # ---
        # ---            
      # ---
    # ---
@@ -477,12 +475,80 @@ for vtuPFile in vtuPFiles[1:-1]:
 # ---   
    
    del reader
-   
+
+   #break
    #print("Debug exit 0")
    #sys.exit(0)
    
 # ---
 
+Pa2GPa= 1.0/1e9
+
+for metamMatName in vtuMetamPidPT:
+
+   print("metamMatName:"+metamMatName)
+   
+   for groupId in sorted(vtuMetamPidPT[metamMatName], reverse=True):
+
+      print("Processing group:"+groupId)
+      
+      for initialPosIdStr in vtuMetamPidPT[metamMatName][groupId]:
+
+         #sortedTimes= tuple(sorted(vtuMetamPidPT[metamMatName][groupId][initialPosIdStr]))
+
+         #csvFileOut= csvFilesOuputFolder + os.sep + groupId + "-" +initialPosIdStr.split(":")[0]+".csv"
+         csvFileOut= csvFilesOuputFolder + os.sep + groupId + "-" + initialPosIdStr + ".csv"
+
+         print("csvFileOut="+csvFileOut)
+
+         if pathlib.Path(csvFileOut).exists():
+            print("Warning: csvFileOut: "+csvFileOut+" already created !!")
+            csvFileOut= csvFileOut+"_dup"
+         # ---
+
+         sortedTimes= tuple(sorted(vtuMetamPidPT[metamMatName][groupId][initialPosIdStr]))
+
+         print("sortedTimes="+str(sortedTimes))
+         
+         #print("Debug exit 0")
+         #sys.exit(0)
+         
+         csvFileP= open(csvFileOut,"w")
+         
+         #csvFileP.write("#time(years),"+metamMatName.split(" ")[1]+"Compo(%),Pressure(GPa),Temperature(C)\n") #,Depth(y[m]),Position(x[m])\n")
+         csvFileP.write("#time(years),Temperature(C),Pressure(GPa),"+
+                        metamMatName.split(" ")[1]+"Compo(%),ocCrustCompo(%),ocSedsCompo(%)\n") #,Depth(y[m]),Position(x[m])\n")
+
+         validTimes= 0
+         
+         for time in sortedTimes:
+
+            print("Processing time:"+str(time))
+
+            metamCompo= vtuMetamPidPT[metamMatName][groupId][initialPosIdStr][time]["metamCompo(%)"]
+            ocCrustCompo= vtuMetamPidPT[metamMatName][groupId][initialPosIdStr][time]["protoCompo(%)"]
+            ocSedsCompo=  vtuMetamPidPT[metamMatName][groupId][initialPosIdStr][time]["ocSedsCompo(%)"]
+            pressurePa= vtuMetamPidPT[metamMatName][groupId][initialPosIdStr][time]["Pressure(Pa)"]
+            tempK= vtuMetamPidPT[metamMatName][groupId][initialPosIdStr][time]["Temperature(K)"]
+
+            if (metamCompo + ocCrustCompo + ocSedsCompo) > minCompoValue:
+              #csvFileP.write(str(time)+","+str(metamCompo)+","+str(pressurePa*Pa2GPa)+","+str(tempK-273.0)+"\n")
+              csvFileP.write(str(time)+","+str(tempK-273.0)+","+str(pressurePa*Pa2GPa)+","+str(metamCompo)+","+str(ocCrustCompo)+","+str(ocSedsCompo)+"\n")
+
+              validTimes += 1
+              
+         # ---
+         csvFileP.close()
+
+         print("Done with csv file:"+csvFileOut+"\n")
+
+         #print("Debug exit 0")
+         #sys.exit(0)
+      # ---
+      print("Done with processing group:"+groupId)
+   # ---
+   print("Done with processing metamMatName:"+metamMatName)
+# ---
 print("Debug exit 0")
 sys.exit(0)
 
