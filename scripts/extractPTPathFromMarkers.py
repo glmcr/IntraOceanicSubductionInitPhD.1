@@ -359,8 +359,8 @@ for metamMatName in vtuMetamPidPT:
    # ---
 # ---
 
-print("Debug exit 0")
-sys.exit(0)
+#print("Debug exit 0")
+#sys.exit(0)
 
 del reader
 
@@ -424,23 +424,31 @@ for vtuPFile in vtuPFiles[1:-1]:
        for metamMatName in vtuMetamPidPT:
           for groupId in vtuMetamPidPT[metamMatName]:
 
-              if initialPosIdStr in vtuMetamPidPT[metamMatName][groupId]:
+              if initialPosIdStr in vtuMetamPidPT[metamMatName][groupId] and \
+                 dataTimeEnd in vtuMetamPidPT[metamMatName][groupId][initialPosIdStr]:
 
                  if dataTime in vtuMetamPidPT[metamMatName][groupId][initialPosIdStr]:
 
-                    vtuMetamPidPT[metamMatName][groupId][initialPosIdStr][dataTime].append({
-                           "Pressure(Gpa)": pPData.GetTuple(pidIter)[0],
-                           "Temperature(K)": pTData.GetTuple(pidIter)[0],
-                           "metamCompo(%)": metamMatCrt,
-                           "protoCompo(%)": protoPData.GetTuple(pidIter)[0],
-                           "ocSedsCompo(%)": ocSedPData.GetTuple(pidIter)[0],
-                           "PidPos": pPosData.GetTuple(pidIter)
-                    })
+                    #vtuMetamPidPT[metamMatName][groupId][initialPosIdStr][dataTime].append({
+                    #       "Pressure(Gpa)": pPData.GetTuple(pidIter)[0],
+                    #       "Temperature(K)": pTData.GetTuple(pidIter)[0],
+                    #       "metamCompo(%)": metamMatCrt,
+                    #       "protoCompo(%)": protoPData.GetTuple(pidIter)[0],
+                    #       "ocSedsCompo(%)": ocSedPData.GetTuple(pidIter)[0],
+                    #       "PidPos": pPosData.GetTuple(pidIter)
+                    #})
+                    
+                    print("\nFound a duplicate for "+groupId+" at pidIter="+str(pidIter)+
+                          " at time -> "+str(dataTime)+" with initial pos + id item -> \n"+initialPosIdStr+"->"+
+                           str(vtuMetamPidPT[metamMatName][groupId][initialPosIdStr][dataTime]))
+                    
+                    del vtuMetamPidPT[metamMatName][groupId][initialPosIdStr]
+                    initPosTrackingList.remove(initialPosIdStr)
 
                  else:
 
-                   vtuMetamPidPT[metamMatName][groupId][initialPosIdStr]= {
-                         dataTime: [{
+                   vtuMetamPidPT[metamMatName][groupId][initialPosIdStr][dataTime]= {
+                         #dataTime: [{
                            "Pressure(Gpa)": pPData.GetTuple(pidIter)[0],
                            "Temperature(K)": pTData.GetTuple(pidIter)[0],
                            "metamCompo(%)": metamMatCrt,
@@ -449,15 +457,30 @@ for vtuPFile in vtuPFiles[1:-1]:
                            "PidPos": pPosData.GetTuple(pidIter)
                            #"aspectPid": int(pidData.GetTuple(pidIter)[0]),
                            #"duplicateInitialPos": None
-                         }]
-                  }
+                         #}]
+                   }
+
+                   print("\n intermediate time match for group:"+groupId+",item="+str(vtuMetamPidPT[metamMatName][groupId][initialPosIdStr]))
        # ---            
      # ---
    # ---
 
-   print("Done with reading VTU file -> "+vtuPFile) 
+   print("Done with reading VTU file -> "+vtuPFile)
+
+   print("at intermediate time : len(initPosTrackingList)="+str(len(initPosTrackingList)))
+
+   for metamMatName in vtuMetamPidPT:
+      for groupId in vtuMetamPidPT[metamMatName]:
+         print("Got "+str(len(vtuMetamPidPT[metamMatName][groupId]))+
+             " markers extracted at intermediate time -> "+str(dataTime)+" for group "+groupId+" of "+metamMatName)
+   # ---
+# ---   
    
    del reader
+   
+   #print("Debug exit 0")
+   #sys.exit(0)
+   
 # ---
 
 print("Debug exit 0")
