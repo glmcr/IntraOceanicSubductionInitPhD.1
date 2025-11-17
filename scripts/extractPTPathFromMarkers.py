@@ -82,8 +82,12 @@ protoPDataEnd= dataTmpEnd.GetPointData().GetArray("lusi oceanicCrustMRB")
 ocSedPDataEnd= dataTmpEnd.GetPointData().GetArray("lusi oceanicSeds")
 
 #initCompo= dataTmp.GetPointData().GetArray("initial composition")
-
 #validPids= []
+
+#metamMatOthers= ("lusi greenschists", "lusi amphibolites", "lusi blueschists", "lusi eclogites")
+#vtuMetamOthersData= {}
+#for metamMatOther in metamMatOthers:
+#    vtuMetamOthersData[metamMatOther]= dataTmpEnd.GetPointData().GetArray(metamMatOther)
 
 vtuMetamData= {}
 vtuMetamPidPT= {}
@@ -99,6 +103,9 @@ for metamMatName in metamGroupInfoDict:
       vtuMetamPidPT[metamMatName][groupId]= {}
    # ---
 # ---
+
+greenschistsPData= dataTmpEnd.GetPointData().GetArray("lusi greenschists")
+amphibolitesPData= dataTmpEnd.GetPointData().GetArray("lusi amphibolites")
 
 initPosTrackingList= []
 
@@ -162,13 +169,14 @@ for pidIter in range(0,pidDataSizeEnd):
 
                      initPosTrackingList.append(initialPosIdStr)
                      
-                     vtuMetamPidPT[metamMatName][groupId][initialPosIdStr]= { # [dataTimeEnd]= 
-                        #dataTimeEnd: [{
+                     vtuMetamPidPT[metamMatName][groupId][initialPosIdStr]= {
                         dataTimeEnd: {
                         
                            "Pressure(Pa)": pPDataEnd.GetTuple(pidIter)[0],
                            "Temperature(K)": pTDataEnd.GetTuple(pidIter)[0],
                            "metamCompo(%)": metamMatCrt,
+                           "greeschists(%)": greenschistsPData.GetTuple(pidIter)[0],
+                           "amphibolites(%)": amphibolitesPData.GetTuple(pidIter)[0],
                            "protoCompo(%)": protoPDataEnd.GetTuple(pidIter)[0],
                            "ocSedsCompo(%)": ocSedPDataEnd.GetTuple(pidIter)[0],
                            "PidPos": pidPos #,
@@ -176,7 +184,6 @@ for pidIter in range(0,pidDataSizeEnd):
                            #"aspectPid": int(pidData.GetTuple(pidIter)[0]),
                            #"duplicateInitialPos": None
                         }
-                        #}]
                      }
 
                   # ---
@@ -260,6 +267,9 @@ protoPDataStart= dataTmpStart.GetPointData().GetArray("lusi oceanicCrustMRB")
 
 ocSedPDataStart= dataTmpStart.GetPointData().GetArray("lusi oceanicSeds")
 
+greenschistsPData= dataTmpStart.GetPointData().GetArray("lusi greenschists")
+amphibolitesPData= dataTmpStart.GetPointData().GetArray("lusi amphibolites")
+
 for metamMatName in metamGroupInfoDict:
    #print("metamMatName="+metamMatName)
    vtuMetamData[metamMatName]= dataTmpStart.GetPointData().GetArray(metamMatName)
@@ -324,6 +334,8 @@ for pidIter in range(0,pidDataSizeStart):
                            "Pressure(Pa)": pPDataStart.GetTuple(pidIter)[0],
                            "Temperature(K)": pTDataStart.GetTuple(pidIter)[0],
                            "metamCompo(%)": metamMatCrt,
+                           "greenschists(%)": greenschistsPData.GetTuple(pidIter)[0],
+                           "amphibolites(%)": amphibolitesPData.GetTuple(pidIter)[0],                       
                            "protoCompo(%)": protolithCrt, #protoPDataStart.GetTuple(pidIter)[0],
                            "ocSedsCompo(%)": ocSedCrt,   #ocSedPDataStart.GetTuple(pidIter)[0],
                            "PidPos": pPosDataStart.GetTuple(pidIter)
@@ -401,6 +413,9 @@ for vtuPFile in vtuPFiles[1:-1]: #vtuPFiles[1:2]: #vtuPFiles[1:-1]:
 
    ocSedPData= dataTmp.GetPointData().GetArray("lusi oceanicSeds")
 
+   greenschistsPData= dataTmp.GetPointData().GetArray("lusi greenschists")
+   amphibolitesPData= dataTmp.GetPointData().GetArray("lusi amphibolites")   
+
    for metamMatName in metamGroupInfoDict:
    #print("metamMatName="+metamMatName)
       vtuMetamData[metamMatName]= dataTmp.GetPointData().GetArray(metamMatName)
@@ -449,6 +464,8 @@ for vtuPFile in vtuPFiles[1:-1]: #vtuPFiles[1:2]: #vtuPFiles[1:-1]:
                            "Pressure(Pa)": pPData.GetTuple(pidIter)[0],
                            "Temperature(K)": pTData.GetTuple(pidIter)[0],
                            "metamCompo(%)": metamMatCrt,
+                           "greenschists(%)": greenschistsPData.GetTuple(pidIter)[0],
+                           "amphibolites(%)": amphibolitesPData.GetTuple(pidIter)[0],    
                            "protoCompo(%)": protolithCrt, #protoPData.GetTuple(pidIter)[0],
                            "ocSedsCompo(%)": ocSedCrt , #ocSedPData.GetTuple(pidIter)[0],
                            "PidPos": pPosData.GetTuple(pidIter)
@@ -517,9 +534,9 @@ for metamMatName in vtuMetamPidPT:
          
          #csvFileP.write("#time(years),"+metamMatName.split(" ")[1]+"Compo(%),Pressure(GPa),Temperature(C)\n") #,Depth(y[m]),Position(x[m])\n")
          csvFileP.write("#time(years),Temperature(C),Pressure(GPa),"+
-                        metamMatName.split(" ")[1]+"Compo(%),ocCrustCompo(%),ocSedsCompo(%)\n") #,Depth(y[m]),Position(x[m])\n")
+                        metamMatName.split(" ")[1]+"Compo(%),greenschists(%),amphibolites(%),ocCrustCompo(%),ocSedsCompo(%)\n") #,Depth(y[m]),Position(x[m])\n")
 
-         validTimes= 0
+         #validTimes= 0
          
          for time in sortedTimes:
 
@@ -528,14 +545,19 @@ for metamMatName in vtuMetamPidPT:
             metamCompo= vtuMetamPidPT[metamMatName][groupId][initialPosIdStr][time]["metamCompo(%)"]
             ocCrustCompo= vtuMetamPidPT[metamMatName][groupId][initialPosIdStr][time]["protoCompo(%)"]
             ocSedsCompo=  vtuMetamPidPT[metamMatName][groupId][initialPosIdStr][time]["ocSedsCompo(%)"]
+
+            greenschistsCompo= vtuMetamPidPT[metamMatName][groupId][initialPosIdStr][time]["greenschists(%)"]
+            amphibolitesCompo=  vtuMetamPidPT[metamMatName][groupId][initialPosIdStr][time]["amphibolites(%)"]
+            
             pressurePa= vtuMetamPidPT[metamMatName][groupId][initialPosIdStr][time]["Pressure(Pa)"]
             tempK= vtuMetamPidPT[metamMatName][groupId][initialPosIdStr][time]["Temperature(K)"]
 
-            if (metamCompo + ocCrustCompo + ocSedsCompo) > minCompoValue:
+            if (metamCompo + greenschistsCompo + amphibolitesCompo + ocCrustCompo + ocSedsCompo) > minCompoValue:
               #csvFileP.write(str(time)+","+str(metamCompo)+","+str(pressurePa*Pa2GPa)+","+str(tempK-273.0)+"\n")
-              csvFileP.write(str(time)+","+str(tempK-273.0)+","+str(pressurePa*Pa2GPa)+","+str(metamCompo)+","+str(ocCrustCompo)+","+str(ocSedsCompo)+"\n")
+              csvFileP.write(str(time)+","+str(tempK-273.0)+","+str(pressurePa*Pa2GPa)+","+str(metamCompo)+","
+                             +str(greenschistsCompo)+","+str(amphibolitesCompo)+","+str(ocCrustCompo)+","+str(ocSedsCompo)+"\n")
 
-              validTimes += 1
+              #validTimes += 1
               
          # ---
          csvFileP.close()
