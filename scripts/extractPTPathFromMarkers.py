@@ -175,7 +175,7 @@ for pidIter in range(0,pidDataSizeEnd):
                            "Pressure(Pa)": pPDataEnd.GetTuple(pidIter)[0],
                            "Temperature(K)": pTDataEnd.GetTuple(pidIter)[0],
                            "metamCompo(%)": metamMatCrt,
-                           "greeschists(%)": greenschistsPData.GetTuple(pidIter)[0],
+                           "greenschists(%)": greenschistsPData.GetTuple(pidIter)[0],
                            "amphibolites(%)": amphibolitesPData.GetTuple(pidIter)[0],
                            "protoCompo(%)": protoPDataEnd.GetTuple(pidIter)[0],
                            "ocSedsCompo(%)": ocSedPDataEnd.GetTuple(pidIter)[0],
