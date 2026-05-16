@@ -6,7 +6,7 @@ import vtk #.vtk
 import glob
 import math
 import json
-import numpy as np
+import numpy #as np
 import pathlib
 
 import h5py
@@ -69,32 +69,34 @@ lastH5Data= h5py.File(h5PFiles[-1],"r")
 
 #pidDataEnd= dataTmpEnd.GetPointData().GetArray("id")
 #pidDataSizeEnd= pidDataEnd.GetSize()
-pidDataEnd= lastH5Data["id"]
+pidDataEnd= numpy.copy(lastH5Data["id"])
 pidDataSizeEnd= pidDataEnd.shape[0]
 print("pidDataEnd size="+str(pidDataSizeEnd)+"\n")
 #sys.exit(0)
 
 #--- particles initial position data for the timestamp
 #initPosDataEnd= dataTmpEnd.GetPointData().GetArray("initial position")
-initPosDataEnd= lastH5Data["initial position"]
+initPosDataEnd= numpy.copy(lastH5Data["initial position"])
 
 #--- particles position data for the timestamp
 #pPosDataEnd= dataTmpEnd.GetPointData().GetArray("position")
-pPosDataEnd= lastH5Data["position"]
+pPosDataEnd= numpy.copy(lastH5Data["position"])
 
 #--- Extract particle Pressure data:
 #pPDataEnd= dataTmpEnd.GetPointData().GetArray("p")
-pPDataEnd= lastH5Data["p"]
+pPDataEnd= numpy.copy(lastH5Data["p"])
    
 #--- Extract particles Temperature [K] data:
 #pTDataEnd= dataTmpEnd.GetPointData().GetArray("T")
-pTDataEnd= lastH5Data["T"]
+pTDataEnd= numpy.copy(lastH5Data["T"])
 
 #protoPDataEnd= dataTmpEnd.GetPointData().GetArray("lusi oceanicCrustMRB")
-protoPDataEnd= lastH5Data["lusi oceanicCrustMRB"]
+protoPDataEnd= numpy.copy(lastH5Data["lusi oceanicCrustMRB"])
 
 #ocSedPDataEnd= dataTmpEnd.GetPointData().GetArray("lusi oceanicSeds")
-ocSedPDataEnd= lastH5Data["lusi oceanicSeds"]
+ocSedPDataEnd= numpy.copy(lastH5Data["lusi oceanicSeds"])
+
+#nodesDataEnd= lastH5Data["nodes"]
 
 #initCompo= dataTmp.GetPointData().GetArray("initial composition")
 #validPids= []
@@ -106,8 +108,9 @@ ocSedPDataEnd= lastH5Data["lusi oceanicSeds"]
 
 h5MetamData= {}
 h5MetamPidPT= {}
+#h5MetamPidPT= {dataTimeEnd: {} }
 
-metamGroupInfoDict= { "lusi granulites", "lusi greenschists", "lusi amphibolites", "lusi blueschists", "lusi eclogites" }
+metamGroupInfoDict= { "lusi granulites", "lusi greenschists", "lusi amphibolites", "lusi blueschists" } #, "lusi eclogites" }
 
 for metamMatName in metamGroupInfoDict:
 
@@ -116,8 +119,8 @@ for metamMatName in metamGroupInfoDict:
    #vtuMetamData[metamMatName]= dataTmpEnd.GetPointData().GetArray(metamMatName)
    #vtuMetamPidPT[metamMatName]= {}
 
-   h5MetamData[metamMatName]= lastH5Data[metamMatName]
-   h5MetamPidPT[metamMatName]= {} 
+   h5MetamData[metamMatName]= numpy.copy(lastH5Data[metamMatName])
+   #h5MetamPidPT[metamMatName]= {dataTimeEnd: {} } 
 
    #for groupId in metamGroupInfoDict[metamMatName]:
    #   #vtuMetamPidPT[metamMatName][groupId]= {}
@@ -128,124 +131,81 @@ for metamMatName in metamGroupInfoDict:
 #greenschistsPData= dataTmpEnd.GetPointData().GetArray("lusi greenschists")
 #amphibolitesPData= dataTmpEnd.GetPointData().GetArray("lusi amphibolites")
 
-initPosTrackingList= []
+#initPosTrackingList= []
+#initPosTrackingDict= {}
+h5MetamPidPTMats= {dataTimeEnd: {} }
 
 for pidIter in range(0,pidDataSizeEnd):
+#for pidIter in range(pidDataSizeEnd-1,0,-1):
+#for pidIter in range(int(pidDataSizeEnd/2),int(pidDataSizeEnd/1.75)):
 
+    #print("pidIter="+str(pidIter))
+    #print("pPosDataEnd[pidIter]="+str(pPosDataEnd[pidIter]))
     #pidPos= pPosDataEnd.GetTuple(pidIter)
-    pidPos= pPosDataEnd[pidIter]
+    pidPosX= pPosDataEnd[pidIter][0]
+    pidPosY= pPosDataEnd[pidIter][1]
+
+    #pid= pidDataEnd[pidIter][0]
+    #print("nodesDataEnd[pidIter]="+str(nodesDataEnd[pidIter]))
+    #sys.exit(0)
     
-    for metamMatName in vtuMetamPidPT:
+    if pidPosY < 600e3:
+       continue
 
-        # --- Compo for the metam. mat. at the pid position
-        #metamMatCrt= h5MetamData[metamMatName].GetTuple(pidIter)[0]
-        metamMatCrt= h5MetamData[metamMatName][pidIter,0] 
-       
-        #for groupId in h5MetamPidPT[metamMatName]:
-        #    groupIdDict= metamGroupInfoDict[metamMatName][groupId]          
-        #    if pidPos[0] > groupIdDict["x1"] and pidPos[1] < groupIdDict["y1"] \
-        #       and pidPos[0] < groupIdDict["x2"] and pidPos[1] > groupIdDict["y2"]:
-        #       if metamMatCrt > minCompoValue:
-        #
-        #          initialPos= initPosDataEnd.GetTuple(pidIter)
-        #          #print("initialPos="+str(initialPos))
-        #          #print("Debug exit 0")   
-        #          #sys.exit(0)
-        #
-        #          aspectPid= int(pidDataEnd.GetTuple(pidIter)[0])
-         initialPosIdStr= "{:12.7f}".format(initialPos[0])+"_"+"{:12.7f}".format(initialPos[1])+"_"+str(aspectPid)
+    if pidPosX < 1e6 or pidPosX > 2e6:
+       continue
 
-                  #duplicateInitialPos= False
-                  
-                  if initialPosIdStr in vtuMetamPidPT[metamMatName][groupId]: # and \
-                     #dataTimeEnd in vtuMetamPidPT[metamMatName][groupId][initialPosIdStr]:
+    #pidFloat= pidDataEnd[pidIter][0]
+    pid= int(pidDataEnd[pidIter][0])
+    #print("pidIter="+str(pidIter))
+    #print("pPosDataEnd[pidIter]="+str(pPosDataEnd[pidIter]))
+    #print("pidFloat="+str(pidFloat))
+    #print("pid="+str(pid))
+    #print("nodesDataEnd[pidIter]="+str(nodesDataEnd[pidIter]))
+    #initPosTrackingDict[pid]= pidIter
+    #sys.exit(0)
 
-                     #vtuMetamPidPT[metamMatName][groupId][initialPosIdStr][dataTimeEnd].append({
-                     #      "Pressure(Gpa)": pPDataEnd.GetTuple(pidIter)[0],
-                     #      "Temperature(K)": pTDataEnd.GetTuple(pidIter)[0],
-                     #      "metamCompo(%)": metamMatCrt,
-                     #      "protoCompo(%)": protoPDataEnd.GetTuple(pidIter)[0],
-                     #      "ocSedsCompo(%)": ocSedPDataEnd.GetTuple(pidIter)[0],
-                     #      "PidPos": pidPos #,
-                     #      #"pidIter": pidIter
-                     #      #"aspectPid": int(pidData.GetTuple(pidIter)[0]),
-                     #      #"duplicateInitialPos": None
-                     #})
+    #print("pPosDataEnd[pidIter]="+str(pPosDataEnd[pidIter]))
+    #print("checking at pPosDataEnd[pidIter]="+str(pPosDataEnd[pidIter]))
+    #print("pid="+str(pid))
+    
+    for metamMatName in h5MetamData: #h5MetamPidPT:
+    #    #print("metamMatName="+metamMatName)
+    #    # --- Compo for the metam. mat. at the pid position
+    #    #metamMatCrt= h5MetamData[metamMatName].GetTuple(pidIter)[0]
+        metamMatCrt= h5MetamData[metamMatName][pidIter,0]
 
-                     print("\nFound a duplicate for "+groupId+" at pidIter="+str(pidIter)+
-                           " at time end -> "+str(dataTimeEnd)+" with initial pos + id item -> \n"+initialPosIdStr+"->"+
-                           str(vtuMetamPidPT[metamMatName][groupId][initialPosIdStr][dataTimeEnd]))
+        #print("metamMatName="+metamMatName+", metamMatCrt="+str(metamMatCrt))
+        #sys.exit(0)
+        
+        if (metamMatCrt > minCompoValue) and (pid not in h5MetamPidPTMats[dataTimeEnd]) :      
 
-                     del vtuMetamPidPT[metamMatName][groupId][initialPosIdStr]
-                     initPosTrackingList.remove(initialPosIdStr)
-                     #print("Debug exit 0")   
-                     #sys.exit(0)
-                     
-                  else:
-
-                  #aspectPid= int(pidData.GetTuple(pidIter)[0])
-
-                     initPosTrackingList.append(initialPosIdStr)
-                     
-                     vtuMetamPidPT[metamMatName][groupId][initialPosIdStr]= {
-                        dataTimeEnd: {
-                        
-                           "Pressure(Pa)": pPDataEnd.GetTuple(pidIter)[0],
-                           "Temperature(K)": pTDataEnd.GetTuple(pidIter)[0],
-                           "metamCompo(%)": metamMatCrt,
-                           "greenschists(%)": greenschistsPData.GetTuple(pidIter)[0],
-                           "amphibolites(%)": amphibolitesPData.GetTuple(pidIter)[0],
-                           "protoCompo(%)": protoPDataEnd.GetTuple(pidIter)[0],
-                           "ocSedsCompo(%)": ocSedPDataEnd.GetTuple(pidIter)[0],
-                           "PidPos": pidPos #,
-                           #"pidIter": pidIter
-                           #"aspectPid": int(pidData.GetTuple(pidIter)[0]),
-                           #"duplicateInitialPos": None
-                        }
-                     }
-
-                  # ---
-
-                  #if initialPosStr not in initPosTrackingList:
-                  #   initPosTrackingList.append(initialPosStr)
-
-                  #print("initialPosStr="+initialPosStr)
-                  #print("vtuMetamPidPT[metamMatName][groupId][initialPosStr]="+str(vtuMetamPidPT[metamMatName][groupId][initialPosStr]))
-                  #print("Debug exit 0")   
-                  #sys.exit(0)                 
-                  
-                # ---
-            # ---
-        # ---          
+           #h5MetamPidPT[metamMatName][dataTimeEnd][pid]= {
+           h5MetamPidPTMats[dataTimeEnd][pid]= {
+              "p": pPDataEnd[pidIter,0],
+              "T": pTDataEnd[pidIter,0],
+              "materials": {
+                   "oceanicCrustMRB": protoPDataEnd[pidIter,0],
+                   "oceanicSeds": ocSedPDataEnd[pidIter,0],
+                   "granulites" : h5MetamData["lusi granulites"][pidIter,0],
+                   "greenschists": h5MetamData["lusi greenschists"][pidIter,0],
+                   "amphibolites": h5MetamData["lusi amphibolites"][pidIter,0],
+                   "blueschists": h5MetamData["lusi blueschists"][pidIter,0]
+              }
+           }
+           
+           print("metamMatName="+metamMatName)
+           print("h5MetamPidPTMats[dataTimeEnd][pid]="+str(h5MetamPidPTMats[dataTimeEnd][pid]))
+           #print("h5MetamPidPT[metamMatName][dataTimeEnd][pid]="+str( h5MetamPidPT[metamMatName][dataTimeEnd][pid]))
+           #sys.exit(0)
+           #break
    # ---
 # ---
 
-del reader
-
-print("at end: len(initPosTrackingList)="+str(len(initPosTrackingList)))
-
-#for metamMatName in vtuMetamPidPT:
-#  for groupId in vtuMetamPidPT[metamMatName]:
-#      for initialPosStr in vtuMetamPidPT[metamMatName][groupId]:
-#         if len(vtuMetamPidPT[metamMatName][groupId][initialPosStr][dataTimeEnd]) > 1: 
-#           initPosTrackingList.remove(initialPosStr)
-# ---
-#print("without duplicates: len(initPosTrackingList)="+str(len(initPosTrackingList)))
-
-for metamMatName in vtuMetamPidPT:
-   for groupId in vtuMetamPidPT[metamMatName]:
-       print("Got "+str(len(vtuMetamPidPT[metamMatName][groupId]))+
-             " markers extracted at dataTimeEnd for group "+groupId+" of "+metamMatName)
-
-       #for initialPosIdStr in vtuMetamPidPT[metamMatName][groupId]:
-       #   print("initialPosIdStr="+initialPosIdStr+
-       #         ", vtuMetamPidPT[metamMatName][groupId][initialPosIdStr].keys()="+
-       #         str(tuple(vtuMetamPidPT[metamMatName][groupId][initialPosIdStr].keys())))
-       #   #print("Debug exit 0")   
-       #   #sys.exit(0)
-   # ---
-# ---
-
+print("len h5MetamPidPTMats[dataTimeEnd]="+str(len(h5MetamPidPTMats[dataTimeEnd])))
+#for  metamMatName in metamGroupInfoDict:
+    #print("found "+str(len(h5MetamPidPT[metamMatName][dataTimeEnd]))+" markers for "+metamMatName+" at "+str(dataTimeEnd)+" My")
+   
 #print("Debug exit 0")   
 #sys.exit(0)
 
@@ -264,6 +224,9 @@ dataTmpStart= reader.GetOutput()
 #--- Extract the timestamp (in years) as an int for this VTU file
 dataTimeStart= int( dataTmpStart.GetFieldData().GetArray("TIME").GetTuple(0)[0] )
 print("dataTimeStart="+str(dataTimeStart))
+print("Debug exit 0")
+sys.exit(0)
+
 
 pidDataStart= dataTmpStart.GetPointData().GetArray("id")
 pidDataSizeStart= pidDataStart.GetSize()
