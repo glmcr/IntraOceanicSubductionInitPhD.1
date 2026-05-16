@@ -120,7 +120,7 @@ for vtuFileIn in vtuFilesIn:
     print("final leftSigXXAcc="+str(leftSigXXAcc))
     print("final rightSigXXAcc="+str(rightSigXXAcc))
 
-    outCsv.write(str(dataMy)+","+str(leftSigXXAcc)+","+str(rightSigXXAcc)+"\n")
+    outCsv.write(str(dataMy)+","+str(leftSigXXAcc/1e9)+","+str(rightSigXXAcc/1e9)+"\n")
     
     print("Done with vtuFileIn -> "+vtuFileIn)
 
