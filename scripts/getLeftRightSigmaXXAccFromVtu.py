@@ -10,87 +10,124 @@ import numpy as np
 import pathlib
 from vtk.util.numpy_support import vtk_to_numpy
 
-vtuFileIn=sys.argv[1]
+leftXDist= 14018.0
+rightXDist= 2.98598e6
+#yFromBottom=594000.0 # LAB
+yFromBottom= 700000.0 - 150000 # strain rate
 
-# --- Create the vtk reader and writer objects.
-reader= vtk.vtkXMLUnstructuredGridReader()
-#writer= vtk.vtkXMLUnstructuredGridWriter()
+#vtuFileIn=sys.argv[1]
+vtuFilesIn= sorted(glob.glob(sys.argv[1]+"/*.vtu"))
 
+#print("vtuFilesIn="+str(vtuFilesIn))
 
-reader.SetFileName(vtuFileIn)
-print("aft reader.SetFileName(vtuFileIn)")
+begConvMy= float(sys.argv[2]) #int(42e6)
 
-reader.Update()
-print("aft reader.Update()")
+outCsv= open(sys.argv[3],"w")
 
-dataIn= reader.GetOutput()
-print("aft reader.GetOutput()")
+outCsv.write("#year[My],left acc. sigXX[GN/m],right acc. sigXX[GN/m]\n")
 
-#print(dir(reader))
+for vtuFileIn in vtuFilesIn:
 
-stressTensors=dataIn.GetPointData().GetArray("stress")
+    print("processing vtuFileIn -> "+vtuFileIn)
+    
+    # --- Create the vtk reader and writer objects.
+    reader= vtk.vtkXMLUnstructuredGridReader()
 
-#print("dir(stressTensor)="+str(dir(stressTensor)))
-stressTensorsSize= stressTensors.GetSize()
-print("stressTensorsSize="+str(stressTensorsSize))
+    reader.SetFileName(vtuFileIn)
+    print("aft reader.SetFileName(vtuFileIn)")
 
-#stressTensorSize= stressTensor[0].GetSize()
-#print("stressTensor[0].GetSize()="+str(stressTensor[0].GetSize()))
-#print("stressTensor.GetValue(0)="+str(stressTensor.GetValue(0)))
+    reader.Update()
+    print("aft reader.Update()")
 
-print("stressTensors.GetTuple(0)=["+str(stressTensors.GetTuple(0))+"]")
+    dataIn= reader.GetOutput()
+    print("aft reader.GetOutput()")
 
-#mappedDataArray=stressTensors.MappedDataArray
-#print("dir(mappedDataArray)="+str(dir(mappedDataArray)))
-#dataArray= stressTensors.CreateDataArray(0)
-#print("dir(dataArray)="+str(dir(dataArray)))
-#print(reader.POINT_DATA)
+    #time=dataIn.GetPointData().GetField("TIME")
+    #print("time="+str(time))
 
-points= dataIn.GetPoints()
-#print(dir(points))
-#print(points.GetPoint(0))
-#print(points.GetPoint(1))
-#print(points.GetPoint(2))
-#print(points.GetPoint(3))
-#print(points.GetPoint(4))
-#print(points.GetPoint(5))
-print("points.GetNumberOfPoints()="+str(points.GetNumberOfPoints()))
+    dataMy= ( dataIn.GetFieldData().GetArray("TIME").GetTuple(0)[0] - begConvMy)/1e6
+    print("dataMy="+str(dataMy))
+    
+    #print("dataIn.GetScalars()="+str(dataIn.GetScalars()))
+    #print(dir(dataIn))
+    #print(dir(dataIn.GetPointData()))
+    #print("dataIn.GetAttributes()="+str(dataIn.GetAttributes(0)))
 
-leftXDist=14018.0
-rightXDist=2.98598e6
-yFromBottom=594000.0
+    stressTensors=dataIn.GetPointData().GetArray("stress")
 
-leftSigXXAcc=0.0
-rightSigXXAcc=0.0
+    #print("dataIn.__getattribute__(TIME)="+str(dataIn.__getattribute__("TIME")))
 
-#pointIdx=0
+    #print("dir(stressTensors)="+str(dir(stressTensors)))
+    stressTensorsSize= stressTensors.GetSize()
+    print("stressTensorsSize="+str(stressTensorsSize))
 
-#for point in points:
-for pointIdx in range(0,points.GetNumberOfPoints()):
+    #print("stressTensors.GetInformation()="+str(stressTensors.GetInformation()))
+    #sys.exit(0)
+    
+    #stressTensorSize= stressTensor[0].GetSize()
+    #print("stressTensor[0].GetSize()="+str(stressTensor[0].GetSize()))
+    #print("stressTensor.GetValue(0)="+str(stressTensor.GetValue(0)))
 
-    point= points.GetPoint(pointIdx)
+    print("stressTensors.GetTuple(0)=["+str(stressTensors.GetTuple(0))+"]")
+
+    #mappedDataArray=stressTensors.MappedDataArray
+    #print("dir(mappedDataArray)="+str(dir(mappedDataArray)))
+    #dataArray= stressTensors.CreateDataArray(0)
+    #print("dir(dataArray)="+str(dir(dataArray)))
+    #print(reader.POINT_DATA)
+    points= dataIn.GetPoints()
+
+    #print(dir(points))
+    #print(points.GetPoint(0))
+    #print(points.GetPoint(1))
+    #print(points.GetPoint(2))
+    #print(points.GetPoint(3))
+    #print(points.GetPoint(4))
+    #print(points.GetPoint(5))
+    print("points.GetNumberOfPoints()="+str(points.GetNumberOfPoints()))
+
+    leftSigXXAcc=0.0
+    rightSigXXAcc=0.0
+
+    #pointIdx=0
+
+    #for point in points:
+    for pointIdx in range(0,points.GetNumberOfPoints()):
+
+        point= points.GetPoint(pointIdx)
 
     #print(dir(point))
     
-    if (math.fabs(point[0] - leftXDist) < 1.0) and  (point[1] >= yFromBottom):
+        if (math.fabs(point[0] - leftXDist) < 1.0) and  (point[1] >= yFromBottom):
 
-        leftSigXXAcc += stressTensors.GetTuple(pointIdx)[0]
+           #leftSigXXAcc += math.fabs(stressTensors.GetTuple(pointIdx)[0])
+           leftSigXXAcc += stressTensors.GetTuple(pointIdx)[0]
 
-        print("leftSigXXAcc="+str(leftSigXXAcc))
-        print("pointIdx="+str(pointIdx)+", point="+str(point))
+           #print("leftSigXXAcc="+str(leftSigXXAcc))
+           #print("pointIdx="+str(pointIdx)+", point="+str(point))
         #sys.exit(0)
 
-    if (math.fabs(point[0] - rightXDist) < 10.0) and  (point[1] >= yFromBottom):
+        if (math.fabs(point[0] - rightXDist) < 10.0) and  (point[1] >= yFromBottom):
 
-        rightSigXXAcc += stressTensors.GetTuple(pointIdx)[0]
+           #rightSigXXAcc += math.fabs(stressTensors.GetTuple(pointIdx)[0])
+           rightSigXXAcc += stressTensors.GetTuple(pointIdx)[0]
     
-        print("rightSigXXAcc="+str(rightSigXXAcc))
-        print("pointIdx="+str(pointIdx)+", point="+str(point))
-        #sys.exit(0)
+           #print("rightSigXXAcc="+str(rightSigXXAcc))
+           #print("pointIdx="+str(pointIdx)+", point="+str(point))
+           #sys.exit(0)
     # ---    
     #pointIdx += 1
+    print("final leftSigXXAcc="+str(leftSigXXAcc))
+    print("final rightSigXXAcc="+str(rightSigXXAcc))
 
+    outCsv.write(str(dataMy)+","+str(leftSigXXAcc)+","+str(rightSigXXAcc)+"\n")
+    
+    print("Done with vtuFileIn -> "+vtuFileIn)
+
+    del dataIn
+    del reader
+    #sys.exit(0)
 # ---
 
-print("final leftSigXXAcc="+str(leftSigXXAcc))
-print("final rightSigXXAcc="+str(rightSigXXAcc))
+#print("final leftSigXXAcc="+str(leftSigXXAcc))
+#print("final rightSigXXAcc="+str(rightSigXXAcc))
