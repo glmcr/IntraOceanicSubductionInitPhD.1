@@ -96,6 +96,10 @@ protoPDataEnd= numpy.copy(lastH5Data["lusi oceanicCrustMRB"])
 #ocSedPDataEnd= dataTmpEnd.GetPointData().GetArray("lusi oceanicSeds")
 ocSedPDataEnd= numpy.copy(lastH5Data["lusi oceanicSeds"])
 
+initAsthEnd= numpy.copy(lastH5Data["initial asthenosphere"])
+initProtoEnd= numpy.copy(lastH5Data["initial oceanicCrustMRB"])
+initOcSedEnd= numpy.copy(lastH5Data["initial oceanicSeds"])
+
 #nodesDataEnd= lastH5Data["nodes"]
 
 #initCompo= dataTmp.GetPointData().GetArray("initial composition")
@@ -110,11 +114,11 @@ h5MetamData= {}
 h5MetamPidPT= {}
 #h5MetamPidPT= {dataTimeEnd: {} }
 
-metamGroupInfoDict= { "lusi granulites", "lusi greenschists", "lusi amphibolites", "lusi blueschists", "lusi eclogites" }
+metamGroupInfoDict= { "lusi granulites", "lusi greenschists", "lusi amphibolites"} #, "lusi blueschists"} #, "lusi eclogites" }
 
 for metamMatName in metamGroupInfoDict:
 
-   print("metamMatName="+metamMatName)
+   #print("metamMatName="+metamMatName)
    
    #vtuMetamData[metamMatName]= dataTmpEnd.GetPointData().GetArray(metamMatName)
    #vtuMetamPidPT[metamMatName]= {}
@@ -187,20 +191,25 @@ for pidIter in range(0,pidDataSizeEnd):
 
         #print("metamMatName="+metamMatName+", metamMatCrt="+str(metamMatCrt))
         #sys.exit(0)
+
+        checkInitMat= initAsthEnd[pidIter,0] + initProtoEnd[pidIter,0] + initOcSedEnd[pidIter,0]
         
         if ((ocCrustMRBCrt > minCompoValue) or (ocSedsCrt > minCompoValue ) or \
-            (metamMatCrt > minCompoValue)) and (pid not in h5MetamPidPTMats[dataTimeEnd]) :      
+            (metamMatCrt > minCompoValue)) and (checkInitMat > 0.5) and (pid not in h5MetamPidPTMats[dataTimeEnd]) :      
 
            if pid in h5MetamPidPTMats[dataTimeEnd]:
-              print("Cannot have duplicate pids !!"+str(pid))
+              print("Cannot have duplicate pids !!"+str(pid)+" for last time : "+str(dataTimeEnd))
               sys.exit(1)
            #else :
            #  finalPids.append(pid)       
            
            #h5MetamPidPT[metamMatName][dataTimeEnd][pid]= {
            h5MetamPidPTMats[dataTimeEnd][pid]= {
-              "initial position":initPosDataEnd[pidIter],
-              "position": pPosDataEnd[pidIter],
+              "initial asthenosphere": initAsthEnd[pidIter,0],
+              "initial oceanicCrustMRB": initProtoEnd[pidIter,0],
+              "initial oceanicSeds": initOcSedEnd[pidIter,0],
+              "initial position":tuple(initPosDataEnd[pidIter][...]),
+              "position": tuple(pPosDataEnd[pidIter][...]),
               "p": pPDataEnd[pidIter,0],
               "T": pTDataEnd[pidIter,0],
               "materials": {
@@ -208,11 +217,18 @@ for pidIter in range(0,pidDataSizeEnd):
                    "oceanicSeds": ocSedPDataEnd[pidIter,0],
                    "granulites" : h5MetamData["lusi granulites"][pidIter,0],
                    "greenschists": h5MetamData["lusi greenschists"][pidIter,0],
-                   "amphibolites": h5MetamData["lusi amphibolites"][pidIter,0],
-                   "blueschists": h5MetamData["lusi blueschists"][pidIter,0],
-                   "eclogites": h5MetamData["lusi eclogites"][pidIter,0]
+                   "amphibolites": h5MetamData["lusi amphibolites"][pidIter,0] #,
+                   #"blueschists": h5MetamData["lusi blueschists"][pidIter,0],
+                   #"eclogites": h5MetamData["lusi eclogites"][pidIter,0],
               }
            }
+
+           #print("h5MetamPidPTMats[dataTimeEnd][pid]="+str(h5MetamPidPTMats[dataTimeEnd][pid]))
+           #sys.exit(0)
+
+           #if h5MetamData["lusi granulites"][pidIter,0] > 0.5:
+           #   print("h5MetamPidPTMats[dataTimeEnd][pid]="+str(h5MetamPidPTMats[dataTimeEnd][pid]))
+           #   sys.exit(0)
 
            #if pid in :
            #   print("Cannot have duplicate pids !!"+str(pid))
@@ -251,21 +267,188 @@ print("done with final file")
 #print("Debug exit 0")   
 #sys.exit(0)
 
-reader= vtk.vtkXMLUnstructuredGridReader()
+#pidsAtTimes= {}
 
-firstFile= vtuPFiles[0]
+for vtuFileInPast in sorted(vtuPFiles[0:-1],reverse=True):
 
-print("Reading first file -> "+firstFile+" to init the markers tracking in the past")
+   reader= vtk.vtkXMLUnstructuredGridReader()
 
-reader.SetFileName(firstFile)
-reader.Update()
+   print("\nReading vtu file -> "+vtuFileInPast)
 
+   reader.SetFileName(vtuFileInPast)
+   reader.Update()
+
+   vtuData= reader.GetOutput()
+   
+   dataTime= int(vtuData.GetFieldData().GetArray("TIME").GetTuple(0)[0] )
+
+   print("dataTime="+str(dataTime))
+   
+   del vtuData
+   del reader
+
+   h5FilePath= particlesDir+"/particles-"+ os.path.basename(vtuFileInPast).split("-")[1].split(".")[0]+".h5"
+
+   print("h5FilePath="+str(h5FilePath))
+
+   h5Data= h5py.File(h5FilePath,"r")
+
+   pidData= numpy.copy(h5Data["id"])
+
+   pidDataSize= pidData.shape[0]
+
+   print("pidDataSize="+str(pidDataSize))
+
+   initPosData= numpy.copy(h5Data["initial position"])
+
+   pPosData= numpy.copy(h5Data["position"])
+
+   pPData= numpy.copy(h5Data["p"])
+
+   pTData= numpy.copy(h5Data["T"])
+
+   protoPData= numpy.copy(h5Data["lusi oceanicCrustMRB"])
+
+   ocSedPData= numpy.copy(h5Data["lusi oceanicSeds"])
+
+   initAsthData= numpy.copy(h5Data["initial asthenosphere"])
+
+   initProtoData= numpy.copy(h5Data["initial oceanicCrustMRB"])
+   initOcSedsData= numpy.copy(h5Data["initial oceanicSeds"])
+
+   for metamMatName in metamGroupInfoDict:
+
+      #print("metamMatName="+metamMatName)
+
+      h5MetamData[metamMatName]= numpy.copy(h5Data[metamMatName])
+   # ---
+   
+   h5MetamPidPTMats[dataTime]= {}
+
+   for pidIter in range(0,pidDataSize):
+
+      pidPosX= pPosData[pidIter][0]
+      pidPosY= pPosData[pidIter][1]
+
+      if pidPosY < yElevMin: #600e3:
+         continue
+
+      if pidPosX < xMin or pidPosX > pidPosX:
+         continue  
+    
+      pid= int(pidData[pidIter][0])
+
+      ocCrustMRBCrt= protoPData[pidIter,0]
+      ocSedsCrt= ocSedPData[pidIter,0]
+
+      for metamMatName in metamGroupInfoDict:
+
+        metamMatCrt= h5MetamData[metamMatName][pidIter,0]
+
+        #print("metamMatName="+metamMatName+", metamMatCrt="+str(metamMatCrt))
+        #sys.exit(0)
+
+        checkInitMat= initAsthData[pidIter,0] + initProtoData[pidIter,0] + initOcSedsData[pidIter,0]
+        
+        if ((ocCrustMRBCrt > minCompoValue) or (ocSedsCrt > minCompoValue ) or \
+            (metamMatCrt > minCompoValue)) and (checkInitMat > 0.5 ) and (pid not in h5MetamPidPTMats[dataTime]) :
+
+           if pid in h5MetamPidPTMats[dataTime]:
+              print("Cannot have duplicate pids !!"+str(pid)+" for time:"+str(dataTime))
+              sys.exit(1)           
+           # ---
+           
+           h5MetamPidPTMats[dataTime][pid]= {
+              
+              "initial asthenosphere": initAsthData[pidIter,0],
+              "initial oceanicCrustMRB": initProtoData[pidIter,0],
+              "initial oceanicSeds": initOcSedsData[pidIter,0],
+              "initial position":tuple(initPosData[pidIter][...]),
+              "position": tuple(pPosData[pidIter][...]),
+              "p": pPData[pidIter,0],
+              "T": pTData[pidIter,0],
+              "materials": {
+                   "oceanicCrustMRB": protoPData[pidIter,0],
+                   "oceanicSeds": ocSedPData[pidIter,0],
+                   "granulites" : h5MetamData["lusi granulites"][pidIter,0],
+                   "greenschists": h5MetamData["lusi greenschists"][pidIter,0],
+                   "amphibolites": h5MetamData["lusi amphibolites"][pidIter,0] #,
+                   #"blueschists": h5MetamData["lusi blueschists"][pidIter,0],
+                   #"eclogites": h5MetamData["lusi eclogites"][pidIter,0]
+              }
+           }
+
+           #if h5MetamData["lusi granulites"][pidIter,0] > 0.5:
+           #   print("h5MetamPidPTMats[dataTime][pid]="+str(h5MetamPidPTMats[dataTime][pid]))
+           #   sys.exit(0)           
+
+        # ---
+      # ---
+   print("nb. markers="+str(len(h5MetamPidPTMats[dataTime]))+" for time: "+str(dataTime))   
+# ---   
+
+metamPidTrack= {}
+
+for pidAtEnd in h5MetamPidPTMats[dataTimeEnd]:
+
+   metamPidTrack[pidAtEnd]= { dataTimeEnd : h5MetamPidPTMats[dataTimeEnd][pidAtEnd] }
+   
+   for dataTimeChk in sorted((tuple(h5MetamPidPTMats.keys())[1:]),reverse=True):
+
+      print("checking dataTimeChk="+str(dataTimeChk))
+
+      for pidAtTime in h5MetamPidPTMats[dataTimeChk]:
+
+         #print("pidAtTime="+str(pidAtTime))
+         #sys.exit(0)
+         
+         if (pidAtTime == pidAtEnd) and \
+             (h5MetamPidPTMats[dataTimeChk][pidAtTime]["initial position"] == \
+               h5MetamPidPTMats[dataTimeEnd][pidAtEnd]["initial position"]): #and \
+            #(h5MetamPidPTMats[dataTimeChk][pidAtTime]["initial asthenosphere"] == \
+            #  h5MetamPidPTMats[dataTimeEnd][pidAtEnd]["initial asthenosphere"]) and \
+            #(h5MetamPidPTMats[dataTimeChk][pidAtTime]["initial oceanicCrustMRB"] == \
+            #  h5MetamPidPTMats[dataTimeEnd][pidAtEnd]["initial oceanicCrustMRB"]) and \
+            #(h5MetamPidPTMats[dataTimeChk][pidAtTime]["initial oceanicSeds"] == \
+            #  h5MetamPidPTMats[dataTimeEnd][pidAtEnd]["initial oceanicSeds"]) :
+
+            #print("h5MetamPidPTMats[dataTimeEnd][pidAtEnd]="+str(h5MetamPidPTMats[dataTimeEnd][pidAtEnd]))
+            #print("h5MetamPidPTMats[dataTimeChk][pidAtTime]="+str(h5MetamPidPTMats[dataTimeChk][pidAtTime]))
+            #sys.exit(0)
+
+            #if dataTimeChk in metamPidTrack[pidAtEnd]:
+            
+            metamPidTrack[pidAtEnd].update({dataTimeChk: h5MetamPidPTMats[dataTimeChk][pidAtTime] })
+
+            #print("metamPidTrack[pidAtEnd]="+str(metamPidTrack[pidAtEnd]))
+            #sys.exit(0)
+            break
+         # ---
+      # ---
+   # ---
+
+   #print("nb. times for pidAtEnd: "+str(pidAtEnd)+" is "+str(len(metamPidTrack[pidAtEnd])))
+   #print("metamPidTrack[pidAtEnd]="+str(metamPidTrack[pidAtEnd]))
+
+   if len(metamPidTrack[pidAtEnd]) > 2:
+      print("\nmetamPidTrack[pidAtEnd]="+str(metamPidTrack[pidAtEnd]))
+      sys.exit(0)   
+
+   if len(metamPidTrack[pidAtEnd]) == 1:
+          del metamPidTrack[pidAtEnd]
+   # ---
+# ---
+
+print("nb. valid markers: "+str(len(metamPidTrack)))
+print("Debug exit 0")
+sys.exit(0)
+          
 #--- Extract all the particles data
-dataTmpStart= reader.GetOutput()
+#dataTmpStart= reader.GetOutput()
 
 #--- Extract the timestamp (in years) as an int for this VTU file
-dataTimeStart= int( dataTmpStart.GetFieldData().GetArray("TIME").GetTuple(0)[0] )
-print("dataTimeStart="+str(dataTimeStart))
+#dataTimeStart= int( dataTmpStart.GetFieldData().GetArray("TIME").GetTuple(0)[0] )
+#print("dataTimeStart="+str(dataTimeStart))
 #print("Debug exit 0")
 #sys.exit(0)
 
@@ -288,7 +471,7 @@ pPosDataStart= numpy.copy(startH5Data["position"])
 
 #--- Extract particle Pressure data:
 #pPDataStart= dataTmpStart.GetPointData().GetArray("p")
-pPDataStart= numpy.copy(startH5Data["position"])                        
+pPDataStart= numpy.copy(startH5Data["p"])                        
    
 #--- Extract particles Temperature data:
 #pTDataStart= dataTmpStart.GetPointData().GetArray("T")
@@ -396,7 +579,7 @@ for initialPid in initialPids:
       persistentPids.append(initialPid)   
 # ---
 
-print("tentaive nb. of persistentPids="+str(len(persistentPids)))
+print("tenttaive nb. of persistentPids="+str(len(persistentPids)))
 
 validPids= []
 
