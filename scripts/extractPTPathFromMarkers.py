@@ -114,7 +114,7 @@ h5MetamData= {}
 h5MetamPidPT= {}
 #h5MetamPidPT= {dataTimeEnd: {} }
 
-metamGroupInfoDict= { "lusi granulites", "lusi greenschists", "lusi amphibolites"} #, "lusi blueschists"} #, "lusi eclogites" }
+metamGroupInfoDict= { "lusi granulites", "lusi greenschists", "lusi amphibolites", "lusi blueschists", "lusi eclogites" }
 
 for metamMatName in metamGroupInfoDict:
 
@@ -217,9 +217,9 @@ for pidIter in range(0,pidDataSizeEnd):
                    "oceanicSeds": ocSedPDataEnd[pidIter,0],
                    "granulites" : h5MetamData["lusi granulites"][pidIter,0],
                    "greenschists": h5MetamData["lusi greenschists"][pidIter,0],
-                   "amphibolites": h5MetamData["lusi amphibolites"][pidIter,0] #,
-                   #"blueschists": h5MetamData["lusi blueschists"][pidIter,0],
-                   #"eclogites": h5MetamData["lusi eclogites"][pidIter,0],
+                   "amphibolites": h5MetamData["lusi amphibolites"][pidIter,0],
+                   "blueschists": h5MetamData["lusi blueschists"][pidIter,0],
+                   "eclogites": h5MetamData["lusi eclogites"][pidIter,0],
               }
            }
 
@@ -372,9 +372,9 @@ for vtuFileInPast in sorted(vtuPFiles[0:-1],reverse=True):
                    "oceanicSeds": ocSedPData[pidIter,0],
                    "granulites" : h5MetamData["lusi granulites"][pidIter,0],
                    "greenschists": h5MetamData["lusi greenschists"][pidIter,0],
-                   "amphibolites": h5MetamData["lusi amphibolites"][pidIter,0] #,
-                   #"blueschists": h5MetamData["lusi blueschists"][pidIter,0],
-                   #"eclogites": h5MetamData["lusi eclogites"][pidIter,0]
+                   "amphibolites": h5MetamData["lusi amphibolites"][pidIter,0],
+                   "blueschists": h5MetamData["lusi blueschists"][pidIter,0],
+                   "eclogites": h5MetamData["lusi eclogites"][pidIter,0]
               }
            }
 
@@ -384,59 +384,52 @@ for vtuFileInPast in sorted(vtuPFiles[0:-1],reverse=True):
 
         # ---
       # ---
-   print("nb. markers="+str(len(h5MetamPidPTMats[dataTime]))+" for time: "+str(dataTime))   
-# ---   
+   print("nb. markers="+str(len(h5MetamPidPTMats[dataTime]))+" for time: "+str(dataTime))
+
+   for metamMatName in metamGroupInfoDict:
+
+      #print("metamMatName="+metamMatName)
+
+      del h5MetamData[metamMatName]
+   # ---
+   
+# ---
 
 metamPidTrack= {}
 
 for pidAtEnd in h5MetamPidPTMats[dataTimeEnd]:
-
+   
    metamPidTrack[pidAtEnd]= { dataTimeEnd : h5MetamPidPTMats[dataTimeEnd][pidAtEnd] }
    
    for dataTimeChk in sorted((tuple(h5MetamPidPTMats.keys())[1:]),reverse=True):
 
-      print("checking dataTimeChk="+str(dataTimeChk))
+      #print("pidAtEnd="+str(pidAtEnd)+", checking dataTimeChk="+str(dataTimeChk))
 
-      for pidAtTime in h5MetamPidPTMats[dataTimeChk]:
+      if pidAtEnd in h5MetamPidPTMats[dataTimeChk]:
 
-         #print("pidAtTime="+str(pidAtTime))
-         #sys.exit(0)
-         
-         if (pidAtTime == pidAtEnd) and \
-             (h5MetamPidPTMats[dataTimeChk][pidAtTime]["initial position"] == \
-               h5MetamPidPTMats[dataTimeEnd][pidAtEnd]["initial position"]): #and \
-            #(h5MetamPidPTMats[dataTimeChk][pidAtTime]["initial asthenosphere"] == \
-            #  h5MetamPidPTMats[dataTimeEnd][pidAtEnd]["initial asthenosphere"]) and \
-            #(h5MetamPidPTMats[dataTimeChk][pidAtTime]["initial oceanicCrustMRB"] == \
-            #  h5MetamPidPTMats[dataTimeEnd][pidAtEnd]["initial oceanicCrustMRB"]) and \
-            #(h5MetamPidPTMats[dataTimeChk][pidAtTime]["initial oceanicSeds"] == \
-            #  h5MetamPidPTMats[dataTimeEnd][pidAtEnd]["initial oceanicSeds"]) :
+         if h5MetamPidPTMats[dataTimeChk][pidAtEnd]["initial position"] == \
+              h5MetamPidPTMats[dataTimeEnd][pidAtEnd]["initial position"] :
 
-            #print("h5MetamPidPTMats[dataTimeEnd][pidAtEnd]="+str(h5MetamPidPTMats[dataTimeEnd][pidAtEnd]))
-            #print("h5MetamPidPTMats[dataTimeChk][pidAtTime]="+str(h5MetamPidPTMats[dataTimeChk][pidAtTime]))
-            #sys.exit(0)
-
-            #if dataTimeChk in metamPidTrack[pidAtEnd]:
-            
-            metamPidTrack[pidAtEnd].update({dataTimeChk: h5MetamPidPTMats[dataTimeChk][pidAtTime] })
-
-            #print("metamPidTrack[pidAtEnd]="+str(metamPidTrack[pidAtEnd]))
-            #sys.exit(0)
-            break
+              metamPidTrack[pidAtEnd].update({ dataTimeChk: h5MetamPidPTMats[dataTimeChk][pidAtEnd] })
          # ---
       # ---
    # ---
 
-   #print("nb. times for pidAtEnd: "+str(pidAtEnd)+" is "+str(len(metamPidTrack[pidAtEnd])))
-   #print("metamPidTrack[pidAtEnd]="+str(metamPidTrack[pidAtEnd]))
-
-   if len(metamPidTrack[pidAtEnd]) > 2:
-      print("\nmetamPidTrack[pidAtEnd]="+str(metamPidTrack[pidAtEnd]))
-      sys.exit(0)   
-
-   if len(metamPidTrack[pidAtEnd]) == 1:
-          del metamPidTrack[pidAtEnd]
+   if len(metamPidTrack[pidAtEnd]) >= 2:
+      #print("\nmetamPidTrack[pidAtEnd]="+str(metamPidTrack[pidAtEnd]))
+      #print("metamPidTrack[pidAtEnd][materials]="+str(metamPidTrack[pidAtEnd][materials]))
+      for time in tuple(metamPidTrack[pidAtEnd].keys()):
+          print("metamPidTrack[pidAtEnd][time][position]="+str(metamPidTrack[pidAtEnd][time]["position"]))
+          print("metamPidTrack[pidAtEnd][time][p]="+str(metamPidTrack[pidAtEnd][time]["p"]))
+          print("metamPidTrack[pidAtEnd][time][T]="+str(metamPidTrack[pidAtEnd][time]["T"]))
+          print("metamPidTrack[pidAtEnd][time][materials]="+str(metamPidTrack[pidAtEnd][time]["materials"]))
+      # ---
+      print("metamPidTrack[pidAtEnd].keys()="+str(tuple(metamPidTrack[pidAtEnd].keys()))+"\n")
+      #sys.exit(0)
+   else:
+      del metamPidTrack[pidAtEnd]
    # ---
+
 # ---
 
 print("nb. valid markers: "+str(len(metamPidTrack)))
