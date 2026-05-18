@@ -32,18 +32,10 @@ csvFilesOuputFolder= sys.argv[3]
 #metamGroupInfoDict= json.load(metamGroupInfoFileP)
 #metamGroupInfoFileP.close()
 
-#print("metamGroupInfoDict="+str(metamGroupInfoDict))
-
-#print("Debug exit 0")   
-#sys.exit(0)
-
 vtuPFiles= sorted(glob.glob(particlesDir + "/*.vtu"))
 h5PFiles= sorted(glob.glob(particlesDir + "/*.h5")) #,  reverse= True)
 
-# --- Remove the file that will be used for initialization from the other vtu files list
-#if vtuParticlesInitFile in vtuPFiles:
-#   vtuPFiles.remove(vtuParticlesInitFile)
-
+# ---
 h5MetamData= {}
 markersTrackerDict= {}
 lusiPid= 0
@@ -433,371 +425,50 @@ for pidAtEnd in h5MetamPidPTMats[dataTimeEnd]:
 # ---
 
 print("nb. valid markers: "+str(len(metamPidTrack)))
-print("Debug exit 0")
-sys.exit(0)
-          
-#--- Extract all the particles data
-#dataTmpStart= reader.GetOutput()
 
-#--- Extract the timestamp (in years) as an int for this VTU file
-#dataTimeStart= int( dataTmpStart.GetFieldData().GetArray("TIME").GetTuple(0)[0] )
-#print("dataTimeStart="+str(dataTimeStart))
-#print("Debug exit 0")
-#sys.exit(0)
+for markerPid in metamPidTrack:
 
-startH5Data= h5py.File(h5PFiles[0],"r")
+    mrkCsvFileOut= csvFilesOuputFolder + "/"+str(markerPid) +"-pTPathsMaterials.csv"
 
-pidDataStart= numpy.copy(startH5Data["id"])
-#pidDataStart= dataTmpStart.GetPointData().GetArray("id")
-#pidDataSizeStart= pidDataStart.GetSize()
-pidDataSizeStart= pidDataStart.shape[0]
+    mrkCsvFileOutP= open(mrkCsvFileOut,"w")
 
-print("pidDataStart size="+str(pidDataSizeStart)+"\n")
+    mrkCsvFileOutP\
+       .write("#time[My},Pressure(GPA),Temperature(C),Temperature(K),Depth(y[m]),Position(x[m]),granulites,amphibolites,greenschists,oceanicCrustMRB,oceanicSeds\n ")
 
-#--- particles initial position data for the timestamp
-#initPosDataStart= dataTmpStart.GetPointData().GetArray("initial position")
-initPosDataStart= numpy.copy(startH5Data["initial position"])
-
-#--- particles position data for the timestamp
-#pPosDataStart= dataTmpStart.GetPointData().GetArray("position")
-pPosDataStart= numpy.copy(startH5Data["position"])
-
-#--- Extract particle Pressure data:
-#pPDataStart= dataTmpStart.GetPointData().GetArray("p")
-pPDataStart= numpy.copy(startH5Data["p"])                        
-   
-#--- Extract particles Temperature data:
-#pTDataStart= dataTmpStart.GetPointData().GetArray("T")
-pTDataStart= numpy.copy(startH5Data["T"])
-
-#protoPDataStart= dataTmpStart.GetPointData().GetArray("lusi oceanicCrustMRB")
-protoPDataStart= numpy.copy(startH5Data["lusi oceanicCrustMRB"])
-
-#ocSedPDataStart= dataTmpStart.GetPointData().GetArray("lusi oceanicSeds")
-ocSedPDataStart= numpy.copy(startH5Data["lusi oceanicSeds"])
-
-#greenschistsPData= dataTmpStart.GetPointData().GetArray("lusi greenschists")
-greenschistsPData= numpy.copy(startH5Data["lusi greenschists"])
-
-#amphibolitesPData= dataTmpStart.GetPointData().GetArray("lusi amphibolites")
-amphibolitesPData=  numpy.copy(startH5Data["lusi amphibolites"])
-
-for metamMatName in metamGroupInfoDict:
-
-   print("metamMatName="+metamMatName)
-
-   h5MetamData[metamMatName]= numpy.copy(startH5Data[metamMatName])
-# ---
-
-h5MetamPidPTMats[dataTimeStart]= {}
-
-for pidIter in range(0,pidDataSizeStart):
-
-    #initialPos= initPosDataStart.GetTuple(pidIter)
-    #aspectPid= int(pidDataStart.GetTuple(pidIter)[0])
-    #initialPosIdStr= "{:12.7f}".format(initialPos[0])+"_"+"{:12.7f}".format(initialPos[1])+"_"+str(aspectPid)
-
-    #protolithCrt= protoPDataStart.GetTuple(pidIter)[0]
-    #aspectPid= pidData.GetTuple(pidIter)[0]
-    #ocSedCrt= ocSedPDataStart.GetTuple(pidIter)[0]
-
-    pidPosX= pPosDataStart[pidIter][0]
-    pidPosY= pPosDataStart[pidIter][1]
-
-    #pid= pidDataEnd[pidIter][0]
-    #print("nodesDataEnd[pidIter]="+str(nodesDataEnd[pidIter]))
-    #sys.exit(0)
+    validPid= False
     
-    if pidPosY < yElevMin: #600e3:
-       continue
+    for timeMy in sorted(tuple(metamPidTrack[markerPid].keys())):
 
-    #if pidPosX < 1e6 or pidPosX > 2e6:
-    if pidPosX < xMin or pidPosX > pidPosX:
-       continue  
-    
-    pid= int(pidDataStart[pidIter][0])
-
-    ocCrustMRBCrt= protoPDataStart[pidIter,0]
-    ocSedsCrt= ocSedPDataStart[pidIter,0]
-
-    for metamMatName in metamGroupInfoDict:
-
-        metamMatCrt= h5MetamData[metamMatName][pidIter,0]
-
-        #print("metamMatName="+metamMatName+", metamMatCrt="+str(metamMatCrt))
-        #sys.exit(0)
-        
-        if ((ocCrustMRBCrt > minCompoValue) or (ocSedsCrt > minCompoValue ) or \
-            (metamMatCrt > minCompoValue)) and (pid not in h5MetamPidPTMats[dataTimeStart]) :
-
-           if pid in h5MetamPidPTMats[dataTimeStart]:
-              print("Cannot have duplicate pids !!"+str(pid))
-              sys.exit(1)           
-
-           h5MetamPidPTMats[dataTimeStart][pid]= {
-              "initial position":initPosDataStart[pidIter],
-              "position": pPosDataStart[pidIter],
-              "p": pPDataStart[pidIter,0],
-              "T": pTDataStart[pidIter,0],
-              "materials": {
-                   "oceanicCrustMRB": protoPDataStart[pidIter,0],
-                   "oceanicSeds": ocSedPDataStart[pidIter,0],
-                   "granulites" : h5MetamData["lusi granulites"][pidIter,0],
-                   "greenschists": h5MetamData["lusi greenschists"][pidIter,0],
-                   "amphibolites": h5MetamData["lusi amphibolites"][pidIter,0],
-                   "blueschists": h5MetamData["lusi blueschists"][pidIter,0],
-                   "eclogites": h5MetamData["lusi eclogites"][pidIter,0]
-              }
-           }
-           
-           #print("metamMatName="+metamMatName)
-           #print("h5MetamPidPTMats[dataTimeStart][pid]="+str(h5MetamPidPTMats[dataTimeStart][pid]))
-           #sys.exit(0)    
+       #print("metamPidTrack[validMarkerPid][timeMy]="+str(metamPidTrack[validMarkerPid][timeMy]))
  
-# ---
-initialPids= tuple(h5MetamPidPTMats[dataTimeStart].keys())
+       materialDict= metamPidTrack[markerPid][timeMy]["materials"]
 
-print("nb. of initialPids="+str(len(initialPids)))
-print("Done with 1st markers file")
+       if (materialDict["granulites"] + materialDict["amphibolites"] + materialDict["greenschists"]) > minCompoValue:
 
-#addedPids= []
-persistentPids= []
+          validPid= True
+       
+          mrkCsvFileOutP\
+             .write(str((timeMy-42e6)/1e6)+","+str(metamPidTrack[markerPid][timeMy]["p"])+","+
+                    str(metamPidTrack[markerPid][timeMy]["T"]-273.0)+","+str(metamPidTrack[markerPid][timeMy]["T"])+","+
+                    str(700e3-metamPidTrack[markerPid][timeMy]["position"][1])+","+str(metamPidTrack[markerPid][timeMy]["position"][0])+","+
+                    str(materialDict["granulites"])+","+str(materialDict["amphibolites"])+","+str(materialDict["greenschists"])+","+
+                    str(materialDict["oceanicCrustMRB"])+","+str(materialDict["oceanicSeds"])+"\n")
 
-#for finalPid in sorted(finalPids):
-for initialPid in initialPids:
-   
-   #print("checking finalPid="+str(finalPid))
-   if initialPid in finalPids:
-
-      persistentPids.append(initialPid)   
-# ---
-
-print("tenttaive nb. of persistentPids="+str(len(persistentPids)))
-
-validPids= []
-
-for persistentPid in persistentPids:
-
-   #print("h5MetamPidPTMats[dataTimeStart][persistentPid]="+str(h5MetamPidPTMats[dataTimeStart][persistentPid]))
-   #print("h5MetamPidPTMats[dataTimeEnd][persistentPid]="+str(h5MetamPidPTMats[dataTimeEnd][persistentPid]))
-   
-   if h5MetamPidPTMats[dataTimeEnd][persistentPid]["initial position"][0] != h5MetamPidPTMats[dataTimeStart][persistentPid]["initial position"][0]:
-      print("\ninitial position mismatch for persistentPid -> "+str(persistentPid)+", rejected !!\n")
-      #sys.exit(0)
-
-   else:
-
-      if (h5MetamPidPTMats[dataTimeEnd][persistentPid]["materials"]["granulites"] > 0.1):
-          print("h5MetamPidPTMats[dataTimeStart][persistentPid][materials][granulites]="+str(h5MetamPidPTMats[dataTimeStart][persistentPid]["materials"]["granulites"]))
-          print("h5MetamPidPTMats[dataTimeEnd][persistentPid][materials][granulites]="+str(h5MetamPidPTMats[dataTimeEnd][persistentPid]["materials"]["granulites"]))         
-      validPids.append(persistentPid)
-      
-# ---
-
-print("nb. of validPids="+str(len(validPids)))
-print("Debug exit 0")
-sys.exit(0)
-
-del reader
-
-# --- Iterate on all the other vtu files not yet processed. 
-for vtuPFile in vtuPFiles[1:-1]: #vtuPFiles[1:2]: #vtuPFiles[1:-1]:
-
-   print("Reading VTU file -> "+vtuPFile) 
-   
-   reader= vtk.vtkXMLUnstructuredGridReader()
-   
-   reader.SetFileName(vtuPFile)
-   reader.Update()
-
-   #--- Extract all the particles data
-   dataTmp= reader.GetOutput()
-
-   #--- Extract the timestamp (in years) as an int for this VTU file
-   dataTime= int( dataTmp.GetFieldData().GetArray("TIME").GetTuple(0)[0] )
-   print("dataTime="+str(dataTime))
-
-   pidData= dataTmp.GetPointData().GetArray("id")
-   pidDataSize= pidData.GetSize()
-   print("pidData size="+str(pidDataSize)+"\n")
-
-   #--- particles initial position data for the timestamp
-   initPosData= dataTmp.GetPointData().GetArray("initial position")
-
-   #--- particles position data for the timestamp
-   pPosData= dataTmp.GetPointData().GetArray("position")
-
-   #--- Extract particle Pressure data:
-   pPData= dataTmp.GetPointData().GetArray("p")
-   
-   #--- Extract particles Temperature data:
-   pTData= dataTmp.GetPointData().GetArray("T")
-
-   protoPData= dataTmp.GetPointData().GetArray("lusi oceanicCrustMRB")
-
-   ocSedPData= dataTmp.GetPointData().GetArray("lusi oceanicSeds")
-
-   greenschistsPData= dataTmp.GetPointData().GetArray("lusi greenschists")
-   amphibolitesPData= dataTmp.GetPointData().GetArray("lusi amphibolites")   
-
-   for metamMatName in metamGroupInfoDict:
-   #print("metamMatName="+metamMatName)
-      vtuMetamData[metamMatName]= dataTmp.GetPointData().GetArray(metamMatName)
-   # --
-
-   for pidIter in range(0,pidDataSize):
-
-     initialPos= initPosData.GetTuple(pidIter)
-     aspectPid= int(pidData.GetTuple(pidIter)[0])
-
-     initialPosIdStr= "{:12.7f}".format(initialPos[0])+"_"+"{:12.7f}".format(initialPos[1])+"_"+str(aspectPid)
-
-     protolithCrt= protoPData.GetTuple(pidIter)[0]
-     ocSedCrt= ocSedPData.GetTuple(pidIter)[0]
-
-     if initialPosIdStr in initPosTrackingList:  #and protolithCrt > minCompoValue :
-
-       #pidPos= pPosData.GetTuple(pidIter)
-       #Pressure= pPDataStart.GetTuple(pidIter)[0]
-       #Temp= pTDataStart.GetTuple(pidIter)[0]
-
-       for metamMatName in vtuMetamPidPT:
-
-          metamMatCrt= vtuMetamData[metamMatName].GetTuple(pidIter)[0]
-          
-          for groupId in vtuMetamPidPT[metamMatName]:
-
-              if initialPosIdStr in vtuMetamPidPT[metamMatName][groupId] and \
-                 dataTimeEnd in vtuMetamPidPT[metamMatName][groupId][initialPosIdStr]:
-
-                 if dataTime in vtuMetamPidPT[metamMatName][groupId][initialPosIdStr]:
-                    
-                    print("\nFound a duplicate for "+groupId+" at pidIter="+str(pidIter)+
-                          " at time -> "+str(dataTime)+" with initial pos + id item -> \n"+initialPosIdStr+"->"+
-                           str(vtuMetamPidPT[metamMatName][groupId][initialPosIdStr][dataTime]))
-                    
-                    del vtuMetamPidPT[metamMatName][groupId][initialPosIdStr]
-                    initPosTrackingList.remove(initialPosIdStr)
-
-                 else:
-
-                   #if (metamMatCrt + protolithCrt + ocSedCrt) > minCompoValue:
-                      
-                     vtuMetamPidPT[metamMatName][groupId][initialPosIdStr][dataTime]= {
-                         #dataTime: [{
-                           "Pressure(Pa)": pPData.GetTuple(pidIter)[0],
-                           "Temperature(K)": pTData.GetTuple(pidIter)[0],
-                           "metamCompo(%)": metamMatCrt,
-                           "greenschists(%)": greenschistsPData.GetTuple(pidIter)[0],
-                           "amphibolites(%)": amphibolitesPData.GetTuple(pidIter)[0],    
-                           "protoCompo(%)": protolithCrt, #protoPData.GetTuple(pidIter)[0],
-                           "ocSedsCompo(%)": ocSedCrt , #ocSedPData.GetTuple(pidIter)[0],
-                           "PidPos": pPosData.GetTuple(pidIter)
-                           #"aspectPid": int(pidData.GetTuple(pidIter)[0]),
-                           #"duplicateInitialPos": None
-                         #}]
-                     }
-
-                     print("\n intermediate time match for group:"+groupId+",item="+str(vtuMetamPidPT[metamMatName][groupId][initialPosIdStr]))
-                 # ---
-       # ---            
-     # ---
-   # ---
-
-   print("Done with reading VTU file -> "+vtuPFile)
-
-   print("at intermediate time : len(initPosTrackingList)="+str(len(initPosTrackingList)))
-
-   for metamMatName in vtuMetamPidPT:
-      for groupId in vtuMetamPidPT[metamMatName]:
-         print("Got "+str(len(vtuMetamPidPT[metamMatName][groupId]))+
-             " markers extracted at intermediate time -> "+str(dataTime)+" for group "+groupId+" of "+metamMatName)
-   # ---
-# ---   
-   
-   del reader
-
-   #break
-   #print("Debug exit 0")
-   #sys.exit(0)
-   
-# ---
-
-Pa2GPa= 1.0/1e9
-
-for metamMatName in vtuMetamPidPT:
-
-   print("metamMatName:"+metamMatName)
-   
-   for groupId in sorted(vtuMetamPidPT[metamMatName], reverse=True):
-
-      print("Processing group:"+groupId)
-      
-      for initialPosIdStr in vtuMetamPidPT[metamMatName][groupId]:
-
-         #sortedTimes= tuple(sorted(vtuMetamPidPT[metamMatName][groupId][initialPosIdStr]))
-
-         #csvFileOut= csvFilesOuputFolder + os.sep + groupId + "-" +initialPosIdStr.split(":")[0]+".csv"
-         csvFileOut= csvFilesOuputFolder + os.sep + groupId + "-" + initialPosIdStr + ".csv"
-
-         print("csvFileOut="+csvFileOut)
-
-         if pathlib.Path(csvFileOut).exists():
-            print("Warning: csvFileOut: "+csvFileOut+" already created !!")
-            csvFileOut= csvFileOut+"_dup"
-         # ---
-
-         sortedTimes= tuple(sorted(vtuMetamPidPT[metamMatName][groupId][initialPosIdStr]))
-
-         print("sortedTimes="+str(sortedTimes))
-         
-         #print("Debug exit 0")
-         #sys.exit(0)
-         
-         csvFileP= open(csvFileOut,"w")
-         
-         #csvFileP.write("#time(years),"+metamMatName.split(" ")[1]+"Compo(%),Pressure(GPa),Temperature(C)\n") #,Depth(y[m]),Position(x[m])\n")
-         csvFileP.write("#time(years),Temperature(C),Pressure(GPa),"+
-                        metamMatName.split(" ")[1]+"Compo(%),greenschists(%),amphibolites(%),ocCrustCompo(%),ocSedsCompo(%)\n") #,Depth(y[m]),Position(x[m])\n")
-
-         #validTimes= 0
-         
-         for time in sortedTimes:
-
-            print("Processing time:"+str(time))
-
-            metamCompo= vtuMetamPidPT[metamMatName][groupId][initialPosIdStr][time]["metamCompo(%)"]
-            ocCrustCompo= vtuMetamPidPT[metamMatName][groupId][initialPosIdStr][time]["protoCompo(%)"]
-            ocSedsCompo=  vtuMetamPidPT[metamMatName][groupId][initialPosIdStr][time]["ocSedsCompo(%)"]
-
-            greenschistsCompo= vtuMetamPidPT[metamMatName][groupId][initialPosIdStr][time]["greenschists(%)"]
-            amphibolitesCompo=  vtuMetamPidPT[metamMatName][groupId][initialPosIdStr][time]["amphibolites(%)"]
-            
-            pressurePa= vtuMetamPidPT[metamMatName][groupId][initialPosIdStr][time]["Pressure(Pa)"]
-            tempK= vtuMetamPidPT[metamMatName][groupId][initialPosIdStr][time]["Temperature(K)"]
-
-            if (metamCompo + greenschistsCompo + amphibolitesCompo + ocCrustCompo + ocSedsCompo) > minCompoValue:
-              #csvFileP.write(str(time)+","+str(metamCompo)+","+str(pressurePa*Pa2GPa)+","+str(tempK-273.0)+"\n")
-              csvFileP.write(str(time)+","+str(tempK-273.0)+","+str(pressurePa*Pa2GPa)+","+str(metamCompo)+","
-                             +str(greenschistsCompo)+","+str(amphibolitesCompo)+","+str(ocCrustCompo)+","+str(ocSedsCompo)+"\n")
-
-              #validTimes += 1
-              
-         # ---
-         csvFileP.close()
-
-         print("Done with csv file:"+csvFileOut+"\n")
-
-         #print("Debug exit 0")
-         #sys.exit(0)
       # ---
-      print("Done with processing group:"+groupId)
-   # ---
-   print("Done with processing metamMatName:"+metamMatName)
+
+    mrkCsvFileOutP.close
+
+    if not validPid:
+       print("No relevant metam. materials for marker -> "+str(markerPid)+" removing its file -> "+mrkCsvFileOut)
+       os.remove(mrkCsvFileOut)
+    # ---
+    
+    #sys.exit(0)
 # ---
+
 print("Debug exit 0")
 sys.exit(0)
-
+          
 csvFile= open(csvFileOut,"w")
 csvStatsFile= open("stats-"+csvFileOut,"w")
 
