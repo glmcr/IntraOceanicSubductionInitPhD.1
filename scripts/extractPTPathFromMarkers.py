@@ -426,18 +426,26 @@ for pidAtEnd in h5MetamPidPTMats[dataTimeEnd]:
 
 print("nb. valid markers: "+str(len(metamPidTrack)))
 
+depthThreshold=20000.0
+
 for markerPid in metamPidTrack:
 
-    mrkCsvFileOut= csvFilesOuputFolder + "/"+str(markerPid) +"-pTPathsMaterials.csv"
+    markerPidTimeKeys= sorted(tuple(metamPidTrack[markerPid].keys()))
+
+    nbTimes= len(markerPidTimeKeys)
+
+    mrkCsvFileOut= csvFilesOuputFolder + "/" + str(nbTimes)+"_"+ str(markerPid) +"_pTPathsMaterials.csv"
 
     mrkCsvFileOutP= open(mrkCsvFileOut,"w")
 
     mrkCsvFileOutP\
-       .write("#time[My},Pressure(GPA),Temperature(C),Temperature(K),Depth(y[m]),Position(x[m]),granulites,amphibolites,greenschists,oceanicCrustMRB,oceanicSeds\n ")
+      .write("#time[My},p(GPA),T(C),T(K),Depth(y[m]),Position(x[m]),granulites,amphibolites,greenschists,oceanicCrustMRB,oceanicSeds,initAsth,initOcCrustMrb,initOcSeds,depthThresholdReached\n ")
 
     validPid= False
+    countTimes= 0
     
-    for timeMy in sorted(tuple(metamPidTrack[markerPid].keys())):
+    #for timeMy in sorted(tuple(metamPidTrack[markerPid].keys())):
+    for timeMy in markerPidTimeKeys:
 
        #print("metamPidTrack[validMarkerPid][timeMy]="+str(metamPidTrack[validMarkerPid][timeMy]))
  
@@ -446,90 +454,41 @@ for markerPid in metamPidTrack:
        if (materialDict["granulites"] + materialDict["amphibolites"] + materialDict["greenschists"]) > minCompoValue:
 
           validPid= True
+          countTimes += 1
+
+          depth= 700e3-metamPidTrack[markerPid][timeMy]["position"][1]
+
+          depthThresholdReached= False
+          
+          if depth >= depthThreshold:
+             depthThresholdReached= True
        
           mrkCsvFileOutP\
              .write(str((timeMy-42e6)/1e6)+","+str(metamPidTrack[markerPid][timeMy]["p"])+","+
                     str(metamPidTrack[markerPid][timeMy]["T"]-273.0)+","+str(metamPidTrack[markerPid][timeMy]["T"])+","+
                     str(700e3-metamPidTrack[markerPid][timeMy]["position"][1])+","+str(metamPidTrack[markerPid][timeMy]["position"][0])+","+
                     str(materialDict["granulites"])+","+str(materialDict["amphibolites"])+","+str(materialDict["greenschists"])+","+
-                    str(materialDict["oceanicCrustMRB"])+","+str(materialDict["oceanicSeds"])+"\n")
+                    str(materialDict["oceanicCrustMRB"])+","+str(materialDict["oceanicSeds"])+","+str(metamPidTrack[markerPid][timeMy]["initial asthenosphere"])+","+
+                    str(metamPidTrack[markerPid][timeMy]["initial oceanicCrustMRB"])+","+str(metamPidTrack[markerPid][timeMy]["initial oceanicSeds"])+","+
+                    str(depthThresholdReached)+"\n")
 
       # ---
 
     mrkCsvFileOutP.close
 
-    if not validPid:
+    if not validPid :
        print("No relevant metam. materials for marker -> "+str(markerPid)+" removing its file -> "+mrkCsvFileOut)
        os.remove(mrkCsvFileOut)
-    # ---
+
+    elif countTimes != nbTimes:
+       print("countTimes != nbTimes for marker -> "+str(markerPid)+" removing its file -> "+mrkCsvFileOut)
+       os.remove(mrkCsvFileOut) 
     
     #sys.exit(0)
 # ---
 
-print("Debug exit 0")
-sys.exit(0)
-          
-csvFile= open(csvFileOut,"w")
-csvStatsFile= open("stats-"+csvFileOut,"w")
-
-csvFile.write("time(years),particle id,concentration,Pressure(GPA),Temperature(C),Temperature(K),Depth(y[m]),Position(x[m])\n")
-csvStatsFile.write("time(years),TemperatureAvg(C),PressureAvg(GPA),DepthsAvg(y[m]),DepthsMin(y[m]),DepthsMax(y[m])\n")
-
-print("vtuPData keys="+str(tuple(vtuPData.keys())))
-
-for dataTime in tuple(vtuPData.keys()):
-
-   print("dataTime="+str(dataTime))
-   
-   vtuPDataT= vtuPData[dataTime]
-
-   #print("vtuPDataT keys="+str(tuple(vtuPDataT.keys())))
-
-   TCAvgList= []
-   PGAvgList= []
-   DepthsAvgList= []
-   
-   for pid in tuple(vtuPDataT.keys()):
-
-      vtuPDataTPid= vtuPDataT[pid]
-      
-      csvFile.write(str(dataTime)+","+str(pid)+","+str(vtuPDataTPid["concentration"])+","+
-                    str(vtuPDataTPid["Pressure(GPa)"])+","+str(vtuPDataTPid["Temperature(C)"])+","+
-                    str(vtuPDataTPid["Temperature(K)"])+","+str(vtuPDataTPid["Depth(y[m])"])+","+str(vtuPDataTPid["Position(x[m])"])+"\n")
-
-      TCAvgList.append(vtuPDataTPid["Temperature(C)"])
-      PGAvgList.append(vtuPDataTPid["Pressure(GPa)"])
-      DepthsAvgList.append(vtuPDataTPid["Depth(y[m])"])
-      
-   # ---
-
-   #print("TCAvgList[0:2]="+str(TCAvgList[0:2]))
-
-   if len( TCAvgList) != 0 :
-   
-      #TCAvgNp= np.array(TCAvgList, dtype=np.float64)
-      #PGAvgNp= np.array(PGAvgList, dtype=np.float64)
-      #print("shape TCAvgNp="+str(TCAvgNp))
-   
-      TCAvg= np.mean(np.array(TCAvgList, dtype=np.float64))
-      PGAvg= np.mean(np.array(PGAvgList, dtype=np.float64))
-
-      DepthsNp= np.array(DepthsAvgList, dtype=np.float64)
-      
-      DepthsAvg= np.mean(DepthsNp)
-
-      DepthsMin= np.min(DepthsNp)
-      DepthsMax= np.max(DepthsNp)
-      
-     #print("TCAvg="+str(TCAvg))
-     #print("PGAvg="+str(PGAvg))
-
-      csvStatsFile.write(str(dataTime)+","+str(TCAvg)+","+str(PGAvg)+","+str(DepthsAvg)+","+str(DepthsMin)+","+str(DepthsMax)+"\n")
-      #sys.exit(0)
-   #--- end if   
-#--- end for dataTime in tuple(vtuPData.keys()): loop
-
+#print("Debug exit 0")
 #sys.exit(0)
-csvFile.close()
-csvStatsFile.close()
+          
+
  
