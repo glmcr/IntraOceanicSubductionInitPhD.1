@@ -451,7 +451,8 @@ for markerPid in metamPidTrack:
  
        materialDict= metamPidTrack[markerPid][timeMy]["materials"]
 
-       if (materialDict["granulites"] + materialDict["amphibolites"] + materialDict["greenschists"]) > minCompoValue:
+       if (materialDict["granulites"] + materialDict["amphibolites"] +
+           materialDict["greenschists"] + materialDict["oceanicCrustMRB"] + materialDict["oceanicSeds"]) > minCompoValue:
 
           validPid= True
           countTimes += 1
