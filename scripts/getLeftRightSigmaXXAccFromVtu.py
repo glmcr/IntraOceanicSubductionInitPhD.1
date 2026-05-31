@@ -13,7 +13,8 @@ from vtk.util.numpy_support import vtk_to_numpy
 leftXDist= 14018.0
 rightXDist= 2.98598e6
 #yFromBottom=594000.0 # LAB
-yFromBottom= 700000.0 - 150000 # strain rate
+convDepthLimit= 150000.0 # 150Km
+yFromBottom= 700000.0 - convDepthLimit # strain rate
 
 #vtuFileIn=sys.argv[1]
 vtuFilesIn= sorted(glob.glob(sys.argv[1]+"/*.vtu"))
@@ -114,7 +115,8 @@ for vtuFileIn in vtuFilesIn:
            if (math.fabs(point[0] - leftXDist) < 1.0) :
 
               #leftSigXXAcc += math.fabs(stressTensors.GetTuple(pointIdx)[0])
-              leftSigXXAcc += (stressTensors.GetTuple(pointIdx)[0] + pressure)
+              #leftSigXXAcc += (stressTensors.GetTuple(pointIdx)[0] + pressure)
+              leftSigXXAcc += (pressure - stressTensors.GetTuple(pointIdx)[4]) # --- tot. pressure - sigYY
 
               nbDepthsLeft += 1
               
@@ -125,7 +127,9 @@ for vtuFileIn in vtuFilesIn:
            if (math.fabs(point[0] - rightXDist) < 10.0): # and  (point[1] >= yFromBottom):
 
               #rightSigXXAcc += math.fabs(stressTensors.GetTuple(pointIdx)[0])
-              rightSigXXAcc += (stressTensors.GetTuple(pointIdx)[0] + pressure)
+              #rightSigXXAcc += (stressTensors.GetTuple(pointIdx)[0] + pressure)
+              rightSigXXAcc += (pressure - stressTensors.GetTuple(pointIdx)[4]) # --- tot. pressure - sigYY
+               
               nbDepthsRight += 1
               
            #print("rightSigXXAcc="+str(rightSigXXAcc))
@@ -139,8 +143,9 @@ for vtuFileIn in vtuFilesIn:
     print("nbDepthsLeft="+str(nbDepthsLeft))
     print("nbDepthsRight="+str(nbDepthsRight))
 
-    outCsv.write(str(dataMy)+","+str(leftSigXXAcc/1e9)+","+str(rightSigXXAcc/1e9)+"\n")
+    #outCsv.write(str(dataMy)+","+str(leftSigXXAcc/1e9)+","+str(rightSigXXAcc/1e9)+"\n")
     #outCsv.write(str(dataMy)+","+str(leftSigXXAcc/nbDepthsLeft)+","+str(rightSigXXAcc/nbDepthsRight)+"\n")
+    outCsv.write(str(dataMy)+","+str((leftSigXXAcc/1e9)*(convDepthLimit/nbDepthsLeft))+","+str((rightSigXXAcc/1e9)*(convDepthLimit/nbDepthsRight))+"\n")
     
     print("Done with vtuFileIn -> "+vtuFileIn)
 
