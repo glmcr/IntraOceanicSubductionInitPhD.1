@@ -57,6 +57,8 @@ for vtuFileIn in vtuFilesIn:
     pressureField= dataIn.GetPointData().GetArray("p")
     stressTensors= dataIn.GetPointData().GetArray("stress")
 
+    mhcs= dataIn.GetPointData().GetArray("maximum_horizontal_compressive_stress")
+    
     #print("dataIn.__getattribute__(TIME)="+str(dataIn.__getattribute__("TIME")))
 
     #print("dir(stressTensors)="+str(dir(stressTensors)))
@@ -114,9 +116,11 @@ for vtuFileIn in vtuFilesIn:
     
            if (math.fabs(point[0] - leftXDist) < 1.0) :
 
-              #leftSigXXAcc += math.fabs(stressTensors.GetTuple(pointIdx)[0])
+              leftSigXXAcc += stressTensors.GetTuple(pointIdx)[0]
+              #leftSigXXAcc +=  (pressure - stressTensors.GetTuple(pointIdx)[0])
               #leftSigXXAcc += (stressTensors.GetTuple(pointIdx)[0] + pressure)
-              leftSigXXAcc += (pressure - stressTensors.GetTuple(pointIdx)[4]) # --- tot. pressure - sigYY
+              #leftSigXXAcc += (pressure - stressTensors.GetTuple(pointIdx)[4]) # --- tot. pressure - sigYY
+              #leftSigXXAcc += mhcs.GetTuple(pointIdx)[0]
 
               nbDepthsLeft += 1
               
@@ -126,9 +130,11 @@ for vtuFileIn in vtuFilesIn:
 
            if (math.fabs(point[0] - rightXDist) < 10.0): # and  (point[1] >= yFromBottom):
 
-              #rightSigXXAcc += math.fabs(stressTensors.GetTuple(pointIdx)[0])
+              rightSigXXAcc += stressTensors.GetTuple(pointIdx)[0]
+              #rightSigXXAcc += (pressure - stressTensors.GetTuple(pointIdx)[0])
               #rightSigXXAcc += (stressTensors.GetTuple(pointIdx)[0] + pressure)
-              rightSigXXAcc += (pressure - stressTensors.GetTuple(pointIdx)[4]) # --- tot. pressure - sigYY
+              #rightSigXXAcc += (pressure - stressTensors.GetTuple(pointIdx)[4]) # --- tot. pressure - sigYY
+              #rightSigXXAcc += mhcs.GetTuple(pointIdx)[0]
                
               nbDepthsRight += 1
               
