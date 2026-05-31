@@ -53,7 +53,8 @@ for vtuFileIn in vtuFilesIn:
     #print(dir(dataIn.GetPointData()))
     #print("dataIn.GetAttributes()="+str(dataIn.GetAttributes(0)))
 
-    stressTensors=dataIn.GetPointData().GetArray("stress")
+    pressureField= dataIn.GetPointData().GetArray("p")
+    stressTensors= dataIn.GetPointData().GetArray("stress")
 
     #print("dataIn.__getattribute__(TIME)="+str(dataIn.__getattribute__("TIME")))
 
@@ -89,6 +90,8 @@ for vtuFileIn in vtuFilesIn:
     leftSigXXAcc=0.0
     rightSigXXAcc=0.0
 
+    nbDepthsRight= nbDepthsLeft= 0
+    
     #pointIdx=0
 
     #for point in points:
@@ -96,31 +99,48 @@ for vtuFileIn in vtuFilesIn:
 
         point= points.GetPoint(pointIdx)
 
-    #print(dir(point))
-    
-        if (math.fabs(point[0] - leftXDist) < 1.0) and  (point[1] >= yFromBottom):
-
-           #leftSigXXAcc += math.fabs(stressTensors.GetTuple(pointIdx)[0])
-           leftSigXXAcc += stressTensors.GetTuple(pointIdx)[0]
-
-           #print("leftSigXXAcc="+str(leftSigXXAcc))
-           #print("pointIdx="+str(pointIdx)+", point="+str(point))
+        pressure= pressureField.GetTuple(pointIdx)[0]
+        #print("point="+str(point)+", pressure="+str(pressure))
         #sys.exit(0)
 
-        if (math.fabs(point[0] - rightXDist) < 10.0) and  (point[1] >= yFromBottom):
+        depthOk= (point[1] >= yFromBottom)
 
-           #rightSigXXAcc += math.fabs(stressTensors.GetTuple(pointIdx)[0])
-           rightSigXXAcc += stressTensors.GetTuple(pointIdx)[0]
+        if depthOk:
+
+           #nbDepths += 1
+           #print("point="+str(point)+", pressure="+str(pressure))
+           #sys.exit(0)            
     
+           if (math.fabs(point[0] - leftXDist) < 1.0) :
+
+              #leftSigXXAcc += math.fabs(stressTensors.GetTuple(pointIdx)[0])
+              leftSigXXAcc += (stressTensors.GetTuple(pointIdx)[0] + pressure)
+
+              nbDepthsLeft += 1
+              
+           #print("leftSigXXAcc="+str(leftSigXXAcc))
+           #print("pointIdx="+str(pointIdx)+", point="+str(point))
+           #sys.exit(0)
+
+           if (math.fabs(point[0] - rightXDist) < 10.0): # and  (point[1] >= yFromBottom):
+
+              #rightSigXXAcc += math.fabs(stressTensors.GetTuple(pointIdx)[0])
+              rightSigXXAcc += (stressTensors.GetTuple(pointIdx)[0] + pressure)
+              nbDepthsRight += 1
+              
            #print("rightSigXXAcc="+str(rightSigXXAcc))
            #print("pointIdx="+str(pointIdx)+", point="+str(point))
            #sys.exit(0)
+           # ---
     # ---    
     #pointIdx += 1
     print("final leftSigXXAcc="+str(leftSigXXAcc))
     print("final rightSigXXAcc="+str(rightSigXXAcc))
+    print("nbDepthsLeft="+str(nbDepthsLeft))
+    print("nbDepthsRight="+str(nbDepthsRight))
 
     outCsv.write(str(dataMy)+","+str(leftSigXXAcc/1e9)+","+str(rightSigXXAcc/1e9)+"\n")
+    #outCsv.write(str(dataMy)+","+str(leftSigXXAcc/nbDepthsLeft)+","+str(rightSigXXAcc/nbDepthsRight)+"\n")
     
     print("Done with vtuFileIn -> "+vtuFileIn)
 
