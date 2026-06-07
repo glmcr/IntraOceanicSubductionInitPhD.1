@@ -158,8 +158,9 @@ for pidIter in range(0,pidDataSizeEnd):
     if pidPosX < xMin or pidPosX > pidPosX:
        continue
 
+    pid= pidDataEnd[pidIter][0]
     #pidFloat= pidDataEnd[pidIter][0]
-    pid= int(pidDataEnd[pidIter][0])
+    #pid= int(pidDataEnd[pidIter][0])
     #print("pidIter="+str(pidIter))
     #print("pPosDataEnd[pidIter]="+str(pPosDataEnd[pidIter]))
     #print("pidFloat="+str(pidFloat))
@@ -327,8 +328,9 @@ for vtuFileInPast in sorted(vtuPFiles[0:-1],reverse=True):
 
       if pidPosX < xMin or pidPosX > pidPosX:
          continue  
-    
-      pid= int(pidData[pidIter][0])
+
+      pid= pidData[pidIter][0]
+      #pid= int(pidData[pidIter][0])
 
       ocCrustMRBCrt= protoPData[pidIter,0]
       ocSedsCrt= ocSedPData[pidIter,0]
@@ -384,6 +386,9 @@ for vtuFileInPast in sorted(vtuPFiles[0:-1],reverse=True):
 
       del h5MetamData[metamMatName]
    # ---
+
+   del initPosData
+   del h5Data
    
 # ---
 
@@ -410,8 +415,8 @@ for pidAtEnd in h5MetamPidPTMats[dataTimeEnd]:
            print("h5MetamPidPTMats[dataTimeEnd][pidAtEnd][\"initial position\"]="+str(h5MetamPidPTMats[dataTimeEnd][pidAtEnd]["initial position"]))
            print("dataTimeChk="+str(dataTimeChk))
            print("metamPidTrack[pidAtEnd].keys()="+str(tuple(metamPidTrack[pidAtEnd].keys()))+"\n")
-           #print("metamPidTrack[pidAtEnd][dataTimeChk][materials]="+str(metamPidTrack[pidAtEnd][dataTimeChk]["materials"]))
-           print("metamPidTrack[pidAtEnd][dataTimeEnd][materials]="+str(metamPidTrack[pidAtEnd][dataTimeEnd]["materials"]))
+           print("h5MetamPidPTMats[dataTimeChk][pidAtEnd][materials]="+str(h5MetamPidPTMats[dataTimeChk][pidAtEnd]["materials"]))
+           print("h5MetamPidPTMats[dataTimeEnd][pidAtEnd][materials]="+str(h5MetamPidPTMats[dataTimeEnd][pidAtEnd]["materials"]))
            #sys.exit(1)
       # ---
       
