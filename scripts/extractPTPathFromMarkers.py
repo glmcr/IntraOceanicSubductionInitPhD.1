@@ -404,7 +404,17 @@ for pidAtEnd in h5MetamPidPTMats[dataTimeEnd]:
 
               metamPidTrack[pidAtEnd].update({ dataTimeChk: h5MetamPidPTMats[dataTimeChk][pidAtEnd] })
          # ---
+         else:
+           print("Cannot have different initial positions for the same pid:"+str(pidAtEnd))
+           print("h5MetamPidPTMats[dataTimeChk][pidAtEnd][\"initial position\"]="+str(h5MetamPidPTMats[dataTimeChk][pidAtEnd]["initial position"]))
+           print("h5MetamPidPTMats[dataTimeEnd][pidAtEnd][\"initial position\"]="+str(h5MetamPidPTMats[dataTimeEnd][pidAtEnd]["initial position"]))
+           print("dataTimeChk="+str(dataTimeChk))
+           print("metamPidTrack[pidAtEnd].keys()="+str(tuple(metamPidTrack[pidAtEnd].keys()))+"\n")
+           #print("metamPidTrack[pidAtEnd][dataTimeChk][materials]="+str(metamPidTrack[pidAtEnd][dataTimeChk]["materials"]))
+           print("metamPidTrack[pidAtEnd][dataTimeEnd][materials]="+str(metamPidTrack[pidAtEnd][dataTimeEnd]["materials"]))
+           #sys.exit(1)
       # ---
+      
    # ---
 
    if len(metamPidTrack[pidAtEnd]) >= 2:
@@ -426,7 +436,7 @@ for pidAtEnd in h5MetamPidPTMats[dataTimeEnd]:
 
 print("nb. valid markers: "+str(len(metamPidTrack)))
 
-depthThreshold=20000.0
+depthThreshold= 10000.0 #20000.0
 
 for markerPid in metamPidTrack:
 
@@ -439,10 +449,19 @@ for markerPid in metamPidTrack:
     mrkCsvFileOutP= open(mrkCsvFileOut,"w")
 
     mrkCsvFileOutP\
-      .write("#time[My},p(GPA),T(C),T(K),Depth(y[m]),Position(x[m]),granulites,amphibolites,greenschists,oceanicCrustMRB,oceanicSeds,initAsth,initOcCrustMrb,initOcSeds,depthThresholdReached\n ")
+      .write("#time[My},p(GPA),T(C),T(K),Depth(y[m]),Position(x[m]),granulites,amphibolites,greenschists, \
+              oceanicCrustMRB,oceanicSeds,initAsth,initOcCrustMrb,initOcSeds,metamCompVarBool,depthThresholdReached\n ")
 
     validPid= False
     countTimes= 0
+
+    timeMyBeg= markerPidTimeKeys[0]
+    #print("t0="+str(t0))
+    #sys.exit(0)
+    
+    prevTimeGranu= metamPidTrack[markerPid][timeMyBeg]["materials"]["granulites"]
+    prevTimeAmphi= metamPidTrack[markerPid][timeMyBeg]["materials"]["amphibolites"]
+    prevTimeGrnSch= metamPidTrack[markerPid][timeMyBeg]["materials"]["greenschists"]
     
     #for timeMy in sorted(tuple(metamPidTrack[markerPid].keys())):
     for timeMy in markerPidTimeKeys:
@@ -459,11 +478,18 @@ for markerPid in metamPidTrack:
 
           depth= 700e3-metamPidTrack[markerPid][timeMy]["position"][1]
 
-          depthThresholdReached= False
+          depthThresholdReached= "TooShallow" #False
           
           if depth >= depthThreshold:
-             depthThresholdReached= True
-       
+             depthThresholdReached= "DepthThrReached" #True
+
+          metamCompoVar= False
+             
+          if materialDict["granulites"] > prevTimeGranu or \
+             materialDict["amphibolites"] > prevTimeAmphi or \
+             materialDict["greenschists"] > prevTimeGrnSch :
+               metamCompoVar= True
+                 
           mrkCsvFileOutP\
              .write(str((timeMy-42e6)/1e6)+","+str(metamPidTrack[markerPid][timeMy]["p"])+","+
                     str(metamPidTrack[markerPid][timeMy]["T"]-273.0)+","+str(metamPidTrack[markerPid][timeMy]["T"])+","+
@@ -471,7 +497,7 @@ for markerPid in metamPidTrack:
                     str(materialDict["granulites"])+","+str(materialDict["amphibolites"])+","+str(materialDict["greenschists"])+","+
                     str(materialDict["oceanicCrustMRB"])+","+str(materialDict["oceanicSeds"])+","+str(metamPidTrack[markerPid][timeMy]["initial asthenosphere"])+","+
                     str(metamPidTrack[markerPid][timeMy]["initial oceanicCrustMRB"])+","+str(metamPidTrack[markerPid][timeMy]["initial oceanicSeds"])+","+
-                    str(depthThresholdReached)+"\n")
+                    str(metamCompoVar)+","+depthThresholdReached+"\n")
 
       # ---
 
