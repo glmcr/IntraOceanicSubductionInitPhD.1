@@ -25,7 +25,7 @@ begConvMy= float(sys.argv[2]) #int(42e6)
 
 outCsv= open(sys.argv[3],"w")
 
-outCsv.write("#year[My],left acc. sigXX[GN/m],right acc. sigXX[GN/m]\n")
+outCsv.write("#year[My],left acc. sigXX[GN/m],right acc. sigXX[GN/m], leftMHCS[GN/m], rightMHCS[GN/m]\n")
 
 for vtuFileIn in vtuFilesIn:
 
@@ -92,6 +92,8 @@ for vtuFileIn in vtuFilesIn:
 
     leftSigXXAcc=0.0
     rightSigXXAcc=0.0
+    leftMHCSAcc=0.0
+    rightMHCSAcc=0.0
 
     nbDepthsRight= nbDepthsLeft= 0
     
@@ -120,13 +122,15 @@ for vtuFileIn in vtuFilesIn:
               #leftSigXXAcc +=  (pressure - stressTensors.GetTuple(pointIdx)[0])
               #leftSigXXAcc += (stressTensors.GetTuple(pointIdx)[0] + pressure)
               #leftSigXXAcc += (pressure - stressTensors.GetTuple(pointIdx)[4]) # --- tot. pressure - sigYY
-              #leftSigXXAcc += mhcs.GetTuple(pointIdx)[0]
+              leftMHCSAcc += mhcs.GetTuple(pointIdx)[0]
 
               nbDepthsLeft += 1
-              
-           #print("leftSigXXAcc="+str(leftSigXXAcc))
-           #print("pointIdx="+str(pointIdx)+", point="+str(point))
-           #sys.exit(0)
+
+              #print("stressTensors.GetTuple(pointIdx)[0]="+str(stressTensors.GetTuple(pointIdx)[0]))
+              #print("mhcs.GetTuple(pointIdx)[0]="+str(mhcs.GetTuple(pointIdx[0])))
+              #print("leftSigXXAcc="+str(leftSigXXAcc))
+              #print("pointIdx="+str(pointIdx)+", point="+str(point))
+              #sys.exit(0)
 
            if (math.fabs(point[0] - rightXDist) < 10.0): # and  (point[1] >= yFromBottom):
 
@@ -134,24 +138,29 @@ for vtuFileIn in vtuFilesIn:
               #rightSigXXAcc += (pressure - stressTensors.GetTuple(pointIdx)[0])
               #rightSigXXAcc += (stressTensors.GetTuple(pointIdx)[0] + pressure)
               #rightSigXXAcc += (pressure - stressTensors.GetTuple(pointIdx)[4]) # --- tot. pressure - sigYY
-              #rightSigXXAcc += mhcs.GetTuple(pointIdx)[0]
+              rightMHCSAcc += mhcs.GetTuple(pointIdx)[0]
                
               nbDepthsRight += 1
-              
-           #print("rightSigXXAcc="+str(rightSigXXAcc))
-           #print("pointIdx="+str(pointIdx)+", point="+str(point))
-           #sys.exit(0)
+
+              #print("stressTensors.GetTuple(pointIdx)[0]="+str(stressTensors.GetTuple(pointIdx)[0]))
+              #print("mhcs.GetTuple(pointIdx)[0]="+str(mhcs.GetTuple(pointIdx)[0]))              
+              #print("rightSigXXAcc="+str(rightSigXXAcc))
+              #print("pointIdx="+str(pointIdx)+", point="+str(point))
+              #sys.exit(0)
            # ---
     # ---    
     #pointIdx += 1
     print("final leftSigXXAcc="+str(leftSigXXAcc))
     print("final rightSigXXAcc="+str(rightSigXXAcc))
+    print("final leftMHCSAcc="+str(leftMHCSAcc))
+    print("final rightMHCSAcc="+str(rightMHCSAcc))
+        
     print("nbDepthsLeft="+str(nbDepthsLeft))
     print("nbDepthsRight="+str(nbDepthsRight))
 
-    #outCsv.write(str(dataMy)+","+str(leftSigXXAcc/1e9)+","+str(rightSigXXAcc/1e9)+"\n")
+    outCsv.write(str(dataMy)+","+str(leftSigXXAcc/1e9)+","+str(rightSigXXAcc/1e9)+","+str(leftMHCSAcc/1e9)+","+str(rightMHCSAcc/1e9)+"\n")
     #outCsv.write(str(dataMy)+","+str(leftSigXXAcc/nbDepthsLeft)+","+str(rightSigXXAcc/nbDepthsRight)+"\n")
-    outCsv.write(str(dataMy)+","+str((leftSigXXAcc/1e9)*(convDepthLimit/nbDepthsLeft))+","+str((rightSigXXAcc/1e9)*(convDepthLimit/nbDepthsRight))+"\n")
+    #outCsv.write(str(dataMy)+","+str((leftSigXXAcc/1e9)*(convDepthLimit/nbDepthsLeft))+","+str((rightSigXXAcc/1e9)*(convDepthLimit/nbDepthsRight))+"\n")
     
     print("Done with vtuFileIn -> "+vtuFileIn)
 
