@@ -454,8 +454,8 @@ for markerPid in metamPidTrack:
     mrkCsvFileOutP= open(mrkCsvFileOut,"w")
 
     mrkCsvFileOutP\
-      .write("#time[My},p(GPA),T(C),T(K),Depth(y[m]),Position(x[m]),granulites,amphibolites,greenschists, \
-              oceanicCrustMRB,oceanicSeds,initAsth,initOcCrustMrb,initOcSeds,metamCompVarBool,depthThresholdReached\n ")
+      .write("#time[My},p(GPA),T(C),T(K),Depth(y[m]),Position(x[m]),granulites,amphibolites,greenschists,blueschists,eclogites\
+oceanicCrustMRB,oceanicSeds,initAsth,initOcCrustMrb,initOcSeds,metamCompVarBool,depthThresholdReached\n ")
 
     validPid= False
     countTimes= 0
@@ -467,6 +467,8 @@ for markerPid in metamPidTrack:
     prevTimeGranu= metamPidTrack[markerPid][timeMyBeg]["materials"]["granulites"]
     prevTimeAmphi= metamPidTrack[markerPid][timeMyBeg]["materials"]["amphibolites"]
     prevTimeGrnSch= metamPidTrack[markerPid][timeMyBeg]["materials"]["greenschists"]
+    prevTimeBluSch= metamPidTrack[markerPid][timeMyBeg]["materials"]["blueschists"]
+    prevTimeEclo= metamPidTrack[markerPid][timeMyBeg]["materials"]["eclogites"]
     
     #for timeMy in sorted(tuple(metamPidTrack[markerPid].keys())):
     for timeMy in markerPidTimeKeys:
@@ -475,8 +477,8 @@ for markerPid in metamPidTrack:
  
        materialDict= metamPidTrack[markerPid][timeMy]["materials"]
 
-       if (materialDict["granulites"] + materialDict["amphibolites"] +
-           materialDict["greenschists"] + materialDict["oceanicCrustMRB"] + materialDict["oceanicSeds"]) > minCompoValue:
+       if (materialDict["granulites"] + materialDict["amphibolites"] + materialDict["blueschists"] +
+           materialDict["eclogites"] + materialDict["greenschists"] + materialDict["oceanicCrustMRB"] + materialDict["oceanicSeds"] ) > minCompoValue:
 
           validPid= True
           countTimes += 1
@@ -492,7 +494,9 @@ for markerPid in metamPidTrack:
              
           if materialDict["granulites"] > prevTimeGranu or \
              materialDict["amphibolites"] > prevTimeAmphi or \
-             materialDict["greenschists"] > prevTimeGrnSch :
+             materialDict["greenschists"] > prevTimeGrnSch or \
+             materialDict["blueschists"] > prevTimeBluSch or \
+             materialDict["eclogites"] > prevTimeEclo:
                metamCompoVar= True
                  
           mrkCsvFileOutP\
@@ -500,7 +504,8 @@ for markerPid in metamPidTrack:
                     str(metamPidTrack[markerPid][timeMy]["T"]-273.0)+","+str(metamPidTrack[markerPid][timeMy]["T"])+","+
                     str(700e3-metamPidTrack[markerPid][timeMy]["position"][1])+","+str(metamPidTrack[markerPid][timeMy]["position"][0])+","+
                     str(materialDict["granulites"])+","+str(materialDict["amphibolites"])+","+str(materialDict["greenschists"])+","+
-                    str(materialDict["oceanicCrustMRB"])+","+str(materialDict["oceanicSeds"])+","+str(metamPidTrack[markerPid][timeMy]["initial asthenosphere"])+","+
+                    str(materialDict["blueschists"])+","+str(materialDict["eclogites"])+","+str(materialDict["oceanicCrustMRB"])+","+
+                    str(materialDict["oceanicSeds"])+","+str(metamPidTrack[markerPid][timeMy]["initial asthenosphere"])+","+
                     str(metamPidTrack[markerPid][timeMy]["initial oceanicCrustMRB"])+","+str(metamPidTrack[markerPid][timeMy]["initial oceanicSeds"])+","+
                     str(metamCompoVar)+","+depthThresholdReached+"\n")
 
