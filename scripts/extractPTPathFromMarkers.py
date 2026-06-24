@@ -454,7 +454,7 @@ for markerPid in metamPidTrack:
     mrkCsvFileOutP= open(mrkCsvFileOut,"w")
 
     mrkCsvFileOutP\
-      .write("#time[My},p(GPA),T(C),T(K),Depth(y[m]),Position(x[m]),granulites,amphibolites,greenschists,blueschists,eclogites\
+      .write("#time[My},p(GPA),T(C),T(K),Depth(y[m]),Position(x[m]),granulites,amphibolites,greenschists,blueschists,eclogites,\
 oceanicCrustMRB,oceanicSeds,initAsth,initOcCrustMrb,initOcSeds,metamCompVarBool,depthThresholdReached\n ")
 
     validPid= False
