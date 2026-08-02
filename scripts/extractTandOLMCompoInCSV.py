@@ -39,21 +39,18 @@ TField= dataIn.GetPointData().GetArray("T")
 
 olmMrbField= dataIn.GetPointData().GetArray("oceanicLithMantleMRB")
 
+ocCrustMrbField= dataIn.GetPointData().GetArray("oceanicCrustMRB")
+
 points= dataIn.GetPoints()
 
-#DepthsForT= {100.0: None, 200.0: None, 300: None, 400: None, 500:
-#             None, 600: None, 700: None, 800: None, 900: None, 1000: None, 1100: None, 1200: None, 1300: None }
-#DepthsForTAt= { 5e6: DepthsForT, 10e6: DepthsForT, 15e6: DepthsForT, 20e6: DepthsForT, 25e6: DepthsForT, 30e6: DepthsForT, 35e6: DepthsForT, 40e6: DepthsForT }
-#depthsForTAtAges= {}
-
-#TDef= (100.0,200.0,300.0,400.0,500.0,600.0,700.0,800.0,900.0,1000.0,1100.0,1200.0,1300.0)
-
-TInfos= { 100.0: [], 200.0: [], 300.0: [],
-          400.0: [], 500.0: [], 600.0: [],
-          700.0: [], 800.0: [], 900.0: [],
-          1000.0: [], 1100.0: [], 1200.0: [], 1300.0: [] }
+TInfos= { 100.0: {}, 200.0: {}, 300.0: {},
+          400.0: {}, 500.0: {}, 600.0: {},
+          700.0: {}, 800.0: {}, 900.0: {},
+          1000.0: {}, 1100.0: {}, 1200.0: {}, 1300.0: {} }
 
 TInfosKeys= tuple(TInfos.keys())
+
+OLMInfo= {} #{ "oceanicLithMantleMRB": {}, "oceanicCrustMRB": {} }
 
 for pointIdx in range(0,points.GetNumberOfPoints()):
 
@@ -65,17 +62,6 @@ for pointIdx in range(0,points.GetNumberOfPoints()):
     if point[0] < middlePointX or point[0] > rightLimitX or point[1] < elevLimitY:
         continue
     # ---
-
-    checkT= TField.GetTuple(pointIdx)[0] - 273.0
-
-    #print("checkT="+str(checkT))
-
-    if checkT > 1300:
-        continue
-    # ---
-
-    print("\npoint="+str(point))
-    print("checkT="+str(checkT))
 
     distFromRidge= point[0] - middlePointX
     depth= 700e3-point[1]
@@ -91,15 +77,65 @@ for pointIdx in range(0,points.GetNumberOfPoints()):
 
     print("ageInMy="+str(ageInMy))
 
+    ageInMyRd= round(ageInMy)
+
+    checkT= TField.GetTuple(pointIdx)[0] - 273.0
+
+    checkCrustMrb= ocCrustMrbField.GetTuple(pointIdx)[0]
+    checkOlmMrb= olmMrbField.GetTuple(pointIdx)[0]
+
+    if checkOlmMrb > 0.5 or checkCrustMrb > 0.5 :
+
+        if ageInMyRd not in OLMInfo:
+            OLMInfo[ageInMyRd]= []
+
+        OLMInfo[ageInMyRd].append( -(depth/1000.0) )
+        #OLMInfo[ageInMyRd].append({ "depthKM": -(depth/1000.0), "distKmFromRidge": distFromRidge })
+        
+    #if checkCrustMrb > 0.5:
+    #    if ageInMyRd not in OLMInfp["oceanicCrustMRB"]:
+    #       OLMInfp["oceanicCrustMRB"][ageInMyRd]= []       
+    #    OLMInfp["oceanicCrustMRB"][ageInMyRd].append({ "depthKM": -(depth/1000.0), "distKmFromRidge": distFromRidge })
+    
+    #print("checkT="+str(checkT))
+
+    if checkT > 1300:
+        continue
+    # ---
+
+    print("\npoint="+str(point))
+    print("checkT="+str(checkT))
+
+    #distFromRidge= point[0] - middlePointX
+    #depth= 700e3-point[1]
+    #print("distFromRidge="+str(distFromRidge))
+    #print("depth="+str(depth))
+    #ageInYears= (distFromRidge/spreadVeloMPY)
+    #print("ageInYears="+str(ageInYears))
+    #ageInMy= ageInYears/1e6
+    #print("ageInMy="+str(ageInMy))
+
     #depthsForTAtAges[ageInMy]= checkT
 
     for Tc in TInfosKeys:
 
         TDiffCheck= math.fabs(Tc-checkT)
 
-        if TDiffCheck < 5.0:
+        if TDiffCheck < 5.0: #10.0: #20.0: #10.0: #5.0:
 
-            TInfos[Tc].append({ "ageInMy": ageInMy, "depthKM": -(depth/1000.0), "distKmFromRidge": distFromRidge })
+            #ageInMyFloor= math.floor(ageInMy)
+            #ageInMyStr= str(round(ageInMy))
+            #ageInMyRd= round(ageInMy)
+
+            if ageInMyRd not in TInfos[Tc]:
+                  TInfos[Tc][ageInMyRd]= []
+            # ---
+            
+            TInfos[Tc][ageInMyRd].append({ "depthKM": -(depth/1000.0), "distKmFromRidge": distFromRidge })
+
+        # ---
+        
+            #TInfos[Tc].append({ "ageInMy": math.floor(ageInMy), "depthKM": -(depth/1000.0), "distKmFromRidge": distFromRidge })
             #print("TInfos="+str(TInfos))
             #sys.exit(0)
         # ---
@@ -110,15 +146,41 @@ for Tc in TInfosKeys:
 
     csvFp= open(str(Tc)+"-"+csvFileOut,"w")
 
-    print("Tc="+str(Tc)+", nb. data="+str(len( TInfos[Tc])))
+    #print("Tc="+str(Tc)+", nb. ages="+str(len( TInfos[Tc])))
 
-    csvFp.write("#age[My],depth(Km),distFromRidge(Km)\n")
+    csvFp.write("#age[My],depth(Km)\n")
 
-    for TcInfo in TInfos[Tc] :
+    for age in sorted(TInfos[Tc]):
+        #print("age="+str(age)+",nb. depths="+str(len( TInfos[Tc][age])))
 
-        csvFp.write(str(TcInfo["ageInMy"])+","+str(TcInfo["depthKM"])+","+str(TcInfo["distKmFromRidge"])+"\n")
+        avgDepthAtAgeAcc= 0.0
 
+        for dictItem in TInfos[Tc][age]:
+            avgDepthAtAgeAcc += dictItem["depthKM"]
+
+        avgDepthAtAge= avgDepthAtAgeAcc/float(len(TInfos[Tc][age]))
+
+        csvFp.write(str(age)+","+str(avgDepthAtAge)+"\n")
+    # ---
+    #for TcInfo in TInfos[Tc] :
+    #    csvFp.write(str(TcInfo["ageInMy"])+","+str(TcInfo["depthKM"])+","+str(TcInfo["distKmFromRidge"])+"\n")
     csvFp.close()
+    #sys.exit(0)
+# ---
+
+csvFp2= open("LABDepths-"+csvFileOut,"w")
+
+csvFp2.write("#age[My],depth(Km)\n")
+
+for age in sorted(OLMInfo.keys()):
+
+    #print("age="+str(age)+", sorted(OLMInfo[age])[-1]="+str(sorted(OLMInfo[age])[-1]))
     
+    maxDepthKm= sorted(OLMInfo[age])[0]
+
+    csvFp2.write(str(age)+","+str(maxDepthKm)+"\n")
+
+csvFp2.close()
+                           
 del reader
 #csvFp.close()
