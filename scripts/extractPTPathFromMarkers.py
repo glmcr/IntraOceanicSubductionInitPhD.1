@@ -469,6 +469,9 @@ oceanicCrustMRB,oceanicSeds,initAsth,initOcCrustMrb,initOcSeds,metamCompVarBool,
     prevTimeGrnSch= metamPidTrack[markerPid][timeMyBeg]["materials"]["greenschists"]
     prevTimeBluSch= metamPidTrack[markerPid][timeMyBeg]["materials"]["blueschists"]
     prevTimeEclo= metamPidTrack[markerPid][timeMyBeg]["materials"]["eclogites"]
+
+    depthThresholdReached= "TooShallow"
+    metamCompoVar= False
     
     #for timeMy in sorted(tuple(metamPidTrack[markerPid].keys())):
     for timeMy in markerPidTimeKeys:
@@ -485,12 +488,12 @@ oceanicCrustMRB,oceanicSeds,initAsth,initOcCrustMrb,initOcSeds,metamCompVarBool,
 
           depth= 700e3-metamPidTrack[markerPid][timeMy]["position"][1]
 
-          depthThresholdReached= "TooShallow" #False
+          #depthThresholdReached= "TooShallow" #False
           
           if depth >= depthThreshold:
              depthThresholdReached= "DepthThrReached" #True
 
-          metamCompoVar= False
+          #metamCompoVar= False
              
           if materialDict["granulites"] > prevTimeGranu or \
              materialDict["amphibolites"] > prevTimeAmphi or \
@@ -519,7 +522,12 @@ oceanicCrustMRB,oceanicSeds,initAsth,initOcCrustMrb,initOcSeds,metamCompVarBool,
 
     elif countTimes != nbTimes:
        print("countTimes != nbTimes for marker -> "+str(markerPid)+" removing its file -> "+mrkCsvFileOut)
-       os.remove(mrkCsvFileOut) 
+       os.remove(mrkCsvFileOut)
+
+    elif depthThresholdReached == "TooShallow":
+       print("depthThresholdReached == TooShallow for marker -> "+str(markerPid)+" removing its file -> "+mrkCsvFileOut)
+       os.remove(mrkCsvFileOut)
+       
     
     #sys.exit(0)
 # ---
