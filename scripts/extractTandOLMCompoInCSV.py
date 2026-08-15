@@ -79,6 +79,8 @@ for pointIdx in range(0,points.GetNumberOfPoints()):
 
     ageInMyRd= round(ageInMy)
 
+    #distFromRidgeRound= ageInMyRd*spreadVeloMPY)
+
     checkT= TField.GetTuple(pointIdx)[0] - 273.0
 
     checkCrustMrb= ocCrustMrbField.GetTuple(pointIdx)[0]
@@ -88,9 +90,11 @@ for pointIdx in range(0,points.GetNumberOfPoints()):
 
         if ageInMyRd not in OLMInfo:
             OLMInfo[ageInMyRd]= []
+            #OLMInfo[ageInMyRd]= {"depths": [], "distKmFromRidge": None}
 
         OLMInfo[ageInMyRd].append( -(depth/1000.0) )
         #OLMInfo[ageInMyRd].append({ "depthKM": -(depth/1000.0), "distKmFromRidge": distFromRidge })
+        #OLMInfo[ageInMyRd].append( (-(depth/1000.0), distFromRidgeRound) )
         
     #if checkCrustMrb > 0.5:
     #    if ageInMyRd not in OLMInfp["oceanicCrustMRB"]:
@@ -131,7 +135,7 @@ for pointIdx in range(0,points.GetNumberOfPoints()):
                   TInfos[Tc][ageInMyRd]= []
             # ---
             
-            TInfos[Tc][ageInMyRd].append({ "depthKM": -(depth/1000.0), "distKmFromRidge": distFromRidge })
+            TInfos[Tc][ageInMyRd].append({ "depthKM": -(depth/1000.0), "distKmFromRidge": (ageInMyRd*1e6*spreadVeloMPY)/1000.0 })
 
         # ---
         
@@ -148,7 +152,7 @@ for Tc in TInfosKeys:
 
     #print("Tc="+str(Tc)+", nb. ages="+str(len( TInfos[Tc])))
 
-    csvFp.write("#age[My],depth(Km)\n")
+    csvFp.write("#age[My],depth(Km), distFromRidge(Km)\n")
 
     for age in sorted(TInfos[Tc]):
         #print("age="+str(age)+",nb. depths="+str(len( TInfos[Tc][age])))
@@ -160,7 +164,9 @@ for Tc in TInfosKeys:
 
         avgDepthAtAge= avgDepthAtAgeAcc/float(len(TInfos[Tc][age]))
 
-        csvFp.write(str(age)+","+str(avgDepthAtAge)+"\n")
+        distKmFromRidge= (age*1e6*spreadVeloMPY)/1000.0
+
+        csvFp.write(str(age)+","+str(avgDepthAtAge)+","+str(distKmFromRidge)+"\n")
     # ---
     #for TcInfo in TInfos[Tc] :
     #    csvFp.write(str(TcInfo["ageInMy"])+","+str(TcInfo["depthKM"])+","+str(TcInfo["distKmFromRidge"])+"\n")
@@ -170,7 +176,7 @@ for Tc in TInfosKeys:
 
 csvFp2= open("LABDepths-"+csvFileOut,"w")
 
-csvFp2.write("#age[My],depth(Km)\n")
+csvFp2.write("#age[My],depth(Km), distFromRidge(Km)\n")
 
 for age in sorted(OLMInfo.keys()):
 
@@ -178,7 +184,9 @@ for age in sorted(OLMInfo.keys()):
     
     maxDepthKm= sorted(OLMInfo[age])[0]
 
-    csvFp2.write(str(age)+","+str(maxDepthKm)+"\n")
+    distKmFromRidge=(age*1e6*spreadVeloMPY)/1000.0
+
+    csvFp2.write(str(age)+","+str(maxDepthKm)+","+str(distKmFromRidge)+"\n")
 
 csvFp2.close()
                            
