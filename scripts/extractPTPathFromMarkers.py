@@ -135,6 +135,9 @@ yElevMin= 250e3
 xMin= 0.5e6
 xMax= 2.5e6
 
+HPThreshold= 0.8e9
+HTThreshold= 800.0
+
 #finalPids= []
 
 for pidIter in range(0,pidDataSizeEnd):
@@ -455,7 +458,7 @@ for markerPid in metamPidTrack:
 
     mrkCsvFileOutP\
       .write("#time[My},p(GPA),T(C),T(K),Depth(y[m]),Position(x[m]),granulites,amphibolites,greenschists,blueschists,eclogites,\
-oceanicCrustMRB,oceanicSeds,initAsth,initOcCrustMrb,initOcSeds,metamCompVarBool,depthThresholdReached\n ")
+oceanicCrustMRB,oceanicSeds,initAsth,initOcCrustMrb,initOcSeds,metamCompVarBool,depthThresholdReached,HTReached,HPReached\n ")
 
     validPid= False
     countTimes= 0
@@ -472,6 +475,8 @@ oceanicCrustMRB,oceanicSeds,initAsth,initOcCrustMrb,initOcSeds,metamCompVarBool,
 
     depthThresholdReached= "TooShallow"
     metamCompoVar= False
+    HPReached= False
+    HTReached= False
     
     #for timeMy in sorted(tuple(metamPidTrack[markerPid].keys())):
     for timeMy in markerPidTimeKeys:
@@ -493,6 +498,12 @@ oceanicCrustMRB,oceanicSeds,initAsth,initOcCrustMrb,initOcSeds,metamCompVarBool,
           if depth >= depthThreshold:
              depthThresholdReached= "DepthThrReached" #True
 
+          if metamPidTrack[markerPid][timeMy]["T"] > HTThreshold:
+             HTReached= True
+
+          if metamPidTrack[markerPid][timeMy]["p"] > HPThreshold:
+             HPReached= True          
+
           #metamCompoVar= False
              
           if materialDict["granulites"] > prevTimeGranu or \
@@ -510,7 +521,7 @@ oceanicCrustMRB,oceanicSeds,initAsth,initOcCrustMrb,initOcSeds,metamCompVarBool,
                     str(materialDict["blueschists"])+","+str(materialDict["eclogites"])+","+str(materialDict["oceanicCrustMRB"])+","+
                     str(materialDict["oceanicSeds"])+","+str(metamPidTrack[markerPid][timeMy]["initial asthenosphere"])+","+
                     str(metamPidTrack[markerPid][timeMy]["initial oceanicCrustMRB"])+","+str(metamPidTrack[markerPid][timeMy]["initial oceanicSeds"])+","+
-                    str(metamCompoVar)+","+depthThresholdReached+"\n")
+                    str(metamCompoVar)+","+depthThresholdReached+","+str(HTReached)+","+str(HPReached)+"\n")
 
       # ---
 
