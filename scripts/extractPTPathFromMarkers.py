@@ -397,9 +397,14 @@ for vtuFileInPast in sorted(vtuPFiles[0:-1],reverse=True):
 
 metamPidTrack= {}
 
+nbValidMarkers= 0
+nbRejectedMarkers= 0
+
 for pidAtEnd in h5MetamPidPTMats[dataTimeEnd]:
    
    metamPidTrack[pidAtEnd]= { dataTimeEnd : h5MetamPidPTMats[dataTimeEnd][pidAtEnd] }
+
+   #previousTimeInFut= dataTimeEnd
    
    for dataTimeChk in sorted((tuple(h5MetamPidPTMats.keys())[1:]),reverse=True):
 
@@ -411,18 +416,27 @@ for pidAtEnd in h5MetamPidPTMats[dataTimeEnd]:
               h5MetamPidPTMats[dataTimeEnd][pidAtEnd]["initial position"] :
 
               metamPidTrack[pidAtEnd].update({ dataTimeChk: h5MetamPidPTMats[dataTimeChk][pidAtEnd] })
+
+              nbValidMarkers += 1
          # ---
          else:
+
+           previousTimeInFut= tuple(metamPidTrack[pidAtEnd].keys())[-1]
+            
            print("Cannot have different initial positions for the same pid:"+str(pidAtEnd))
            print("h5MetamPidPTMats[dataTimeChk][pidAtEnd][\"initial position\"]="+str(h5MetamPidPTMats[dataTimeChk][pidAtEnd]["initial position"]))
+           print("h5MetamPidPTMats[previousTimeInFut][pidAtEnd][\"initial position\"]="+str(h5MetamPidPTMats[previousTimeInFut][pidAtEnd]["initial position"]))
            print("h5MetamPidPTMats[dataTimeEnd][pidAtEnd][\"initial position\"]="+str(h5MetamPidPTMats[dataTimeEnd][pidAtEnd]["initial position"]))
            print("dataTimeChk="+str(dataTimeChk))
-           print("metamPidTrack[pidAtEnd].keys()="+str(tuple(metamPidTrack[pidAtEnd].keys()))+"\n")
+           print("previousTimeInFut="+str(previousTimeInFut))
+           print("metamPidTrack[pidAtEnd].keys()="+str(tuple(metamPidTrack[pidAtEnd].keys())))
            print("h5MetamPidPTMats[dataTimeChk][pidAtEnd][materials]="+str(h5MetamPidPTMats[dataTimeChk][pidAtEnd]["materials"]))
+           print("h5MetamPidPTMats[previousTimeInFut][pidAtEnd][materials]="+str(h5MetamPidPTMats[previousTimeInFut][pidAtEnd]["materials"]))
            print("h5MetamPidPTMats[dataTimeEnd][pidAtEnd][materials]="+str(h5MetamPidPTMats[dataTimeEnd][pidAtEnd]["materials"]))
+           nbRejectedMarkers += 1
            #sys.exit(1)
       # ---
-      
+       #previousTimeInFut= dataTimeChk  
    # ---
 
    if len(metamPidTrack[pidAtEnd]) >= 2:
@@ -542,6 +556,8 @@ oceanicCrustMRB,oceanicSeds,initAsth,initOcCrustMrb,initOcSeds,metamCompVarBool,
     
     #sys.exit(0)
 # ---
+print("nbValidMarkers="+str(nbValidMarkers))
+print("nbRejectedMarkers="+str(nbRejectedMarkers))
 
 #print("Debug exit 0")
 #sys.exit(0)
