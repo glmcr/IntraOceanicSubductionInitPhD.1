@@ -10,13 +10,17 @@ TLABatDistFromRidgeK= float(sys.argv[1])
 TimeInMy= float(sys.argv[2])
 N= int(sys.argv[3])
 
-zrNoWater= 1550.0
+#zrNoWater= 1550.0
+zrNoWater=1074.49
 zp= 98500.0
+#zp= 90000.0
 T0K= 273.25
 
-rhoMantle= 3370.0
+#rhoMantle= 3370.0
 thermalExpOLMMrb= 3e-5
+#thermalExpOLMMrb= 2.5e-5
 thermalDiffOLMMrb= 1.07e-6
+#thermalDiffOLMMrb= 2.14e-6
 
 piSquared= math.pi**2
 piSquaredInv= 1.0/piSquared
@@ -61,8 +65,17 @@ print("nbIter="+str(nbIter))
 
 #print(" thermalExpOLMMrb * (TLABatDistFromRidgeK-T0K)="+str( thermalExpOLMMrb * (TLABatDistFromRidgeK-T0K)))
 
-wt= zrNoWater + 0.5 * thermalExpOLMMrb * (TLABatDistFromRidgeK-T0K) * zp * checkConv
+wtHalfPlateModel= zrNoWater + 0.5 * thermalExpOLMMrb * (TLABatDistFromRidgeK-T0K) * zp * checkConv
+#wtHalfPlateModel= zrNoWater + 1.0 * thermalExpOLMMrb * (TLABatDistFromRidgeK-T0K) * zp * checkConv
+                     
 #wt= zrNoWater + 0.5 * math.fabs(thermalExpOLMMrb * (TLABatDistFromRidgeK-T0K) -1.0) * zp * checkConv
 #wt= zrNoWater + 0.5 *  zp * checkConv *(1.0/(1.0 - thermalExpOLMMrb * (TLABatDistFromRidgeK-T0K)))
 
-print("wt(m)="+str(wt))
+print("wtHalfPlateModel(m)="+str(wtHalfPlateModel))
+
+wtHalfSpaceModel= zrNoWater + 2.0 * thermalExpOLMMrb * zp * math.sqrt( (thermalDiffOLMMrb*timeInSeconds)/math.pi )
+
+print("2.0 * thermalExpOLMMrb * zp * math.sqrt( (thermalDiffOLMMrb*timeInSeconds)/math.pi )="+
+      str(2.0 * thermalExpOLMMrb * zp * math.sqrt( (thermalDiffOLMMrb*timeInSeconds)/math.pi )))
+
+print("wtHalfSpaceModel(m)="+str(wtHalfSpaceModel))
