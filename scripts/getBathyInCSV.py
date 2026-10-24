@@ -18,8 +18,8 @@ spreadVeloMPY= 0.025 # meters/years
 
 #middlePointX= 1.48949e6 #1.49036e6
 #middlePointX= 1.49036e6
-#middlePointX= 1.495e6
-middlePointX= 1.5e6
+middlePointX= 1.498e6 #1.498e6 #1.495e6
+#middlePointX= 1.501e6 #1.5e6
 #leftLimitX= 500e3
 rightLimitX= 3.0e6 - 500e3
 #elevLimitY= 700e3-140e3
@@ -68,6 +68,8 @@ densityInfo= {}
 distInfo= {}
 depthInfo= {}
 
+minDistFromRidge= 1.e20
+
 #OLMInfo= {} #{ "oceanicLithMantleMRB": {}, "oceanicCrustMRB": {} }
 
 for pointIdx in range(0,points.GetNumberOfPoints()):
@@ -86,6 +88,10 @@ for pointIdx in range(0,points.GetNumberOfPoints()):
     depth= 700e3-point[1]
 
     print("distFromRidge="+str(distFromRidge))
+
+    if distFromRidge < minDistFromRidge:
+        minDistFromRidge= distFromRidge
+    
     print("depth="+str(depth))
 
     ageInYears= (distFromRidge/spreadVeloMPY)
@@ -96,11 +102,16 @@ for pointIdx in range(0,points.GetNumberOfPoints()):
 
     print("ageInMy="+str(ageInMy))
 
-    ageInMyRd= round(ageInMy)
+    ageInMyRd= round(math.floor(ageInMy+0.5))
+
+    print("ageInMyRd="+str(ageInMyRd))
+    #sys.exit(0)
 
     if ageInMyRd not in distInfo:
-        distInfo[ageInMyRd]= distFromRidge
+        distInfo[ageInMyRd]= [] #distFromRidge
     # ---
+    
+    distInfo[ageInMyRd].append(distFromRidge)
     
     #distFromRidgeRound= ageInMyRd*spreadVeloMPY)
 
@@ -163,7 +174,8 @@ for pointIdx in range(0,points.GetNumberOfPoints()):
 sortedAges= sorted(tuple(densityInfo.keys()))
 sortedElevsAge0= sorted(tuple(densityInfo[sortedAges[0]]))
 
-print("sortedElevsAge0)="+str(sortedElevsAge0))
+print("minDistFromRidge="+str(minDistFromRidge))
+#print("sortedElevsAge0)="+str(sortedElevsAge0))
 #sys.exit(0)
 
 for age in sortedAges[1:]:
@@ -232,13 +244,17 @@ for age in sortedAges[1:]:
     # ---
 # ---
 
+del reader
 #sys.exit(0)
              
 densityDiffAccDict= {}
+distsFromRidge= {}
 
 for age in sorted(tuple(densityInfo.keys())):
 
     #print("age="+str(age))
+
+    distsFromRidge[age]= np.mean(distInfo[age])
     
     #sortedElevs= sorted(tuple(densityInfo[age].keys()))
 
@@ -269,7 +285,8 @@ for age in sorted(tuple(densityInfo.keys())):
     
     print("\nage="+str(age))
     print("densityDiffAcc="+str(densityDiffAcc))
-    print("distInfo[age]="+str(distInfo[age]))
+    print("distsFromRidge[age]="+str(distsFromRidge[age]))
+    #print("distInfo[age]="+str(distInfo[age]))
     #print("len(sortedElevs)="+str(len(sortedElevs)))
     #sys.exit(0)
 
@@ -278,73 +295,43 @@ for age in sorted(tuple(densityInfo.keys())):
 # ---
 #sys.exit(0)
 
-bathyAtRidge= 1e20
+bathyAtRidgeNoWater= 1e20
 
 for elev in depthInfo[sortedAges[0]] :
 
-    checkDepth= depthInfo[sortedAges[0]][elev]
+    checkBathy= depthInfo[sortedAges[0]][elev]
 
-    if checkDepth < bathyAtRidge:
-        bathyAtRidge= checkDepth
+    if checkBathy < bathyAtRidgeNoWater:
+        bathyAtRidgeNoWater= checkBathy
     # ---
 # ---
 
-print("bathyAtRidge="+str(bathyAtRidge))
+print("bathyAtRidgeNoWater="+str(bathyAtRidgeNoWater))
 
-bathyAtAge= {0: bathyAtRidge}
+bathyAtRidgeWithWater= 2500.0
+
+#bathyAtAge= {0: bathyAtRidge}
+csvFp= open(csvFileOut,"w")
+
+csvFp.write("#age[My],distFromRidge[Km],bathyNoWater[m],bathyWithWater[m]\n")
+
+csvFp.write("0,"+str(distsFromRidge[0])+","+str(-bathyAtRidgeNoWater)+","+str(-bathyAtRidgeWithWater)+"\n")
+#print("age=0, bathyAtAgeNoWater="+str(bathyAtAgeNoWater)+", bathyAtAgeWithWater="+str(bathyAtAgeWithWater))
 
 for age in sortedAges[1:]:
 
-    bathyAtAge[age]= bathyAtRidge + (1.0/mantleDensSTP)*(densityDiffAccDict[age]-densityDiffAccDict[0])
+    bathyAtAgeNoWater= bathyAtRidgeNoWater + (1.0/mantleDensSTP)*(densityDiffAccDict[age]-densityDiffAccDict[0])
 
-    print("age="+str(age)+", bathyAtAge[age]="+str(bathyAtAge[age]))
-# ---
-#print("depthInfo[sortedAges[0]]="+str(depthInfo[sortedAges[0]]))
-sys.exit(0)
-
-for Tc in TInfosKeys:
-
-    csvFp= open(str(Tc)+"-"+csvFileOut,"w")
-
-    #print("Tc="+str(Tc)+", nb. ages="+str(len( TInfos[Tc])))
-
-    csvFp.write("#age[My],depth(Km), distFromRidge(Km)\n")
-
-    for age in sorted(TInfos[Tc]):
-        #print("age="+str(age)+",nb. depths="+str(len( TInfos[Tc][age])))
-
-        avgDepthAtAgeAcc= 0.0
-
-        for dictItem in TInfos[Tc][age]:
-            avgDepthAtAgeAcc += dictItem["depthKM"]
-
-        avgDepthAtAge= avgDepthAtAgeAcc/float(len(TInfos[Tc][age]))
-
-        distKmFromRidge= (age*1e6*spreadVeloMPY)/1000.0
-
-        csvFp.write(str(age)+","+str(avgDepthAtAge)+","+str(distKmFromRidge)+"\n")
-    # ---
-    #for TcInfo in TInfos[Tc] :
-    #    csvFp.write(str(TcInfo["ageInMy"])+","+str(TcInfo["depthKM"])+","+str(TcInfo["distKmFromRidge"])+"\n")
-    csvFp.close()
-    #sys.exit(0)
-# ---
-
-csvFp2= open("LABDepths-"+csvFileOut,"w")
-
-csvFp2.write("#age[My],depth(Km), distFromRidge(Km)\n")
-
-for age in sorted(OLMInfo.keys()):
-
-    #print("age="+str(age)+", sorted(OLMInfo[age])[-1]="+str(sorted(OLMInfo[age])[-1]))
+    bathyAtAgeWithWater= bathyAtRidgeWithWater + (1.0/(mantleDensSTP-1028.0))*(densityDiffAccDict[age]-densityDiffAccDict[0])
     
-    maxDepthKm= sorted(OLMInfo[age])[0]
+    print("age="+str(age)+", bathyAtAgeNoWater="+str(bathyAtAgeNoWater)+", bathyAtAgeWithWater="+str(bathyAtAgeWithWater))
 
-    distKmFromRidge=(age*1e6*spreadVeloMPY)/1000.0
+    csvFp.write(str(age)+","+str(distsFromRidge[age])+","+str(-bathyAtAgeNoWater)+","+str(-bathyAtAgeWithWater)+"\n")
+# ---
 
-    csvFp2.write(str(age)+","+str(maxDepthKm)+","+str(distKmFromRidge)+"\n")
+csvFp.close()
+#print("depthInfo[sortedAges[0]]="+str(depthInfo[sortedAges[0]]))
 
-csvFp2.close()
-                           
-del reader
+#sys.exit(0)                          
+#del reader
 #csvFp.close()
